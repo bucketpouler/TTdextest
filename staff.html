@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Staff Tools — Pokédex</title>
-
+  <title>Staff — Outils Pokédex</title>
   <style>
     :root {
       --page-bg: #eef4f6;
       --grid-line: rgba(98, 135, 148, 0.12);
       --panel: #dfeaf0;
       --panel-light: #eef6f8;
-      --panel-dark: #cbdde5;
       --blue: #6aa9c4;
       --blue-dark: #3f6473;
       --coral: #e8755f;
@@ -21,9 +19,7 @@
       --radius: 12px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -39,10 +35,10 @@
 
     header {
       max-width: 1180px;
-      margin: 28px auto 12px;
+      margin: 28px auto 10px;
       padding: 30px 24px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #b7def1 0%, #f3d3dc 100%);
+      background: linear-gradient(135deg, #b7def1 0%, #f3d3dc 48%, #e7f4f6 100%);
       border: 1px solid rgba(106, 169, 196, 0.28);
       text-align: center;
     }
@@ -55,48 +51,54 @@
       color: #15202a;
     }
 
+    header p {
+      margin: 10px 0 0;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+
     .container {
       max-width: 1180px;
       margin: 0 auto;
       padding: 0 24px 54px;
     }
 
-    .panel {
+    .staff-login,
+    .dashboard {
+      margin-top: 14px;
       padding: 14px;
       border-radius: var(--radius);
       background: var(--panel);
       border: 1px solid rgba(91, 125, 138, 0.2);
     }
 
-    .login-panel {
+    .staff-login {
       max-width: 480px;
-      margin: 18px auto 0;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .hidden {
-      display: none !important;
+    .login-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: 10px;
     }
 
-    input,
-    select,
-    button {
-      width: 100%;
+    input, select, button {
       padding: 10px;
       border-radius: 8px;
-      border: 1px solid rgba(91, 125, 138, 0.2);
+      border: 1px solid rgba(91,125,138,0.2);
       background: var(--panel-light);
-      font-weight: 700;
+      font-weight: 600;
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
 
     button {
       cursor: pointer;
-      transition: transform 0.12s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
+      color: var(--blue-dark);
     }
 
     button.primary {
@@ -105,23 +107,19 @@
       border-color: transparent;
     }
 
-    .login-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      margin-top: 10px;
+    .error {
+      color: #9d4434;
+      font-weight: 800;
+      margin-top: 8px;
     }
 
-    .login-row button {
-      width: auto;
-      white-space: nowrap;
-    }
+    .hidden { display: none; }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .stat-card {
@@ -133,7 +131,7 @@
 
     .stat-card strong {
       display: block;
-      font-size: 28px;
+      font-size: 24px;
       color: var(--blue-dark);
     }
 
@@ -141,7 +139,6 @@
       font-size: 12px;
       font-weight: 800;
       color: var(--muted);
-      text-transform: uppercase;
     }
 
     .tools-grid {
@@ -155,25 +152,34 @@
       border-radius: var(--radius);
       background: var(--panel-light);
       border: 1px solid rgba(91, 125, 138, 0.16);
+      min-width: 0;
+    }
+
+    .tool-card:first-child {
+      grid-column: 1 / -1;
     }
 
     .tool-card h2 {
       margin: 0 0 10px;
       color: var(--blue-dark);
+      font-size: 22px;
     }
 
-    .wide {
-      grid-column: 1 / -1;
-    }
-
-    .filters {
+    .control-line {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr auto;
       gap: 8px;
       margin-bottom: 10px;
     }
 
-    .talents {
+    .filter-line {
+      display: grid;
+      grid-template-columns: 1fr 180px 240px 180px;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .talent-line {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -190,11 +196,12 @@
       border: 1px solid rgba(91, 125, 138, 0.16);
       font-size: 12px;
       font-weight: 800;
+      cursor: pointer;
     }
 
     .talent-check input {
       width: auto;
-      margin: 0;
+      padding: 0;
     }
 
     .result-box {
@@ -202,238 +209,198 @@
       padding: 12px;
       border-radius: 10px;
       background: #d6e7ee;
-      min-height: 80px;
+      border: 1px solid rgba(91, 125, 138, 0.18);
+      min-height: 70px;
     }
 
     .mini-pokemon {
       display: grid;
-      grid-template-columns: 78px 1fr;
-      gap: 12px;
+      grid-template-columns: 72px 1fr;
+      gap: 10px;
       align-items: center;
-      padding: 10px;
-      border-radius: 10px;
-      background: var(--panel);
-      margin-top: 8px;
     }
 
     .mini-pokemon img {
-      width: 78px;
-      height: 78px;
+      width: 72px;
+      height: 72px;
       object-fit: contain;
       border-radius: 50%;
       background: rgba(255,255,255,0.45);
       padding: 5px;
     }
 
-    .mini-title {
-      font-weight: 900;
-      color: var(--blue-dark);
-      margin-bottom: 5px;
-    }
-
-    .badges {
+    .types {
       display: flex;
+      gap: 6px;
       flex-wrap: wrap;
-      gap: 5px;
+      margin-top: 5px;
     }
 
-    .badge {
+    .type,
+    .tag {
       display: inline-block;
       padding: 4px 8px;
       border-radius: 6px;
-      background: var(--blue);
-      color: white;
       font-size: 10px;
-      font-weight: 900;
-      text-transform: uppercase;
+      font-weight: 800;
+      color: white;
+      background: var(--blue);
     }
 
-    .badge.coral {
-      background: var(--coral);
+    .type:nth-child(2) { background: var(--coral); }
+    .tag { background: var(--coral); margin: 2px; }
+
+    .summary-line {
+      margin-bottom: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.35);
+      color: var(--blue-dark);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
     }
 
-    .badge.green {
-      background: var(--green);
+    .rarity {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      color: white;
+      margin-top: 4px;
     }
+
+    .rarity.common { background: var(--green); }
+    .rarity.rare { background: var(--coral); }
 
     .list {
-      max-height: 360px;
+      max-height: 340px;
       overflow-y: auto;
+      padding-right: 4px;
     }
 
     .list-item {
       display: grid;
-      grid-template-columns: 54px 1fr;
-      gap: 10px;
+      grid-template-columns: 46px 1fr;
+      gap: 8px;
       align-items: center;
       padding: 8px;
       border-radius: 9px;
       background: var(--panel);
       margin-bottom: 6px;
+      border: 1px solid rgba(91, 125, 138, 0.12);
     }
 
     .list-item img {
-      width: 54px;
-      height: 54px;
+      width: 46px;
+      height: 46px;
       object-fit: contain;
       border-radius: 50%;
       background: rgba(255,255,255,0.45);
       padding: 3px;
     }
 
-    .list-title {
-      font-weight: 900;
-      color: var(--blue-dark);
-    }
-
-    @media (max-width: 900px) {
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .tools-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .filters {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 0 12px 32px;
-      }
-
-      .stats,
-      .filters,
+    @media (max-width: 780px) {
+      .tools-grid,
+      .filter-line,
+      .control-line,
       .login-row {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
-
 <body>
-
 <header>
   <h1>Staff Tools</h1>
+  <p>Outils privés branchés sur le Google Sheets du Pokédex</p>
 </header>
 
 <main class="container">
-
-  <section id="loginPanel" class="panel login-panel">
+  <section id="loginPanel" class="staff-login">
     <strong>Accès staff</strong>
-
+    <p>Protection simple côté navigateur. Suffisant pour cacher l’interface, pas pour sécuriser des données sensibles.</p>
     <div class="login-row">
-      <input id="passwordInput" type="password" placeholder="Mot de passe">
+      <input id="passwordInput" type="password" placeholder="Mot de passe staff">
       <button class="primary" onclick="loginStaff()">Entrer</button>
     </div>
+    <div id="loginError" class="error"></div>
   </section>
 
-  <section id="dashboard" class="panel hidden">
-
+  <section id="dashboard" class="dashboard hidden">
     <div class="stats">
-      <div class="stat-card">
-        <strong id="totalCount">0</strong>
-        <span>Pokémon</span>
-      </div>
-
-      <div class="stat-card">
-        <strong id="missingZoneCount">0</strong>
-        <span>Inaccessibles</span>
-      </div>
-
-      <div class="stat-card">
-        <strong id="zoneCount">0</strong>
-        <span>Zones</span>
-      </div>
-
-      <div class="stat-card">
-        <strong id="megaCount">0</strong>
-        <span>Méga</span>
-      </div>
+      <div class="stat-card"><strong id="totalCount">0</strong><span>Pokémon chargés</span></div>
+      <div class="stat-card"><strong id="missingZoneCount">0</strong><span>Sans zone</span></div>
+      <div class="stat-card"><strong id="zoneCount">0</strong><span>Zones détectées</span></div>
+      <div class="stat-card"><strong id="megaCount">0</strong><span>Avec méga</span></div>
     </div>
 
     <div class="tools-grid">
-
-      <article class="tool-card wide">
+      <article class="tool-card">
         <h2>🎲 Générateur de rencontre</h2>
-
-        <div class="filters">
-          <select id="zoneSelect">
-            <option value="">Toutes les zones</option>
-          </select>
-
-          <select id="typeSelect">
-            <option value="">Tous les types</option>
-          </select>
-
-          <select id="typePairSelect">
-            <option value="">Aucun binôme</option>
-          </select>
-
-          <button class="primary" onclick="generateEncounter()">
-            Générer
-          </button>
+        <div class="filter-line">
+          <select id="zoneSelect"><option value="">Toutes les zones</option></select>
+          <select id="typeSelect"><option value="">Tous les types</option></select>
+          <select id="typePairSelect"><option value="">Aucun binôme</option></select>
+          <button class="primary" onclick="generateEncounter()">Générer</button>
         </div>
-
-        <div class="talents">
-          <label class="talent-check">
-            <input id="talentAuraFarmer" type="checkbox">
-            Aura Farmer
-          </label>
-
-          <label class="talent-check">
-            <input id="talentShasseur" type="checkbox">
-            Shasseur
-          </label>
-
-          <label class="talent-check">
-            <input id="talentBattleRoyale" type="checkbox">
-            Battle Royale
-          </label>
+        <div class="talent-line">
+          <label class="talent-check"><input id="talentAuraFarmer" type="checkbox"> Aura Farmer</label>
+          <select id="auraRankSelect" class="hidden" title="Rang actuel du joueur">
+            <option value="C">Rang C</option>
+            <option value="B">Rang B</option>
+            <option value="A">Rang A</option>
+            <option value="S">Rang S</option>
+            <option value="X">Rang X</option>
+          </select>
+          <label class="talent-check"><input id="talentShasseur" type="checkbox"> Shasseur</label>
+          <label class="talent-check"><input id="talentBattleRoyale" type="checkbox"> Battle Royale</label>
         </div>
-
-        <div id="encounterResult" class="result-box">
-          Choisis une zone ou génère une rencontre.
-        </div>
+        <div id="encounterResult" class="result-box">Choisis une zone ou génère parmi toute la base.</div>
       </article>
 
       <article class="tool-card">
-        <h2>⚠️ Pokémon inaccessibles</h2>
+        <h2>⚠️ Pokémon sans zone</h2>
+        <div class="control-line">
+          <input id="missingSearch" placeholder="Filtrer la liste..." oninput="renderMissingZones()">
+          <button onclick="copyMissingZones()">Copier</button>
+        </div>
         <div id="missingList" class="list"></div>
       </article>
 
       <article class="tool-card">
-        <h2>📊 Équilibrage des types</h2>
-        <div id="typeBalanceResult" class="list"></div>
+        <h2>📍 Pokémon par zone</h2>
+        <div class="control-line">
+          <select id="zoneInspect"><option value="">Choisir une zone</option></select>
+          <button onclick="renderZoneInspect()">Voir</button>
+        </div>
+        <div id="zoneInspectResult" class="list result-box">Sélectionne une zone.</div>
       </article>
 
+      <article class="tool-card">
+        <h2>📊 Équilibrage des types</h2>
+        <div id="typeBalanceResult" class="list result-box">Chargement des types...</div>
+      </article>
     </div>
   </section>
 </main>
 
 <script>
-const STAFF_PASSWORD = "staff";
 const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1";
+const STAFF_PASSWORD = "staff";
 
 let allPokemon = [];
-
-function loginStaff(){
-  const password = document.getElementById("passwordInput").value;
-
-  if(password !== STAFF_PASSWORD){
-    alert("Mot de passe incorrect.");
-    return;
-  }
-
-  document.getElementById("loginPanel").classList.add("hidden");
-  document.getElementById("dashboard").classList.remove("hidden");
-}
+let allZones = [];
+let allTypes = [];
+let typePairs = [];
 
 function normalizeText(value){
   return (value || "").toString().trim();
+}
+
+function normalizeName(value){
+  return normalizeText(value).toLowerCase();
 }
 
 function getPokemonName(p){
@@ -449,161 +416,480 @@ function getType2(p){
 }
 
 function getZones(p){
-  return normalizeText(p.zone).split(",").map(z => z.trim()).filter(Boolean);
+  return normalizeText(p.zone)
+    .split(",")
+    .map(z => z.trim())
+    .filter(Boolean);
 }
 
-async function load(){
+function hasZone(p){
+  return getZones(p).length > 0;
+}
+
+function hasEvolutionPrevious(p){
+  return normalizeText(p.evolves_from_species).length > 0;
+}
+
+function isMissingBasePokemonZone(p){
+  return !hasZone(p) && !hasEvolutionPrevious(p);
+}
+
+async function loadData(){
   const res = await fetch(SHEET_URL);
   const raw = await res.json();
 
+  if(!Array.isArray(raw)){
+    throw new Error("Le Google Sheet n'a pas renvoyé une liste exploitable.");
+  }
+
   allPokemon = raw.map(row => {
     const clean = {};
-
     Object.keys(row).forEach(key => {
       clean[key.trim().toLowerCase()] = row[key];
     });
-
     return clean;
-  });
+  }).filter(p => p.id || p.french || p.nom || p.name);
 
+  allZones = Array.from(new Set(allPokemon.flatMap(getZones))).sort();
+  allTypes = Array.from(new Set(allPokemon.flatMap(p => [getType1(p), getType2(p)]).filter(Boolean))).sort();
+  typePairs = buildOptimizedTypePairs();
+
+  fillSelect("zoneSelect", allZones, "Toutes les zones");
+  fillSelect("zoneInspect", allZones, "Choisir une zone");
+  fillSelect("typeSelect", allTypes, "Tous les types");
+  fillTypePairSelect();
   renderStats();
-  fillFilters();
-  renderMissing();
-  renderTypes();
+  renderMissingZones();
+  renderTypeBalance();
+}
+
+function fillSelect(id, values, firstLabel){
+  const select = document.getElementById(id);
+  select.innerHTML = `<option value="">${firstLabel}</option>`;
+  values.forEach(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    select.appendChild(option);
+  });
+}
+
+function fillTypePairSelect(){
+  const select = document.getElementById("typePairSelect");
+  select.innerHTML = `<option value="">Aucun binôme</option>`;
+
+  typePairs.forEach(pair => {
+    const option = document.createElement("option");
+    option.value = pair.types.join("|");
+    option.textContent = `${pair.types[0]} + ${pair.types[1]} (${pair.poolCount} Pokémon)`;
+    select.appendChild(option);
+  });
+}
+
+function loginStaff(){
+  const password = document.getElementById("passwordInput").value;
+  const error = document.getElementById("loginError");
+
+  if(password !== STAFF_PASSWORD){
+    error.textContent = "Mot de passe incorrect.";
+    return;
+  }
+
+  error.textContent = "";
+  document.getElementById("loginPanel").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  localStorage.setItem("staffAccess", "ok");
 }
 
 function renderStats(){
   document.getElementById("totalCount").textContent = allPokemon.length;
-
-  document.getElementById("missingZoneCount").textContent =
-    allPokemon.filter(p => !p.zone).length;
-
-  const zones = new Set();
-
-  allPokemon.forEach(p => {
-    getZones(p).forEach(z => zones.add(z));
-  });
-
-  document.getElementById("zoneCount").textContent = zones.size;
-
-  document.getElementById("megaCount").textContent =
-    allPokemon.filter(p => p["mega_1_name"] || p["mega_2_name"]).length;
+  document.getElementById("missingZoneCount").textContent = allPokemon.filter(isMissingBasePokemonZone).length;
+  document.getElementById("zoneCount").textContent = allZones.length;
+  document.getElementById("megaCount").textContent = allPokemon.filter(p => p["mega_1_name"] || p["mega_2_name"]).length;
 }
 
-function fillFilters(){
-  const zones = new Set();
-  const types = new Set();
+function getRarityInfo(p){
+  const raw = normalizeName(p.spawn);
 
-  allPokemon.forEach(p => {
-    getZones(p).forEach(z => zones.add(z));
+  if(raw === "rare") return { label: "Rare", className: "rare" };
+  if(raw === "commun" || raw === "common") return { label: "Commun", className: "common" };
 
-    if(getType1(p)) types.add(getType1(p));
-    if(getType2(p)) types.add(getType2(p));
-  });
+  const num = parseFloat(raw);
+  if(num === 2) return { label: "Rare", className: "rare" };
+  if(num === 10) return { label: "Commun", className: "common" };
 
-  const zoneSelect = document.getElementById("zoneSelect");
-  [...zones].sort().forEach(zone => {
-    zoneSelect.innerHTML += `<option>${zone}</option>`;
-  });
-
-  const typeSelect = document.getElementById("typeSelect");
-
-  [...types].sort().forEach(type => {
-    typeSelect.innerHTML += `<option>${type}</option>`;
-  });
+  return null;
 }
 
-function renderMissing(){
-  const missing = allPokemon.filter(p => !p.zone);
+function pokemonMiniHtml(p, options = {}){
+  const type1 = getType1(p);
+  const type2 = getType2(p);
+  const zones = getZones(p);
+  const isShiny = options.isShiny || false;
+  const rank = options.rank || null;
+  const captureDifficulty = options.captureDifficulty || null;
+  const rarity = getRarityInfo(p);
+  const sprite = isShiny && p.shiny ? p.shiny : p.sprite;
 
-  document.getElementById("missingList").innerHTML =
-    missing.map(p => `
-      <div class="list-item">
-        <img src="${p.sprite || ""}">
-        <div>
-          <div class="list-title">
-            #${p.id || "?"} — ${getPokemonName(p)}
-          </div>
-        </div>
-      </div>
-    `).join("");
-}
-
-function renderTypes(){
-  const counts = {};
-
-  allPokemon.forEach(p => {
-    [getType1(p), getType2(p)].filter(Boolean).forEach(type => {
-      counts[type] = (counts[type] || 0) + 1;
-    });
-  });
-
-  const sorted = Object.entries(counts)
-    .sort((a, b) => a[1] - b[1]);
-
-  document.getElementById("typeBalanceResult").innerHTML =
-    sorted.map(([type, count]) => `
-      <div class="list-item">
-        <div></div>
-        <div>
-          <div class="list-title">
-            ${type} — ${count}
-          </div>
-        </div>
-      </div>
-    `).join("");
-}
-
-function generateEncounter(){
-  const zone = document.getElementById("zoneSelect").value;
-  const type = document.getElementById("typeSelect").value;
-
-  const filtered = allPokemon.filter(p => {
-    const zoneOk =
-      !zone || getZones(p).includes(zone);
-
-    const typeOk =
-      !type ||
-      getType1(p) === type ||
-      getType2(p) === type;
-
-    return zoneOk && typeOk;
-  });
-
-  if(!filtered.length){
-    document.getElementById("encounterResult").innerHTML =
-      "Aucun Pokémon trouvé.";
-    return;
-  }
-
-  const pokemon =
-    filtered[Math.floor(Math.random() * filtered.length)];
-
-  document.getElementById("encounterResult").innerHTML = `
+  return `
     <div class="mini-pokemon">
-      <img src="${pokemon.sprite || ""}">
-
+      <img src="${sprite || ""}" alt="${getPokemonName(p)}">
       <div>
-        <div class="mini-title">
-          #${pokemon.id || "?"} — ${getPokemonName(pokemon)}
+        <strong>#${p.id || "?"} — ${getPokemonName(p)} ${isShiny ? "✨ Shiny" : ""}</strong>
+        <div class="types">
+          ${type1 ? `<span class="type">${type1}</span>` : ""}
+          ${type2 ? `<span class="type">${type2}</span>` : ""}
         </div>
-
-        <div class="badges">
-          ${getType1(pokemon)
-            ? `<span class="badge">${getType1(pokemon)}</span>`
-            : ""}
-
-          ${getType2(pokemon)
-            ? `<span class="badge coral">${getType2(pokemon)}</span>`
-            : ""}
-        </div>
+        ${rank ? `<div><span class="tag">Rang ${rank}</span></div>` : ""}
+        ${rarity ? `<div><span class="rarity ${rarity.className}">${rarity.label}</span></div>` : ""}
+        ${captureDifficulty ? `<div><span class="tag">${captureDifficulty}</span></div>` : ""}
+        ${zones.length ? `<div>${zones.map(z => `<span class="tag">${z}</span>`).join("")}</div>` : ""}
       </div>
     </div>
   `;
 }
 
-load();
-</script>
+function getSelectedTalents(){
+  return {
+    auraFarmer: document.getElementById("talentAuraFarmer")?.checked || false,
+    shasseur: document.getElementById("talentShasseur")?.checked || false,
+    battleRoyale: document.getElementById("talentBattleRoyale")?.checked || false
+  };
+}
 
+function getSpawnWeight(p){
+  const raw = normalizeName(p.spawn);
+  const num = parseFloat(raw);
+
+  if(Number.isFinite(num) && num > 0){
+    return num;
+  }
+
+  if(raw === "commun" || raw === "common") return 10;
+  if(raw === "rare") return 2;
+  if(raw === "ultra" || raw === "ultra-rare") return 1;
+
+  return 1;
+}
+
+function weightedRandom(pool){
+  const total = pool.reduce((sum, p) => sum + getSpawnWeight(p), 0);
+  let roll = Math.random() * total;
+
+  for(const p of pool){
+    roll -= getSpawnWeight(p);
+    if(roll <= 0){
+      return p;
+    }
+  }
+
+  return pool[pool.length - 1];
+}
+
+function getEncounterCount(talents){
+  if(!talents.battleRoyale){
+    return 1;
+  }
+
+  const roll = Math.random();
+
+  if(roll < 1 / 20){
+    return 4;
+  }
+
+  if(roll < 1 / 20 + 1 / 15){
+    return 3;
+  }
+
+  if(roll < 1 / 20 + 1 / 15 + 1 / 10){
+    return 2;
+  }
+
+  return 1;
+}
+
+function rollShiny(talents){
+  const shinyRate = talents.shasseur ? 350 : 500;
+  return Math.floor(Math.random() * shinyRate) === 0;
+}
+
+function rollRank(talents){
+  const ranks = ["C", "B", "A", "S", "X"];
+  const currentRank = document.getElementById("auraRankSelect")?.value || "C";
+
+  if(!talents.auraFarmer){
+    return currentRank;
+  }
+
+  const currentIndex = ranks.indexOf(currentRank);
+  if(currentIndex === -1){
+    return currentRank;
+  }
+
+  const shouldUpgrade = Math.random() < 0.10;
+  if(shouldUpgrade && currentIndex < ranks.length - 1){
+    return ranks[currentIndex + 1];
+  }
+
+  return currentRank;
+}
+
+function getCaptureDifficultyLabel(talents){
+  return talents.auraFarmer ? "Capture plus difficile" : "Capture normale";
+}
+
+function generateEncounter(){
+  const zone = document.getElementById("zoneSelect").value;
+  const type = document.getElementById("typeSelect").value;
+  const typePairValue = document.getElementById("typePairSelect").value;
+  const pairTypes = typePairValue ? typePairValue.split("|") : [];
+  const talents = getSelectedTalents();
+
+  const pool = allPokemon.filter(p => {
+    const zones = getZones(p);
+    const matchesZone = !zone || zones.includes(zone);
+    const matchesType = !type || getType1(p) === type || getType2(p) === type;
+    const matchesPair = pairTypes.length === 0 || pokemonHasAnyType(p, pairTypes);
+
+    // Si un type seul est sélectionné, il garde la priorité sur le binôme.
+    const matchesTypeMode = type ? matchesType : matchesPair;
+
+    return matchesZone && matchesTypeMode;
+  });
+
+  if(pool.length === 0){
+    document.getElementById("encounterResult").innerHTML = "Aucun Pokémon ne correspond à ces filtres.";
+    return;
+  }
+
+  const encounterCount = getEncounterCount(talents);
+  const results = [];
+
+  for(let i = 0; i < encounterCount; i++){
+    const chosen = weightedRandom(pool);
+    results.push({
+      pokemon: chosen,
+      isShiny: rollShiny(talents),
+      rank: rollRank(talents),
+      captureDifficulty: getCaptureDifficultyLabel(talents)
+    });
+  }
+
+  const filterSummary = [
+    zone ? `Zone : ${zone}` : "Toutes les zones",
+    type ? `Type seul : ${type}` : (pairTypes.length ? `Binôme : ${pairTypes.join(" + ")}` : "Tous les types"),
+    `Pool : ${pool.length} Pokémon`
+  ].join(" • ");
+
+  const talentSummary = [
+    talents.auraFarmer ? "Aura Farmer actif : 10% rang supérieur + capture difficile" : "Aura Farmer inactif",
+    talents.shasseur ? "Shasseur actif : shiny 1/350" : "Shiny : 1/500",
+    talents.battleRoyale ? "Battle Royale actif" : "Battle Royale inactif"
+  ].join(" • ");
+
+  document.getElementById("encounterResult").innerHTML = `
+    <div class="summary-line">${filterSummary}</div>
+    <div class="summary-line">${talentSummary}</div>
+    <div style="margin-bottom:8px;"><strong>${encounterCount} Pokémon apparu${encounterCount > 1 ? "s" : ""}</strong></div>
+    ${results.map(result => pokemonMiniHtml(result.pokemon, result)).join('<div style="height:8px"></div>')}
+  `;
+}
+
+function renderMissingZones(){
+  const search = normalizeName(document.getElementById("missingSearch")?.value || "");
+  const missing = allPokemon.filter(isMissingBasePokemonZone).filter(p => {
+    const name = normalizeName(getPokemonName(p));
+    const id = normalizeName(p.id);
+    return !search || name.includes(search) || id.includes(search);
+  });
+
+  const container = document.getElementById("missingList");
+
+  if(missing.length === 0){
+    container.innerHTML = "Aucun Pokémon sans zone.";
+    return;
+  }
+
+  container.innerHTML = missing.map(p => {
+    const rarity = getRarityInfo(p);
+    return `
+      <div class="list-item">
+        <img src="${p.sprite || ""}" alt="${getPokemonName(p)}">
+        <div>
+          <strong>#${p.id || "?"}</strong> — ${getPokemonName(p)}
+          ${rarity ? `<div><span class="rarity ${rarity.className}">${rarity.label}</span></div>` : ""}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function copyMissingZones(){
+  const missing = allPokemon.filter(isMissingBasePokemonZone);
+  const text = missing.map(p => `${p.id || "?"} ; ${getPokemonName(p)}`).join("\n");
+  navigator.clipboard.writeText(text);
+}
+
+function getTypeCounts(){
+  const counts = {};
+
+  allPokemon.forEach(p => {
+    const type1 = getType1(p);
+    const type2 = getType2(p);
+
+    if(type1){
+      counts[type1] = (counts[type1] || 0) + 1;
+    }
+
+    if(type2){
+      counts[type2] = (counts[type2] || 0) + 1;
+    }
+  });
+
+  return counts;
+}
+
+function getSortedTypeCounts(){
+  return Object.entries(getTypeCounts()).sort((a, b) => a[1] - b[1]);
+}
+
+function pokemonHasAnyType(p, types){
+  const type1 = getType1(p);
+  const type2 = getType2(p);
+  return types.includes(type1) || types.includes(type2);
+}
+
+function getPairPoolCount(types){
+  return allPokemon.filter(p => pokemonHasAnyType(p, types)).length;
+}
+
+function buildOptimizedTypePairs(){
+  const sorted = getSortedTypeCounts();
+  const pairs = [];
+
+  let left = 0;
+  let right = sorted.length - 1;
+
+  while(left < right){
+    const lowType = sorted[left][0];
+    const highType = sorted[right][0];
+    const types = [lowType, highType];
+
+    pairs.push({
+      types,
+      poolCount: getPairPoolCount(types),
+      score: sorted[left][1] + sorted[right][1]
+    });
+
+    left++;
+    right--;
+  }
+
+  return pairs.sort((a, b) => a.poolCount - b.poolCount);
+}
+
+function renderTypeBalance(){
+  const container = document.getElementById("typeBalanceResult");
+  const sorted = getSortedTypeCounts();
+
+  if(sorted.length === 0){
+    container.innerHTML = "Aucun type détecté.";
+    return;
+  }
+
+  const minCount = sorted[0][1];
+
+  container.innerHTML = sorted.map(([type, count]) => {
+    const isLowest = count === minCount;
+    return `
+      <div class="list-item">
+        <div></div>
+        <div>
+          <strong>${type}</strong> — ${count} Pokémon
+          ${isLowest ? `<div><span class="rarity rare">Moins représenté</span></div>` : ""}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderZoneInspect(){
+  const zone = document.getElementById("zoneInspect").value;
+  const container = document.getElementById("zoneInspectResult");
+
+  if(!zone){
+    container.innerHTML = "Sélectionne une zone.";
+    return;
+  }
+
+  const list = allPokemon.filter(p => getZones(p).includes(zone));
+
+  if(list.length === 0){
+    container.innerHTML = "Aucun Pokémon dans cette zone.";
+    return;
+  }
+
+  container.innerHTML = list.map(p => {
+    const rarity = getRarityInfo(p);
+    return `
+      <div class="list-item">
+        <img src="${p.sprite || ""}" alt="${getPokemonName(p)}">
+        <div>
+          <strong>#${p.id || "?"}</strong> — ${getPokemonName(p)}
+          ${rarity ? `<div><span class="rarity ${rarity.className}">${rarity.label}</span></div>` : ""}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function runTests(){
+  console.assert(getSpawnWeight({ spawn: "commun" }) === 10, "Test spawn commun échoué");
+  console.assert(getSpawnWeight({ spawn: "rare" }) === 2, "Test spawn rare échoué");
+  console.assert(getSpawnWeight({ spawn: "10" }) === 10, "Test spawn numérique échoué");
+  console.assert(getRarityInfo({ spawn: "commun" }).label === "Commun", "Test rareté commun échoué");
+  console.assert(getRarityInfo({ spawn: "rare" }).label === "Rare", "Test rareté rare échoué");
+  console.assert(getEncounterCount({ battleRoyale: false }) === 1, "Test battle royale désactivé échoué");
+  console.assert(isMissingBasePokemonZone({ zone: "", evolves_from_species: "" }) === true, "Test sans zone base échoué");
+  console.assert(isMissingBasePokemonZone({ zone: "", evolves_from_species: "Bulbizarre" }) === false, "Test sans zone évolution échoué");
+  const fakeTypes = [{ "type 1": "Feu", "type 2": "Vol" }, { "type 1": "Eau", "type 2": "" }];
+  const oldAllPokemon = allPokemon;
+  allPokemon = fakeTypes;
+  console.assert(getTypeCounts().Feu === 1, "Test comptage type 1 échoué");
+  console.assert(getTypeCounts().Vol === 1, "Test comptage type 2 échoué");
+  const testPairs = buildOptimizedTypePairs();
+  console.assert(testPairs.length === 1, "Test création binôme échoué");
+  console.assert(testPairs[0].types.includes("Eau"), "Test binôme type rare échoué");
+  allPokemon = oldAllPokemon;
+  console.info("Tests staff tools terminés.");
+}
+
+document.getElementById("talentAuraFarmer")?.addEventListener("change", function(){
+  document.getElementById("auraRankSelect")?.classList.toggle("hidden", !this.checked);
+});
+
+// Quand on choisit un type seul, il prend la priorité : on garde le binôme visible,
+// mais le résumé du lancer indique clairement quel filtre est réellement utilisé.
+document.getElementById("typeSelect")?.addEventListener("change", function(){
+  const typePair = document.getElementById("typePairSelect");
+  if(this.value && typePair){
+    typePair.title = "Ignoré tant qu'un type seul est sélectionné";
+  } else if(typePair){
+    typePair.title = "";
+  }
+});
+
+runTests();
+
+loadData().then(() => {
+  if(localStorage.getItem("staffAccess") === "ok"){
+    document.getElementById("loginPanel").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+  }
+}).catch(error => {
+  console.error(error);
+  document.getElementById("loginError").textContent = "Erreur de chargement du Google Sheets.";
+});
+</script>
 </body>
 </html>
