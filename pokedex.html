@@ -643,7 +643,7 @@ function showPokemon(p){
 
   const evolutionBlock = nextEvolutions.length ? makeInfoBlock(
     `Évolution${nextEvolutions.length > 1 ? "s" : ""}`,
-    `${ownEvolutionCondition ? `<div style="margin-bottom:10px; font-size:12px; color:var(--muted); font-weight:700;">${ownEvolutionCondition}</div>` : ""}
+    `${ownEvolutionCondition ? `<div style="margin-bottom:10px; font-size:12px; color:var(--muted); font-weight:700; display:none;">${ownEvolutionCondition}</div>` : ""}
      <div class="evolution-next-list">${nextEvolutions.map(evolutionChip).join("")}</div>`
   ) : "";
 
