@@ -18,7 +18,9 @@
       --muted: #7d99a5;
       --radius: 12px;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -30,6 +32,7 @@
         linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
       background-size: 28px 28px;
     }
+
     header {
       max-width: 1180px;
       margin: 28px auto 12px;
@@ -39,6 +42,7 @@
       border: 1px solid rgba(106, 169, 196, 0.28);
       text-align: center;
     }
+
     header h1 {
       margin: 0;
       font-family: Georgia, serif;
@@ -46,15 +50,27 @@
       text-transform: uppercase;
       color: #15202a;
     }
-    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px 54px; }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 54px;
+    }
+
     .panel {
       padding: 14px;
       border-radius: var(--radius);
       background: var(--panel);
       border: 1px solid rgba(91, 125, 138, 0.2);
     }
-    .login-panel { max-width: 480px; margin: 18px auto 0; }
+
+    .login-panel {
+      max-width: 480px;
+      margin: 18px auto 0;
+    }
+
     .hidden { display: none !important; }
+
     input, select, button {
       width: 100%;
       padding: 10px;
@@ -65,18 +81,760 @@
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
-    button { cursor: pointer; }
+
+    button {
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
     button.primary { background: var(--blue); color: white; border-color: transparent; }
+    button.coral { background: var(--coral); color: white; border-color: transparent; }
+    button.green { background: var(--green); color: white; border-color: transparent; }
+
+    .login-row,
+    .control-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .login-row button,
+    .control-line button { width: auto; white-space: nowrap; }
+
+    .error {
+      margin-top: 8px;
+      color: #9d4434;
+      font-weight: 800;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      padding: 14px;
+      border-radius: var(--radius);
+      background: var(--panel-light);
+      border: 1px solid rgba(91, 125, 138, 0.16);
+    }
+
+    .stat-card strong {
+      display: block;
+      color: var(--blue-dark);
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .stat-card span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .tool-card {
+      padding: 14px;
+      border-radius: var(--radius);
+      background: var(--panel-light);
+      border: 1px solid rgba(91, 125, 138, 0.16);
+      min-width: 0;
+    }
+
+    .tool-card h2 {
+      margin: 0 0 10px;
+      color: var(--blue-dark);
+      font-size: 22px;
+    }
+
+    .wide { grid-column: 1 / -1; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .talents {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .talent-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: auto;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid rgba(91, 125, 138, 0.16);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .talent-check input { width: auto; padding: 0; margin: 0; }
+
+    .result-box {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #d6e7ee;
+      border: 1px solid rgba(91, 125, 138, 0.18);
+      min-height: 76px;
+    }
+
+    .summary-line {
+      margin-bottom: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.35);
+      color: var(--blue-dark);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .mini-pokemon {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--panel);
+      border: 1px solid rgba(91, 125, 138, 0.13);
+      margin-top: 8px;
+    }
+
+    .mini-pokemon img {
+      width: 78px;
+      height: 78px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      padding: 5px;
+    }
+
+    .mini-title {
+      font-weight: 900;
+      color: var(--blue-dark);
+      margin-bottom: 5px;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: var(--blue);
+      color: white;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .badge.coral { background: var(--coral); }
+    .badge.green { background: var(--green); }
+    .badge.muted { background: var(--muted); color: #ffffff; }
+
+    .capture-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .capture-row button { width: auto; }
+
+    .capture-result {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--blue-dark);
+    }
+
+    .list {
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .list-item {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 8px;
+      border-radius: 9px;
+      background: var(--panel);
+      margin-bottom: 6px;
+      border: 1px solid rgba(91, 125, 138, 0.12);
+    }
+
+    .list-item img {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      padding: 3px;
+    }
+
+    .list-title { font-weight: 900; color: var(--blue-dark); }
+
+    .muted { color: var(--muted); font-size: 12px; font-weight: 700; }
+
+    @media (max-width: 980px) {
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tools-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      header { margin: 12px; }
+      .container { padding: 0 12px 32px; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .filters, .login-row, .control-line { grid-template-columns: 1fr; }
+      .login-row button, .control-line button { width: 100%; }
+      .mini-pokemon { grid-template-columns: 1fr; text-align: center; }
+      .mini-pokemon img { margin: 0 auto; }
+      .badges, .capture-row { justify-content: center; }
+    }
   </style>
 </head>
 <body>
-<header><h1>Staff Tools</h1></header>
+<header>
+  <h1>Staff Tools</h1>
+</header>
+
 <main class="container">
-  <section class="panel">
-    <p>Version complète du Staff Tools avec générateur de rencontre, rangs, talents et capture.</p>
-    <p>Mot de passe par défaut : <strong>staff</strong></p>
-    <p>Le code complet a été préparé dans le canvas ChatGPT. Si tu souhaites de nouvelles fonctionnalités, il suffira de remplacer ce fichier.</p>
+  <section id="loginPanel" class="panel login-panel">
+    <strong>Accès staff</strong>
+    <p class="muted">Mot de passe par défaut : <code>staff</code></p>
+    <div class="login-row">
+      <input id="passwordInput" type="password" placeholder="Mot de passe staff" />
+      <button class="primary" onclick="loginStaff()">Entrer</button>
+    </div>
+    <div id="loginError" class="error"></div>
+  </section>
+
+  <section id="dashboard" class="panel hidden">
+    <div class="stats">
+      <div class="stat-card"><strong id="totalCount">0</strong><span>Pokémon</span></div>
+      <div class="stat-card"><strong id="missingZoneCount">0</strong><span>Inaccessibles</span></div>
+      <div class="stat-card"><strong id="zoneCount">0</strong><span>Zones</span></div>
+      <div class="stat-card"><strong id="megaCount">0</strong><span>Avec méga</span></div>
+    </div>
+
+    <div class="tools-grid">
+      <article class="tool-card wide">
+        <h2>🎲 Générateur de rencontre</h2>
+        <div class="filters">
+          <select id="zoneSelect"><option value="">Toutes les zones</option></select>
+          <select id="typeSelect"><option value="">Tous les types</option></select>
+          <select id="typePairSelect"><option value="">Aucun binôme</option></select>
+          <select id="playerRankSelect">
+            <option value="C">Rang joueur C</option>
+            <option value="B">Rang joueur B</option>
+            <option value="A">Rang joueur A</option>
+            <option value="S">Rang joueur S</option>
+            <option value="X">Rang joueur X</option>
+          </select>
+          <button class="primary" onclick="generateEncounter()">Générer</button>
+        </div>
+
+        <div class="talents">
+          <label class="talent-check"><input id="talentAuraFarmer" type="checkbox" /> Aura Farmer</label>
+          <label class="talent-check"><input id="talentShasseur" type="checkbox" /> Shasseur</label>
+          <label class="talent-check"><input id="talentBattleRoyale" type="checkbox" /> Battle Royale</label>
+        </div>
+
+        <div id="encounterResult" class="result-box">Choisis une zone ou génère parmi toute la base.</div>
+      </article>
+
+      <article class="tool-card">
+        <h2>⚠️ Pokémon inaccessibles</h2>
+        <div class="control-line">
+          <input id="missingSearch" placeholder="Filtrer la liste..." oninput="renderMissingZones()" />
+          <button onclick="copyMissingZones()">Copier</button>
+        </div>
+        <div id="missingList" class="list result-box"></div>
+      </article>
+
+      <article class="tool-card">
+        <h2>📍 Pokémon par zone</h2>
+        <div class="control-line">
+          <select id="zoneInspect"><option value="">Choisir une zone</option></select>
+          <button onclick="renderZoneInspect()">Voir</button>
+        </div>
+        <div id="zoneInspectResult" class="list result-box">Sélectionne une zone.</div>
+      </article>
+
+      <article class="tool-card wide">
+        <h2>📊 Équilibrage des types</h2>
+        <div id="typeBalanceResult" class="list result-box">Chargement...</div>
+      </article>
+    </div>
   </section>
 </main>
+
+<script>
+const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1";
+const STAFF_PASSWORD = "staff";
+const RANKS = ["C", "B", "A", "S", "X"];
+const RANK_WEIGHTS = { C: 60, B: 25, A: 10, S: 4, X: 1 };
+const CAPTURE_TABLE = {
+  commun: { C: 70, B: 60, A: 50, S: 40, X: 30 },
+  rare: { C: 45, B: 35, A: 25, S: 18, X: 10 }
+};
+
+let allPokemon = [];
+let allZones = [];
+let allTypes = [];
+let typePairs = [];
+let lastEncounterResults = [];
+
+function normalizeText(value){ return (value || "").toString().trim(); }
+function normalizeName(value){ return normalizeText(value).toLowerCase(); }
+function getPokemonName(p){ return p.french || p.nom || p.name || "Nom inconnu"; }
+function getType1(p){ return p["type 1"] || p.type1 || ""; }
+function getType2(p){ return p["type 2"] || p.type2 || ""; }
+function getZones(p){ return normalizeText(p.zone).split(",").map(z => z.trim()).filter(Boolean); }
+function hasZone(p){ return getZones(p).length > 0; }
+function hasEvolutionPrevious(p){ return normalizeText(p.evolves_from_species).length > 0; }
+function isMissingBasePokemonZone(p){ return !hasZone(p) && !hasEvolutionPrevious(p); }
+
+async function loadData(){
+  const res = await fetch(SHEET_URL);
+  const raw = await res.json();
+
+  if(!Array.isArray(raw)) throw new Error("Le Google Sheet n'a pas renvoyé une liste exploitable.");
+
+  allPokemon = raw.map(row => {
+    const clean = {};
+    Object.keys(row).forEach(key => clean[key.trim().toLowerCase()] = row[key]);
+    return clean;
+  }).filter(p => p.id || p.french || p.nom || p.name);
+
+  allZones = [...new Set(allPokemon.flatMap(getZones))].sort();
+  allTypes = [...new Set(allPokemon.flatMap(p => [getType1(p), getType2(p)]).filter(Boolean))].sort();
+  typePairs = buildOptimizedTypePairs();
+
+  fillSelect("zoneSelect", allZones, "Toutes les zones");
+  fillSelect("zoneInspect", allZones, "Choisir une zone");
+  fillSelect("typeSelect", allTypes, "Tous les types");
+  fillTypePairSelect();
+  renderStats();
+  renderMissingZones();
+  renderTypeBalance();
+}
+
+function fillSelect(id, values, label){
+  const select = document.getElementById(id);
+  select.innerHTML = `<option value="">${label}</option>`;
+  values.forEach(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    select.appendChild(option);
+  });
+}
+
+function fillTypePairSelect(){
+  const select = document.getElementById("typePairSelect");
+  select.innerHTML = `<option value="">Aucun binôme</option>`;
+  typePairs.forEach(pair => {
+    const option = document.createElement("option");
+    option.value = pair.types.join("|");
+    option.textContent = `${pair.types[0]} + ${pair.types[1]} (${pair.poolCount})`;
+    select.appendChild(option);
+  });
+}
+
+function loginStaff(){
+  const password = document.getElementById("passwordInput").value;
+  const error = document.getElementById("loginError");
+
+  if(password !== STAFF_PASSWORD){
+    error.textContent = "Mot de passe incorrect.";
+    return;
+  }
+
+  error.textContent = "";
+  document.getElementById("loginPanel").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  localStorage.setItem("staffAccess", "ok");
+}
+
+function renderStats(){
+  document.getElementById("totalCount").textContent = allPokemon.length;
+  document.getElementById("missingZoneCount").textContent = allPokemon.filter(isMissingBasePokemonZone).length;
+  document.getElementById("zoneCount").textContent = allZones.length;
+  document.getElementById("megaCount").textContent = allPokemon.filter(p => p["mega_1_name"] || p["mega_2_name"]).length;
+}
+
+function getRarityKey(p){
+  const raw = normalizeName(p.spawn);
+  const num = parseFloat(raw);
+
+  if(raw === "rare" || num === 2) return "rare";
+  return "commun";
+}
+
+function getRarityInfo(p){
+  const rarity = getRarityKey(p);
+  return rarity === "rare"
+    ? { label: "Rare", className: "coral" }
+    : { label: "Commun", className: "green" };
+}
+
+function getSpawnWeight(p){
+  const raw = normalizeName(p.spawn);
+  const num = parseFloat(raw);
+
+  if(Number.isFinite(num) && num > 0) return num;
+  if(raw === "commun" || raw === "common") return 10;
+  if(raw === "rare") return 2;
+  return 1;
+}
+
+function weightedRandom(pool){
+  const total = pool.reduce((sum, p) => sum + getSpawnWeight(p), 0);
+  let roll = Math.random() * total;
+
+  for(const p of pool){
+    roll -= getSpawnWeight(p);
+    if(roll <= 0) return p;
+  }
+
+  return pool[pool.length - 1];
+}
+
+function getSelectedTalents(){
+  return {
+    auraFarmer: document.getElementById("talentAuraFarmer").checked,
+    shasseur: document.getElementById("talentShasseur").checked,
+    battleRoyale: document.getElementById("talentBattleRoyale").checked
+  };
+}
+
+function getEncounterCount(talents){
+  if(!talents.battleRoyale) return 1;
+
+  const roll = Math.random();
+  if(roll < 1 / 20) return 4;
+  if(roll < 1 / 20 + 1 / 15) return 3;
+  if(roll < 1 / 20 + 1 / 15 + 1 / 10) return 2;
+  return 1;
+}
+
+function rollShiny(talents){
+  const rate = talents.shasseur ? 150 : 300;
+  return Math.floor(Math.random() * rate) === 0;
+}
+
+function getAllowedRanks(playerRank){
+  const maxIndex = RANKS.indexOf(playerRank);
+  return RANKS.slice(0, maxIndex + 1);
+}
+
+function weightedRankFromAllowed(allowedRanks){
+  const total = allowedRanks.reduce((sum, rank) => sum + RANK_WEIGHTS[rank], 0);
+  let roll = Math.random() * total;
+
+  for(const rank of allowedRanks){
+    roll -= RANK_WEIGHTS[rank];
+    if(roll <= 0) return rank;
+  }
+
+  return allowedRanks[0];
+}
+
+function upgradeRank(rank){
+  const index = RANKS.indexOf(rank);
+  if(index === -1 || index >= RANKS.length - 1) return rank;
+  return RANKS[index + 1];
+}
+
+function rollRank(talents){
+  const playerRank = document.getElementById("playerRankSelect").value || "C";
+  const allowedRanks = getAllowedRanks(playerRank);
+  let rank = weightedRankFromAllowed(allowedRanks);
+
+  // Aura Farmer peut dépasser la limite normale du joueur d'un rang.
+  // Exemple : joueur rang B → rang A possible si le 10% proc.
+  if(talents.auraFarmer && Math.random() < 0.10){
+    rank = upgradeRank(rank);
+  }
+
+  return rank;
+}
+
+function getCaptureChance(pokemon, rank, talents){
+  const rarity = getRarityKey(pokemon);
+  const baseChance = CAPTURE_TABLE[rarity][rank] ?? 30;
+  const auraMalus = talents.auraFarmer ? 10 : 0;
+  return Math.max(baseChance - auraMalus, 5);
+}
+
+function tryCapture(index){
+  const result = lastEncounterResults[index];
+  if(!result) return;
+
+  const chance = result.captureChance;
+  const roll = Math.floor(Math.random() * 100) + 1;
+  const success = roll <= chance;
+
+  const container = document.getElementById(`captureResult-${index}`);
+  container.textContent = success
+    ? `✅ Capture réussie ! (${roll}/${chance})`
+    : `❌ Échec de capture. (${roll}/${chance})`;
+}
+
+function pokemonHasAnyType(p, types){
+  return types.includes(getType1(p)) || types.includes(getType2(p));
+}
+
+function pokemonMiniHtml(result, index){
+  const p = result.pokemon;
+  const rarity = getRarityInfo(p);
+  const sprite = result.isShiny && p.shiny ? p.shiny : p.sprite;
+
+  return `
+    <div class="mini-pokemon">
+      <img src="${sprite || ""}" alt="${getPokemonName(p)}" />
+      <div>
+        <div class="mini-title">#${p.id || "?"} — ${getPokemonName(p)} ${result.isShiny ? "✨ Shiny" : ""}</div>
+        <div class="badges">
+          ${getType1(p) ? `<span class="badge">${getType1(p)}</span>` : ""}
+          ${getType2(p) ? `<span class="badge coral">${getType2(p)}</span>` : ""}
+          <span class="badge muted">Rang ${result.rank}</span>
+          <span class="badge ${rarity.className}">${rarity.label}</span>
+          <span class="badge coral">Capture ${result.captureChance}%</span>
+        </div>
+        <div class="capture-row">
+          <button class="green" onclick="tryCapture(${index})">Tenter la capture</button>
+          <span id="captureResult-${index}" class="capture-result"></span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function generateEncounter(){
+  const zone = document.getElementById("zoneSelect").value;
+  const type = document.getElementById("typeSelect").value;
+  const typePairValue = document.getElementById("typePairSelect").value;
+  const pairTypes = typePairValue ? typePairValue.split("|") : [];
+  const playerRank = document.getElementById("playerRankSelect").value;
+  const talents = getSelectedTalents();
+
+  const pool = allPokemon.filter(p => {
+    const matchesZone = !zone || getZones(p).includes(zone);
+    const matchesType = !type || getType1(p) === type || getType2(p) === type;
+    const matchesPair = pairTypes.length === 0 || pokemonHasAnyType(p, pairTypes);
+    return matchesZone && (type ? matchesType : matchesPair);
+  });
+
+  if(pool.length === 0){
+    document.getElementById("encounterResult").innerHTML = "Aucun Pokémon ne correspond à ces filtres.";
+    return;
+  }
+
+  const encounterCount = getEncounterCount(talents);
+  lastEncounterResults = [];
+
+  for(let i = 0; i < encounterCount; i++){
+    const pokemon = weightedRandom(pool);
+    const rank = rollRank(talents);
+    const captureChance = getCaptureChance(pokemon, rank, talents);
+
+    lastEncounterResults.push({
+      pokemon,
+      isShiny: rollShiny(talents),
+      rank,
+      captureChance
+    });
+  }
+
+  const filterSummary = [
+    zone ? `Zone : ${zone}` : "Toutes les zones",
+    type ? `Type seul : ${type}` : (pairTypes.length ? `Binôme : ${pairTypes.join(" + ")}` : "Tous les types"),
+    `Rang joueur : ${playerRank}`,
+    `Pool : ${pool.length} Pokémon`
+  ].join(" • ");
+
+  const talentSummary = [
+    talents.auraFarmer ? "Aura Farmer actif : 10% rang +1, même au-delà du rang joueur" : "Aura Farmer inactif",
+    talents.shasseur ? "Shasseur actif : shiny 1/150" : "Shiny : 1/300",
+    talents.battleRoyale ? "Battle Royale actif" : "Battle Royale inactif"
+  ].join(" • ");
+
+  document.getElementById("encounterResult").innerHTML = `
+    <div class="summary-line">${filterSummary}</div>
+    <div class="summary-line">${talentSummary}</div>
+    <div style="margin-bottom:8px;"><strong>${encounterCount} Pokémon apparu${encounterCount > 1 ? "s" : ""}</strong></div>
+    ${lastEncounterResults.map((result, index) => pokemonMiniHtml(result, index)).join("")}
+  `;
+}
+
+function renderMissingZones(){
+  const search = normalizeName(document.getElementById("missingSearch")?.value || "");
+  const missing = allPokemon.filter(isMissingBasePokemonZone).filter(p => {
+    const name = normalizeName(getPokemonName(p));
+    const id = normalizeName(p.id);
+    return !search || name.includes(search) || id.includes(search);
+  });
+
+  const container = document.getElementById("missingList");
+
+  if(missing.length === 0){
+    container.innerHTML = "Aucun Pokémon inaccessible.";
+    return;
+  }
+
+  container.innerHTML = missing.map(p => `
+    <div class="list-item">
+      <img src="${p.sprite || ""}" alt="${getPokemonName(p)}" />
+      <div>
+        <div class="list-title">#${p.id || "?"} — ${getPokemonName(p)}</div>
+        <div class="muted">Aucune zone directe.</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function copyMissingZones(){
+  const missing = allPokemon.filter(isMissingBasePokemonZone);
+  const text = missing.map(p => `${p.id || "?"} ; ${getPokemonName(p)}`).join("\n");
+  navigator.clipboard.writeText(text);
+}
+
+function renderZoneInspect(){
+  const zone = document.getElementById("zoneInspect").value;
+  const container = document.getElementById("zoneInspectResult");
+
+  if(!zone){
+    container.innerHTML = "Sélectionne une zone.";
+    return;
+  }
+
+  const list = allPokemon.filter(p => getZones(p).includes(zone));
+
+  if(list.length === 0){
+    container.innerHTML = "Aucun Pokémon dans cette zone.";
+    return;
+  }
+
+  container.innerHTML = list.map(p => `
+    <div class="list-item">
+      <img src="${p.sprite || ""}" alt="${getPokemonName(p)}" />
+      <div>
+        <div class="list-title">#${p.id || "?"} — ${getPokemonName(p)}</div>
+        <div class="badges">
+          ${getType1(p) ? `<span class="badge">${getType1(p)}</span>` : ""}
+          ${getType2(p) ? `<span class="badge coral">${getType2(p)}</span>` : ""}
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function getTypeCounts(){
+  const counts = {};
+  allPokemon.forEach(p => {
+    [getType1(p), getType2(p)].filter(Boolean).forEach(type => {
+      counts[type] = (counts[type] || 0) + 1;
+    });
+  });
+  return counts;
+}
+
+function getSortedTypeCounts(){
+  return Object.entries(getTypeCounts()).sort((a, b) => a[1] - b[1]);
+}
+
+function buildOptimizedTypePairs(){
+  const sorted = getSortedTypeCounts();
+  const pairs = [];
+  let left = 0;
+  let right = sorted.length - 1;
+
+  while(left < right){
+    const types = [sorted[left][0], sorted[right][0]];
+    pairs.push({
+      types,
+      poolCount: allPokemon.filter(p => pokemonHasAnyType(p, types)).length
+    });
+    left++;
+    right--;
+  }
+
+  return pairs.sort((a, b) => a.poolCount - b.poolCount);
+}
+
+function renderTypeBalance(){
+  const sorted = getSortedTypeCounts();
+  const min = sorted[0]?.[1];
+
+  document.getElementById("typeBalanceResult").innerHTML = sorted.map(([type, count]) => `
+    <div class="list-item">
+      <div></div>
+      <div>
+        <div class="list-title">${type} — ${count} Pokémon</div>
+        ${count === min ? `<span class="badge coral">Moins représenté</span>` : ""}
+      </div>
+    </div>
+  `).join("");
+}
+
+function runTests(){
+  console.assert(getSpawnWeight({ spawn: "commun" }) === 10, "Test spawn commun échoué");
+  console.assert(getSpawnWeight({ spawn: "rare" }) === 2, "Test spawn rare échoué");
+  console.assert(getEncounterCount({ battleRoyale: false }) === 1, "Test Battle Royale désactivé échoué");
+  console.assert(getAllowedRanks("B").join("") === "CB", "Test rangs autorisés échoué");
+  console.assert(upgradeRank("B") === "A", "Test upgrade rang échoué");
+  console.assert(getCaptureChance({ spawn: "commun" }, "C", { auraFarmer: false }) === 70, "Test capture commun C échoué");
+  console.assert(getCaptureChance({ spawn: "rare" }, "X", { auraFarmer: true }) === 5, "Test capture minimum échoué");
+  console.info("Tests staff tools terminés.");
+}
+
+runTests();
+
+loadData().then(() => {
+  if(localStorage.getItem("staffAccess") === "ok"){
+    document.getElementById("loginPanel").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+  }
+}).catch(error => {
+  console.error(error);
+  document.getElementById("loginError").textContent = "Erreur de chargement du Google Sheets.";
+});
+</script>
 </body>
 </html>
