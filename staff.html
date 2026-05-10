@@ -872,17 +872,35 @@ function getCaptureChance(pokemon, rank, talents){
 }
 
 
-function generateEncounterRpResponse(index){
-  const result = lastEncounterResults[index];
-  if(!result){
-    return;
-  }
 
-  // Si aucun jet n'a encore été effectué, on en lance un automatiquement.
+function generateEncounterAppearanceRp(index){
+  const result = lastEncounterResults[index];
+  if(!result) return;
+
+  renderAppearanceRpCode(result);
+
+  const textarea = document.getElementById("captureRpTextarea");
+  if(textarea){
+    textarea.scrollIntoView({ behavior: "smooth", block: "center" });
+    textarea.select();
+  }
+}
+
+function generateEncounterCaptureRp(index){
+  const result = lastEncounterResults[index];
+  if(!result) return;
+
   if(typeof result.success === "undefined"){
     const roll = Math.floor(Math.random() * 100) + 1;
     result.roll = roll;
     result.success = roll <= result.captureChance;
+
+    const container = document.getElementById(`captureResult-${index}`);
+    if(container){
+      container.textContent = result.success
+        ? `✅ Capture réussie ! (${result.roll}/${result.captureChance})`
+        : `❌ Échec de capture. (${result.roll}/${result.captureChance})`;
+    }
   }
 
   const rarity = getRarityInfo(result.pokemon);
@@ -943,7 +961,8 @@ function pokemonMiniHtml(result, index){
         </div>
         <div class="capture-row">
           <button class="green" onclick="tryCapture(${index})">Tenter la capture</button>
-          <button class="primary" onclick="generateEncounterRpResponse(${index})">Générer la réponse RP</button>
+          <button class="primary" onclick="generateEncounterAppearanceRp(${index})">Générer le post d’apparition</button>
+          <button class="coral" onclick="generateEncounterCaptureRp(${index})">Générer le post de capture</button>
           <span id="captureResult-${index}" class="capture-result"></span>
         </div>
       </div>
@@ -1127,6 +1146,148 @@ function escapeHtmlForRp(value){
     .replace(/"/g, "&quot;");
 }
 
+
+
+const APPEARANCE_TEXTS = [
+  "Un bruissement attire l’attention. Dans les environs, un {name} fait son apparition.",
+  "Quelque chose remue non loin de là… C’est un {name} qui sort de sa cachette.",
+  "Une présence se révèle soudain : un {name} se tient devant toi.",
+  "Au détour du chemin, un {name} surgit de nulle part.",
+  "Le calme ambiant est rompu par l’arrivée d’un {name}.",
+  "Un mouvement furtif capte ton regard. Un {name} vient d’apparaître.",
+  "Un {name} sauvage se montre enfin.",
+  "L’atmosphère change subtilement… Un {name} se matérialise devant toi."
+];
+
+const TYPE_APPEARANCE_TEXTS = {
+  "Eau": [
+    "La surface de l’eau s’agite doucement… Un {name} émerge soudainement.",
+    "Une vague inhabituelle attire ton regard : un {name} apparaît."
+  ],
+  "Feu": [
+    "Une chaleur soudaine se fait sentir. Un {name} se dresse devant toi.",
+    "Quelques étincelles dansent dans l’air… Un {name} apparaît."
+  ],
+  "Plante": [
+    "Les feuillages frémissent doucement. Un {name} sort de la végétation.",
+    "Les plantes s’écartent pour laisser passer un {name}."
+  ],
+  "Spectre": [
+    "Un frisson te parcourt l’échine… Un {name} se matérialise silencieusement.",
+    "Une présence étrange flotte dans l’air. Un {name} apparaît."
+  ],
+  "Électrik": [
+    "Une légère décharge crépite dans l’air. Un {name} surgit.",
+    "L’atmosphère se charge d’électricité… Un {name} apparaît."
+  ],
+  "Glace": [
+    "L’air devient soudainement plus froid. Un {name} se révèle.",
+    "Des cristaux de givre scintillent autour d’un {name}."
+  ],
+  "Dragon": [
+    "Une aura imposante se fait sentir. Un {name} se présente à toi.",
+    "Un rugissement lointain annonce l’arrivée d’un {name}."
+  ],
+  "Fée": [
+    "Une douce lueur scintille… Un {name} apparaît dans un éclat féerique.",
+    "Des paillettes lumineuses révèlent la présence d’un {name}."
+  ]
+};
+
+const SHINY_APPEARANCE_TEXTS = [
+  "Une lueur inhabituelle attire ton regard… Ce {name} est chromatique !",
+  "Des éclats scintillants entourent ce {name} aux couleurs exceptionnelles.",
+  "Impossible de s’y tromper : ce {name} possède une coloration rare."
+];
+
+function chooseRandom(list){
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function getAppearanceText(result){
+  const p = result.pokemon;
+  const name = getPokemonName(p);
+  const type1 = getType1(p);
+
+  let pool = [];
+
+  if(result.isShiny){
+    pool = SHINY_APPEARANCE_TEXTS;
+  } else if(TYPE_APPEARANCE_TEXTS[type1]) {
+    pool = TYPE_APPEARANCE_TEXTS[type1];
+  } else {
+    pool = APPEARANCE_TEXTS;
+  }
+
+  return chooseRandom(pool).replace(/\{name\}/g, name);
+}
+
+function buildAppearanceRpHtml(result){
+  const p = result.pokemon;
+  const name = getPokemonName(p);
+  const sprite = result.isShiny && p.shiny ? p.shiny : p.sprite;
+  const type1 = getType1(p);
+  const type2 = getType2(p);
+  const rarity = getRarityInfo(p);
+  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#6aa9c4;color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
+
+  return `<div style="max-width:620px;margin:18px auto;padding:18px;border-radius:16px;background:#eef4f6;background-image:linear-gradient(rgba(98,135,148,0.12) 1px, transparent 1px),linear-gradient(90deg, rgba(98,135,148,0.12) 1px, transparent 1px);background-size:28px 28px;border:1px solid rgba(91,125,138,0.20);font-family:Arial,Helvetica,sans-serif;color:#405965;">
+  <div style="padding:22px 18px;border-radius:14px;background:linear-gradient(135deg,#b7def1 0%,#f3d3dc 100%);border:1px solid rgba(106,169,196,0.28);text-align:center;">
+    <div style="font-family:Georgia,serif;font-size:34px;line-height:1;text-transform:uppercase;color:#15202a;font-weight:900;letter-spacing:1px;">Apparition</div>
+    <div style="margin-top:8px;display:inline-block;padding:7px 12px;border-radius:999px;background:rgba(106,169,196,0.20);color:#3f6473;font-size:12px;font-weight:900;text-transform:uppercase;">Un Pokémon apparaît</div>
+  </div>
+
+  <div style="margin-top:14px;padding:14px;border-radius:14px;background:#eef6f8;border:1px solid rgba(91,125,138,0.16);">
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;">
+      <div style="width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.55);border:1px solid rgba(91,125,138,0.16);display:flex;align-items:center;justify-content:center;padding:8px;">
+        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:104px;max-height:104px;object-fit:contain;" />` : `<span style="font-size:12px;color:#7d99a5;font-weight:800;">Pas de sprite</span>`}
+      </div>
+
+      <div>
+        <div style="font-size:12px;font-weight:900;color:#7d99a5;text-transform:uppercase;">Rencontre sauvage</div>
+        <div style="margin-top:3px;font-size:24px;font-weight:900;color:#3f6473;">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
+        <div style="margin-top:8px;">
+          ${typesHtml}
+          <span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#7d99a5;color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
+          <span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#e8755f;color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(rarity.label)}</span>
+          ${result.isShiny ? `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#f3d3dc;color:#3f6473;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;padding:12px;border-radius:12px;background:#d6e7ee;border:1px solid rgba(91,125,138,0.18);font-size:13px;line-height:1.6;">
+      ${escapeHtmlForRp(getAppearanceText(result))}
+    </div>
+
+    <div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;text-align:center;">
+      <div style="padding:10px;border-radius:10px;background:#dfeaf0;border:1px solid rgba(91,125,138,0.14);">
+        <strong style="display:block;color:#3f6473;font-size:22px;line-height:1;">${escapeHtmlForRp(result.rank)}</strong>
+        <span style="display:block;margin-top:4px;color:#7d99a5;font-size:10px;font-weight:900;text-transform:uppercase;">Rang</span>
+      </div>
+      <div style="padding:10px;border-radius:10px;background:#dfeaf0;border:1px solid rgba(91,125,138,0.14);">
+        <strong style="display:block;color:#3f6473;font-size:22px;line-height:1;">${escapeHtmlForRp(rarity.label)}</strong>
+        <span style="display:block;margin-top:4px;color:#7d99a5;font-size:10px;font-weight:900;text-transform:uppercase;">Rareté</span>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderAppearanceRpCode(result){
+  const box = document.getElementById("captureRpCodeBox");
+  if(!box) return;
+
+  const rpHtml = buildAppearanceRpHtml(result);
+
+  box.classList.remove("hidden");
+  box.innerHTML = `
+    <div class="summary-line">Post RP d’apparition avec CSS inline, prêt à copier/coller dans le sujet.</div>
+    <textarea id="captureRpTextarea" readonly>${rpHtml.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</textarea>
+    <button class="primary" onclick="copyCaptureRpCode()">Copier le post d’apparition</button>
+    <div class="rp-preview">${rpHtml}</div>
+  `;
+}
+
 function buildCaptureRpHtml(result){
   const p = result.pokemon;
   const name = getPokemonName(p);
@@ -1255,15 +1416,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const preview = document.getElementById("forumPreviewExample");
   if (!preview) return;
 
-  const example = {
-    pokemon: {
-      id: "025",
-      french: "Pikachu",
-      sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
-      shiny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/25.png",
-      "type 1": "Électrik",
-      spawn: "commun"
-    },
+  const basePokemon = {
+    id: "025",
+    french: "Pikachu",
+    sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+    shiny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/25.png",
+    "type 1": "Électrik",
+    spawn: "commun"
+  };
+
+  const appearanceExample = {
+    pokemon: basePokemon,
+    rank: "B",
+    isShiny: false
+  };
+
+  const captureExample = {
+    pokemon: basePokemon,
     rank: "B",
     isShiny: false,
     captureChance: 60,
@@ -1272,8 +1441,13 @@ document.addEventListener("DOMContentLoaded", () => {
     rarityLabel: "Commun"
   };
 
-  if (typeof buildCaptureRpHtml === "function") {
-    preview.innerHTML = buildCaptureRpHtml(example);
+  if (typeof buildAppearanceRpHtml === "function" && typeof buildCaptureRpHtml === "function") {
+    preview.innerHTML = `
+      <div class="summary-line">Exemple de post d’apparition</div>
+      ${buildAppearanceRpHtml(appearanceExample)}
+      <div class="summary-line" style="margin-top:16px;">Exemple de post de capture</div>
+      ${buildCaptureRpHtml(captureExample)}
+    `;
   }
 });
 
