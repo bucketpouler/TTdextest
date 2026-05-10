@@ -279,6 +279,51 @@
       color: var(--blue-dark);
     }
 
+    .capture-simulator-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 210px;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .capture-controls {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      align-content: start;
+    }
+
+    .capture-preview {
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--panel);
+      border: 1px solid rgba(91, 125, 138, 0.13);
+      text-align: center;
+      min-height: 150px;
+    }
+
+    .capture-preview img {
+      width: 92px;
+      height: 92px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      padding: 6px;
+      margin-bottom: 8px;
+    }
+
+    .capture-manual-result {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 9px;
+      background: #d6e7ee;
+      border: 1px solid rgba(91, 125, 138, 0.18);
+      font-weight: 900;
+      color: var(--blue-dark);
+      min-height: 40px;
+    }
+
+
     .list {
       max-height: 360px;
       overflow-y: auto;
@@ -313,6 +358,8 @@
     @media (max-width: 980px) {
       .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .tools-grid { grid-template-columns: 1fr; }
+      .capture-simulator-layout { grid-template-columns: 1fr; }
+      .capture-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 700px) {
@@ -324,6 +371,7 @@
       .mini-pokemon { grid-template-columns: 1fr; text-align: center; }
       .mini-pokemon img { margin: 0 auto; }
       .badges, .capture-row { justify-content: center; }
+      .capture-controls { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -375,6 +423,41 @@
         </div>
 
         <div id="encounterResult" class="result-box">Choisis une zone ou génère parmi toute la base.</div>
+      </article>
+
+      <article class="tool-card wide">
+        <h2>🎯 Simulateur de capture</h2>
+        <div class="capture-simulator-layout">
+          <div>
+            <div class="capture-controls">
+              <select id="capturePokemonSelect" onchange="renderCapturePreview()">
+                <option value="">Choisir un Pokémon</option>
+              </select>
+              <select id="captureRankSelect" onchange="renderCapturePreview()">
+                <option value="C">Rang C</option>
+                <option value="B">Rang B</option>
+                <option value="A">Rang A</option>
+                <option value="S">Rang S</option>
+                <option value="X">Rang X</option>
+              </select>
+              <select id="captureRaritySelect" onchange="renderCapturePreview()">
+                <option value="auto">Rareté auto</option>
+                <option value="commun">Commun</option>
+                <option value="rare">Rare</option>
+              </select>
+              <button class="green" onclick="tryManualCapture()">Tester la capture</button>
+            </div>
+
+            <div class="talents" style="margin-top:10px;">
+              <label class="talent-check"><input id="captureAuraFarmer" type="checkbox" onchange="renderCapturePreview()" /> Aura Farmer</label>
+              <label class="talent-check"><input id="captureShiny" type="checkbox" onchange="renderCapturePreview()" /> Pokémon shiny</label>
+            </div>
+
+            <div id="captureManualResult" class="capture-manual-result">Choisis un Pokémon pour calculer ses chances de capture.</div>
+          </div>
+
+          <div id="capturePreview" class="capture-preview">Aucun Pokémon sélectionné.</div>
+        </div>
       </article>
 
       <article class="tool-card">
@@ -449,6 +532,7 @@ async function loadData(){
   fillSelect("zoneInspect", allZones, "Choisir une zone");
   fillSelect("typeSelect", allTypes, "Tous les types");
   fillTypePairSelect();
+  fillCapturePokemonSelect();
   renderStats();
   renderMissingZones();
   renderTypeBalance();
@@ -489,6 +573,98 @@ function loginStaff(){
   document.getElementById("loginPanel").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
   localStorage.setItem("staffAccess", "ok");
+}
+
+function fillCapturePokemonSelect(){
+  const select = document.getElementById("capturePokemonSelect");
+  if(!select) return;
+
+  const sorted = [...allPokemon].sort((a, b) => {
+    const idA = parseInt(a.id, 10);
+    const idB = parseInt(b.id, 10);
+    if(Number.isFinite(idA) && Number.isFinite(idB)) return idA - idB;
+    return getPokemonName(a).localeCompare(getPokemonName(b), "fr");
+  });
+
+  select.innerHTML = `<option value="">Choisir un Pokémon</option>`;
+  sorted.forEach((pokemon, index) => {
+    const option = document.createElement("option");
+    option.value = allPokemon.indexOf(pokemon);
+    option.textContent = `#${pokemon.id || "?"} — ${getPokemonName(pokemon)}`;
+    select.appendChild(option);
+  });
+}
+
+function getManualCapturePokemon(){
+  const value = document.getElementById("capturePokemonSelect")?.value;
+  if(value === "" || value === undefined) return null;
+  return allPokemon[parseInt(value, 10)] || null;
+}
+
+function getManualCaptureRarityKey(pokemon){
+  const forced = document.getElementById("captureRaritySelect")?.value || "auto";
+  if(forced !== "auto") return forced;
+  return getRarityKey(pokemon);
+}
+
+function getManualCaptureChance(pokemon){
+  const rank = document.getElementById("captureRankSelect")?.value || "C";
+  const rarity = getManualCaptureRarityKey(pokemon);
+  const baseChance = CAPTURE_TABLE[rarity][rank] ?? 30;
+  const auraMalus = document.getElementById("captureAuraFarmer")?.checked ? 10 : 0;
+  return Math.max(baseChance - auraMalus, 5);
+}
+
+function renderCapturePreview(){
+  const pokemon = getManualCapturePokemon();
+  const preview = document.getElementById("capturePreview");
+  const result = document.getElementById("captureManualResult");
+
+  if(!pokemon){
+    preview.innerHTML = "Aucun Pokémon sélectionné.";
+    result.textContent = "Choisis un Pokémon pour calculer ses chances de capture.";
+    return;
+  }
+
+  const rank = document.getElementById("captureRankSelect").value;
+  const chance = getManualCaptureChance(pokemon);
+  const rarity = getManualCaptureRarityKey(pokemon);
+  const shiny = document.getElementById("captureShiny").checked;
+  const sprite = shiny && pokemon.shiny ? pokemon.shiny : pokemon.sprite;
+  const rarityInfo = rarity === "rare"
+    ? { label: "Rare", className: "coral" }
+    : { label: "Commun", className: "green" };
+
+  preview.innerHTML = `
+    <img src="${sprite || ""}" alt="${getPokemonName(pokemon)}" />
+    <div class="mini-title">#${pokemon.id || "?"} — ${getPokemonName(pokemon)} ${shiny ? "✨" : ""}</div>
+    <div class="badges" style="justify-content:center;">
+      ${getType1(pokemon) ? `<span class="badge">${getType1(pokemon)}</span>` : ""}
+      ${getType2(pokemon) ? `<span class="badge coral">${getType2(pokemon)}</span>` : ""}
+      <span class="badge muted">Rang ${rank}</span>
+      <span class="badge ${rarityInfo.className}">${rarityInfo.label}</span>
+    </div>
+  `;
+
+  result.textContent = `Taux de capture : ${chance}%.`;
+}
+
+function tryManualCapture(){
+  const pokemon = getManualCapturePokemon();
+  const result = document.getElementById("captureManualResult");
+
+  if(!pokemon){
+    result.textContent = "Choisis d'abord un Pokémon.";
+    return;
+  }
+
+  const chance = getManualCaptureChance(pokemon);
+  const roll = Math.floor(Math.random() * 100) + 1;
+  const success = roll <= chance;
+
+  result.textContent = success
+    ? `✅ Capture réussie ! Jet : ${roll}/100 — taux ${chance}%.`
+    : `❌ Échec de capture. Jet : ${roll}/100 — taux ${chance}%.`;
 }
 
 function renderStats(){
@@ -821,6 +997,7 @@ function runTests(){
   console.assert(upgradeRank("B") === "A", "Test upgrade rang échoué");
   console.assert(getCaptureChance({ spawn: "commun" }, "C", { auraFarmer: false }) === 70, "Test capture commun C échoué");
   console.assert(getCaptureChance({ spawn: "rare" }, "X", { auraFarmer: true }) === 5, "Test capture minimum échoué");
+  console.assert(CAPTURE_TABLE.commun.C === 70, "Test table capture manuelle échoué");
   console.info("Tests staff tools terminés.");
 }
 
