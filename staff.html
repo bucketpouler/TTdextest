@@ -194,6 +194,18 @@
 
     .talent-check input { width: auto; padding: 0; margin: 0; }
 
+    .capture-search-group {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 8px;
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 700px) {
+      .capture-search-group { grid-template-columns: 1fr; }
+    }
+
+
     .result-box {
       margin-top: 10px;
       padding: 12px;
@@ -430,9 +442,12 @@
         <div class="capture-simulator-layout">
           <div>
             <div class="capture-controls">
-              <select id="capturePokemonSelect" onchange="renderCapturePreview()">
-                <option value="">Choisir un Pokémon</option>
-              </select>
+              <div class="capture-search-group">
+                <input id="capturePokemonSearch" type="text" placeholder="Rechercher un Pokémon par nom ou numéro..." oninput="fillCapturePokemonSelect()" />
+                <select id="capturePokemonSelect" onchange="renderCapturePreview()">
+                  <option value="">Choisir un Pokémon</option>
+                </select>
+              </div>
               <select id="captureRankSelect" onchange="renderCapturePreview()">
                 <option value="C">Rang C</option>
                 <option value="B">Rang B</option>
@@ -579,20 +594,31 @@ function fillCapturePokemonSelect(){
   const select = document.getElementById("capturePokemonSelect");
   if(!select) return;
 
-  const sorted = [...allPokemon].sort((a, b) => {
-    const idA = parseInt(a.id, 10);
-    const idB = parseInt(b.id, 10);
-    if(Number.isFinite(idA) && Number.isFinite(idB)) return idA - idB;
-    return getPokemonName(a).localeCompare(getPokemonName(b), "fr");
-  });
+  const search = normalizeName(document.getElementById("capturePokemonSearch")?.value || "");
 
-  select.innerHTML = `<option value="">Choisir un Pokémon</option>`;
-  sorted.forEach((pokemon, index) => {
+  const sorted = [...allPokemon]
+    .filter(p => {
+      const name = normalizeName(getPokemonName(p));
+      const id = normalizeName(p.id);
+      return !search || name.includes(search) || id.includes(search);
+    })
+    .sort((a, b) => {
+      const idA = parseInt(a.id, 10);
+      const idB = parseInt(b.id, 10);
+      if(Number.isFinite(idA) && Number.isFinite(idB)) return idA - idB;
+      return getPokemonName(a).localeCompare(getPokemonName(b), "fr");
+    });
+
+  select.innerHTML = `<option value="">${sorted.length ? "Choisir un Pokémon" : "Aucun Pokémon trouvé"}</option>`;
+
+  sorted.forEach(pokemon => {
     const option = document.createElement("option");
     option.value = allPokemon.indexOf(pokemon);
     option.textContent = `#${pokemon.id || "?"} — ${getPokemonName(pokemon)}`;
     select.appendChild(option);
   });
+
+  renderCapturePreview();
 }
 
 function getManualCapturePokemon(){
