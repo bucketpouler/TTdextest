@@ -1135,37 +1135,221 @@ const APPEARANCE_TEXTS = [
 ];
 
 const TYPE_APPEARANCE_TEXTS = {
-  "Eau": [
-    "La surface de l’eau s’agite doucement… Un {name} émerge soudainement.",
-    "Une vague inhabituelle attire ton regard : un {name} apparaît."
+  "Acier": [
+    "Un bruit métallique résonne non loin… Un {name} se dévoile.",
+    "Quelque chose accroche la lumière. Un {name} avance d’un pas solide.",
+    "Un éclat froid traverse les environs : un {name} apparaît.",
+    "Le sol vibre légèrement sous le poids d’un {name}.",
+    "Un cliquetis régulier annonce l’arrivée d’un {name}.",
+    "Entre deux reflets métalliques, un {name} se montre.",
+    "L’air semble vibrer autour d’une silhouette robuste : un {name}.",
+    "Un son sec retentit. Un {name} vient de surgir.",
+    "Sa carapace luisante attire immédiatement ton regard : un {name}.",
+    "Un {name} apparaît, solide et impassible."
   ],
-  "Feu": [
-    "Une chaleur soudaine se fait sentir. Un {name} se dresse devant toi.",
-    "Quelques étincelles dansent dans l’air… Un {name} apparaît."
-  ],
-  "Plante": [
-    "Les feuillages frémissent doucement. Un {name} sort de la végétation.",
-    "Les plantes s’écartent pour laisser passer un {name}."
-  ],
-  "Spectre": [
-    "Un frisson te parcourt l’échine… Un {name} se matérialise silencieusement.",
-    "Une présence étrange flotte dans l’air. Un {name} apparaît."
-  ],
-  "Électrik": [
-    "Une légère décharge crépite dans l’air. Un {name} surgit.",
-    "L’atmosphère se charge d’électricité… Un {name} apparaît."
-  ],
-  "Glace": [
-    "L’air devient soudainement plus froid. Un {name} se révèle.",
-    "Des cristaux de givre scintillent autour d’un {name}."
+  "Combat": [
+    "Une présence pleine d’énergie se fait sentir. Un {name} apparaît.",
+    "Un {name} surgit, prêt à en découdre.",
+    "Des pas fermes résonnent. Un {name} se place devant toi.",
+    "L’air se tend brusquement : un {name} vient d’apparaître.",
+    "Une silhouette déterminée s’avance. C’est un {name}.",
+    "Un mouvement vif attire ton attention : un {name} bondit hors de sa cachette.",
+    "Un {name} sauvage te fixe avec assurance.",
+    "Le calme est rompu par l’arrivée énergique d’un {name}.",
+    "Un {name} se tient droit, visiblement prêt au combat.",
+    "Une aura combative entoure le {name} qui vient d’apparaître."
   ],
   "Dragon": [
     "Une aura imposante se fait sentir. Un {name} se présente à toi.",
-    "Un rugissement lointain annonce l’arrivée d’un {name}."
+    "Un grondement lointain annonce l’arrivée d’un {name}.",
+    "L’atmosphère devient lourde, presque solennelle. Un {name} apparaît.",
+    "Un souffle puissant traverse les environs. Un {name} se dévoile.",
+    "Une silhouette majestueuse surgit : un {name}.",
+    "Le silence se fait soudain, comme à l’approche d’un {name}.",
+    "Un {name} apparaît, porteur d’une présence écrasante.",
+    "Un cri profond résonne avant que le {name} ne se montre.",
+    "Une énergie ancienne semble accompagner l’arrivée d’un {name}.",
+    "Un {name} sauvage surgit, impressionnant dès le premier regard."
+  ],
+  "Eau": [
+    "La surface de l’eau s’agite doucement… Un {name} émerge soudainement.",
+    "Une vague inhabituelle attire ton regard : un {name} apparaît.",
+    "Des gouttelettes éclaboussent les alentours tandis qu’un {name} se montre.",
+    "Un remous trouble le calme de l’eau. Un {name} vient d’apparaître.",
+    "Quelque chose glisse près de la rive : un {name}.",
+    "Un reflet bouge à la surface… C’est un {name}.",
+    "L’eau clapote doucement avant de révéler un {name}.",
+    "Un {name} surgit dans une gerbe d’eau.",
+    "Une silhouette aquatique se dessine peu à peu : un {name}.",
+    "Le courant change brusquement, annonçant la présence d’un {name}."
+  ],
+  "Électrik": [
+    "Une légère décharge crépite dans l’air. Un {name} surgit.",
+    "L’atmosphère se charge d’électricité… Un {name} apparaît.",
+    "Quelques étincelles jaillissent soudain autour d’un {name}.",
+    "Un grésillement attire ton attention : un {name} est là.",
+    "Tes cheveux se hérissent légèrement. Un {name} vient d’apparaître.",
+    "Un éclair bref illumine la zone, révélant un {name}.",
+    "L’air vibre d’une énergie vive. Un {name} se montre.",
+    "Une impulsion électrique traverse les environs avant l’arrivée d’un {name}.",
+    "Un {name} surgit dans un petit crépitement lumineux.",
+    "Une tension étrange flotte autour du {name} qui vient d’apparaître."
   ],
   "Fée": [
     "Une douce lueur scintille… Un {name} apparaît dans un éclat féerique.",
-    "Des paillettes lumineuses révèlent la présence d’un {name}."
+    "Des paillettes lumineuses révèlent la présence d’un {name}.",
+    "L’air semble plus léger tandis qu’un {name} se montre.",
+    "Une aura délicate flotte autour d’un {name} sauvage.",
+    "Un éclat pastel attire ton regard : un {name} vient d’apparaître.",
+    "Un murmure presque magique accompagne l’arrivée d’un {name}.",
+    "Une lumière douce danse dans l’air avant de révéler un {name}.",
+    "Un {name} apparaît avec une grâce presque irréelle.",
+    "L’atmosphère se teinte de douceur à l’approche d’un {name}.",
+    "Un scintillement fugace laisse place à un {name}."
+  ],
+  "Feu": [
+    "Une chaleur soudaine se fait sentir. Un {name} se dresse devant toi.",
+    "Quelques étincelles dansent dans l’air… Un {name} apparaît.",
+    "L’air devient plus sec, plus brûlant. Un {name} vient d’apparaître.",
+    "Une petite flamme vacille au loin, révélant un {name}.",
+    "Un souffle chaud traverse les environs avant l’arrivée d’un {name}.",
+    "Une braise roule au sol. Un {name} se montre.",
+    "La température grimpe brusquement : un {name} est là.",
+    "Un éclat rougeoyant attire ton regard vers un {name}.",
+    "Un {name} surgit, accompagné d’une vague de chaleur.",
+    "Une lueur ardente annonce la présence d’un {name}."
+  ],
+  "Glace": [
+    "L’air devient soudainement plus froid. Un {name} se révèle.",
+    "Des cristaux de givre scintillent autour d’un {name}.",
+    "Un souffle glacé traverse les environs : un {name} apparaît.",
+    "Le sol se couvre d’une fine pellicule de givre devant un {name}.",
+    "Un frisson parcourt l’air tandis qu’un {name} se montre.",
+    "Une brume froide s’élève, laissant apparaître un {name}.",
+    "Des éclats de glace brillent autour du {name} sauvage.",
+    "Un silence hivernal accompagne l’arrivée d’un {name}.",
+    "Une fraîcheur mordante annonce la présence d’un {name}.",
+    "Un {name} surgit dans une légère poussière de glace."
+  ],
+  "Insecte": [
+    "Un léger bourdonnement se rapproche. Un {name} apparaît.",
+    "Quelque chose remue dans les herbes : un {name} se montre.",
+    "Un bruissement nerveux attire ton regard vers un {name}.",
+    "Entre deux feuilles, un {name} finit par sortir.",
+    "Un {name} grimpe lentement hors de sa cachette.",
+    "Les herbes frémissent sur le passage d’un {name}.",
+    "Un mouvement minuscule mais vif révèle un {name}.",
+    "Un {name} sauvage surgit parmi la végétation.",
+    "Un bourdonnement discret annonce l’arrivée d’un {name}.",
+    "Un {name} apparaît, presque parfaitement camouflé."
+  ],
+  "Normal": [
+    "Un bruit familier attire ton attention. Un {name} apparaît.",
+    "Au détour du chemin, un {name} se montre tranquillement.",
+    "Un {name} sauvage s’approche avec curiosité.",
+    "Le calme ambiant est interrompu par l’arrivée d’un {name}.",
+    "Une silhouette bouge non loin : c’est un {name}.",
+    "Un {name} sort doucement de sa cachette.",
+    "Quelque chose remue à proximité. Un {name} vient d’apparaître.",
+    "Un {name} traverse ton chemin sans prévenir.",
+    "Un mouvement simple mais net révèle la présence d’un {name}.",
+    "Un {name} apparaît, comme s’il avait toujours été là."
+  ],
+  "Plante": [
+    "Les feuillages frémissent doucement. Un {name} sort de la végétation.",
+    "Les plantes s’écartent pour laisser passer un {name}.",
+    "Une odeur végétale flotte dans l’air tandis qu’un {name} apparaît.",
+    "Un bruissement dans les buissons révèle un {name}.",
+    "Les herbes hautes s’agitent autour d’un {name}.",
+    "Un {name} surgit au milieu des feuilles.",
+    "Une fleur tremble légèrement avant de laisser voir un {name}.",
+    "La végétation semble s’animer sur le passage d’un {name}.",
+    "Un rayon de lumière glisse sur les feuilles et dévoile un {name}.",
+    "Un {name} apparaît, parfaitement à l’aise parmi les plantes."
+  ],
+  "Poison": [
+    "Une odeur étrange flotte soudain dans l’air. Un {name} apparaît.",
+    "Un nuage trouble s’élève doucement autour d’un {name}.",
+    "Quelque chose rampe dans l’ombre : un {name} se montre.",
+    "L’air devient plus lourd, annonçant l’arrivée d’un {name}.",
+    "Une couleur vive attire ton regard vers un {name}.",
+    "Un {name} surgit avec une aura inquiétante.",
+    "Un frémissement suspect révèle la présence d’un {name}.",
+    "Une trace étrange au sol mène jusqu’à un {name}.",
+    "Un {name} apparaît, accompagné d’un léger parfum toxique.",
+    "Un mouvement furtif trahit la présence d’un {name}."
+  ],
+  "Psy": [
+    "Une sensation étrange traverse ton esprit. Un {name} apparaît.",
+    "L’air semble onduler autour d’un {name}.",
+    "Un silence irréel précède l’arrivée d’un {name}.",
+    "Une force invisible attire ton attention vers un {name}.",
+    "Un {name} se révèle dans une atmosphère presque hypnotique.",
+    "Un léger vertige te prend tandis qu’un {name} apparaît.",
+    "Une présence mentale se fait sentir : un {name} est là.",
+    "L’espace semble se troubler autour du {name}.",
+    "Un {name} surgit comme appelé par une pensée lointaine.",
+    "Une aura mystérieuse accompagne l’arrivée d’un {name}."
+  ],
+  "Roche": [
+    "Des cailloux roulent soudain au sol. Un {name} apparaît.",
+    "Un bruit sourd résonne près des rochers : un {name} se montre.",
+    "La pierre semble bouger… C’est un {name}.",
+    "Un {name} surgit entre deux formations rocheuses.",
+    "Le sol craque légèrement sous l’apparition d’un {name}.",
+    "Un éboulement discret révèle la présence d’un {name}.",
+    "Une silhouette massive se détache des rochers : un {name}.",
+    "Un {name} apparaît, camouflé parmi les pierres.",
+    "Des éclats minéraux brillent autour d’un {name}.",
+    "Un grondement bas annonce l’arrivée d’un {name}."
+  ],
+  "Sol": [
+    "La terre tremble légèrement. Un {name} surgit du sol.",
+    "Un nuage de poussière se soulève autour d’un {name}.",
+    "Quelque chose remue sous tes pieds : un {name} apparaît.",
+    "Une trace fraîche dans la terre mène jusqu’à un {name}.",
+    "Le sol se fissure doucement avant de révéler un {name}.",
+    "Un {name} sort de la poussière, l’air parfaitement à l’aise.",
+    "Un mouvement dans le sable attire ton regard vers un {name}.",
+    "Une vibration sourde annonce la présence d’un {name}.",
+    "Un {name} apparaît dans un léger tourbillon de poussière.",
+    "La terre s’agite sur le passage d’un {name}."
+  ],
+  "Spectre": [
+    "Un frisson te parcourt l’échine… Un {name} se matérialise silencieusement.",
+    "Une présence étrange flotte dans l’air. Un {name} apparaît.",
+    "L’ombre semble bouger d’elle-même avant de révéler un {name}.",
+    "Un souffle froid passe derrière toi. Un {name} est là.",
+    "Une silhouette translucide se dessine lentement : un {name}.",
+    "Le silence devient pesant tandis qu’un {name} se montre.",
+    "Un rire lointain résonne avant l’apparition d’un {name}.",
+    "Un {name} surgit d’un recoin sombre.",
+    "Une brume inquiétante accompagne l’arrivée d’un {name}.",
+    "Un {name} apparaît comme s’il sortait d’un mauvais rêve."
+  ],
+  "Ténèbres": [
+    "L’ombre s’épaissit autour de toi. Un {name} apparaît.",
+    "Un regard brillant perce l’obscurité : un {name} est là.",
+    "Quelque chose rôde dans un coin sombre… C’est un {name}.",
+    "Un {name} surgit sans un bruit.",
+    "L’atmosphère devient plus lourde à l’arrivée d’un {name}.",
+    "Une silhouette furtive se glisse devant toi : un {name}.",
+    "Un mouvement dans l’ombre révèle un {name}.",
+    "Un {name} apparaît avec une discrétion inquiétante.",
+    "Un frisson d’instinct te prévient de l’arrivée d’un {name}.",
+    "L’obscurité semble reculer pour laisser passer un {name}."
+  ],
+  "Vol": [
+    "Un battement d’ailes fend l’air. Un {name} apparaît.",
+    "Une ombre passe au-dessus de toi : un {name} descend en piqué.",
+    "Le vent se lève légèrement avec l’arrivée d’un {name}.",
+    "Un cri résonne dans le ciel avant qu’un {name} ne se montre.",
+    "Un {name} se pose non loin de toi.",
+    "Une plume tourbillonne dans l’air, suivie par un {name}.",
+    "Un mouvement aérien attire ton regard vers un {name}.",
+    "Un {name} surgit depuis les hauteurs.",
+    "Le ciel s’anime soudain : un {name} apparaît.",
+    "Un souffle rapide annonce le passage d’un {name}."
   ]
 };
 
@@ -1175,6 +1359,51 @@ const SHINY_APPEARANCE_TEXTS = [
   "Impossible de s’y tromper : ce {name} possède une coloration rare."
 ];
 
+
+function normalizeTypeKeyForText(type){
+  const aliases = {
+    "electrik": "Électrik",
+    "électrik": "Électrik",
+    "electric": "Électrik",
+    "fee": "Fée",
+    "fée": "Fée",
+    "fairy": "Fée",
+    "tenebres": "Ténèbres",
+    "ténèbres": "Ténèbres",
+    "dark": "Ténèbres",
+    "acier": "Acier",
+    "steel": "Acier",
+    "combat": "Combat",
+    "fighting": "Combat",
+    "dragon": "Dragon",
+    "eau": "Eau",
+    "water": "Eau",
+    "feu": "Feu",
+    "fire": "Feu",
+    "glace": "Glace",
+    "ice": "Glace",
+    "insecte": "Insecte",
+    "bug": "Insecte",
+    "normal": "Normal",
+    "plante": "Plante",
+    "grass": "Plante",
+    "poison": "Poison",
+    "psy": "Psy",
+    "psychic": "Psy",
+    "roche": "Roche",
+    "rock": "Roche",
+    "sol": "Sol",
+    "ground": "Sol",
+    "spectre": "Spectre",
+    "ghost": "Spectre",
+    "vol": "Vol",
+    "flying": "Vol"
+  };
+
+  const key = normalizeName(type);
+  return aliases[key] || type;
+}
+
 function chooseRandom(list){
   return list[Math.floor(Math.random() * list.length)];
 }
@@ -1182,7 +1411,7 @@ function chooseRandom(list){
 function getAppearanceText(result){
   const p = result.pokemon;
   const name = getPokemonName(p);
-  const type1 = getType1(p);
+  const type1 = normalizeTypeKeyForText(getType1(p));
 
   let pool = [];
 
@@ -1263,6 +1492,58 @@ function renderAppearanceRpCode(result){
   `;
 }
 
+
+const CAPTURE_SUCCESS_TEXTS = [
+  "La Poké Ball s'immobilise enfin. Le Pokémon est capturé.",
+  "Après quelques secondes de suspense, la capture est réussie.",
+  "La Poké Ball cesse de bouger : le Pokémon rejoint ton équipe.",
+  "Un déclic retentit. La capture est confirmée.",
+  "Le Pokémon est capturé sans pouvoir s'échapper.",
+  "La Poké Ball se stabilise définitivement. C'est une réussite.",
+  "Après une dernière secousse, le Pokémon est attrapé.",
+  "La tentative porte ses fruits : le Pokémon est capturé.",
+  "Le mécanisme de la Poké Ball se verrouille avec succès.",
+  "La capture est un succès total.",
+  "Le Pokémon est désormais en sécurité dans la Poké Ball.",
+  "La Poké Ball se referme et ne bouge plus.",
+  "Cette fois, le Pokémon ne parvient pas à s'échapper.",
+  "La capture se déroule parfaitement.",
+  "Le Pokémon rejoint ta collection.",
+  "Une dernière secousse, puis plus rien : capture réussie.",
+  "Le verrouillage est effectif. Le Pokémon est attrapé.",
+  "La Poké Ball confirme la réussite de la capture.",
+  "Le Pokémon est officiellement capturé.",
+  "Le suspense prend fin sur une capture réussie."
+];
+
+const CAPTURE_FAILURE_TEXTS = [
+  "La Poké Ball s'ouvre brusquement. Le Pokémon s'échappe.",
+  "Après quelques secousses, le Pokémon parvient à se libérer.",
+  "La capture échoue au dernier moment.",
+  "Le Pokémon force l'ouverture de la Poké Ball.",
+  "La Poké Ball ne parvient pas à retenir le Pokémon.",
+  "Le Pokémon brise sa prison et reprend sa liberté.",
+  "Une secousse de trop, et le Pokémon s'échappe.",
+  "La tentative échoue malgré tes efforts.",
+  "Le mécanisme cède et le Pokémon ressort.",
+  "La capture est un échec.",
+  "Le Pokémon résiste et se libère.",
+  "La Poké Ball s'ouvre avant le verrouillage final.",
+  "Impossible de retenir le Pokémon plus longtemps.",
+  "Le Pokémon refuse catégoriquement de se laisser capturer.",
+  "La Poké Ball éclate et relâche le Pokémon.",
+  "Le suspense se termine sur un échec.",
+  "Le Pokémon s'extrait de la Poké Ball au dernier instant.",
+  "La capture rate de peu.",
+  "Le Pokémon parvient à reprendre le dessus.",
+  "La tentative de capture n'aboutit pas."
+];
+
+function getCaptureFlavorText(success){
+  const pool = success ? CAPTURE_SUCCESS_TEXTS : CAPTURE_FAILURE_TEXTS;
+  return chooseRandom(pool);
+}
+
 function buildCaptureRpHtml(result){
   const p = result.pokemon;
   const name = getPokemonName(p);
@@ -1270,9 +1551,7 @@ function buildCaptureRpHtml(result){
   const type1 = getType1(p);
   const type2 = getType2(p);
   const successText = result.success ? "Capture réussie" : "Capture échouée";
-  const introText = result.success
-    ? "La Poké Ball s'immobilise enfin. Après quelques secondes de tension, le verdict tombe : le Pokémon est capturé."
-    : "La Poké Ball remue, hésite... puis s'ouvre brutalement. Le Pokémon parvient à s'en échapper.";
+  const introText = getCaptureFlavorText(result.success);
   const statusColor = result.success ? "#77b475" : "#e8755f";
   const statusBg = result.success ? "rgba(119,180,117,0.18)" : "rgba(232,117,95,0.18)";
   const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#6aa9c4;color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
