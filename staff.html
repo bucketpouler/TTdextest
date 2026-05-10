@@ -417,7 +417,7 @@
 </header>
 
 <main class="container">
-  <section id="dashboard" class="panel hidden">
+<section id="dashboard" class="panel">
     <div class="stats">
       <div class="stat-card"><strong id="totalCount">0</strong><span>Pokémon</span></div>
       <div class="stat-card"><strong id="missingZoneCount">0</strong><span>Inaccessibles</span></div>
@@ -530,7 +530,6 @@
 
 <script>
 const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1";
-const STAFF_PASSWORD = "staff";
 const RANKS = ["C", "B", "A", "S", "X"];
 const RANK_WEIGHTS = { C: 60, B: 25, A: 10, S: 4, X: 1 };
 const CAPTURE_TABLE = {
@@ -603,20 +602,6 @@ function fillTypePairSelect(){
   });
 }
 
-function loginStaff(){
-  const password = document.getElementById("passwordInput").value;
-  const error = document.getElementById("loginError");
-
-  if(password !== STAFF_PASSWORD){
-    error.textContent = "Mot de passe incorrect.";
-    return;
-  }
-
-  error.textContent = "";
-  document.getElementById("loginPanel").classList.add("hidden");
-  document.getElementById("dashboard").classList.remove("hidden");
-  localStorage.setItem("staffAccess", "ok");
-}
 
 function fillCapturePokemonSelect(){
   const select = document.getElementById("capturePokemonSelect");
@@ -1392,12 +1377,7 @@ function runTests(){
 
 runTests();
 
-loadData().then(() => {
-  if(localStorage.getItem("staffAccess") === "ok"){
-    document.getElementById("loginPanel").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-  }
-}).catch(error => {
+loadData().catch(error => {
   console.error(error);
   document.getElementById("loginError").textContent = "Erreur de chargement du Google Sheets.";
 });
