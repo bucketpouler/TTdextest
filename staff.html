@@ -1478,11 +1478,20 @@ function buildAppearanceRpHtml(result){
 </div>`;
 }
 
+function minifyForumHtml(html){
+  return String(html)
+    .replace(/\r?\n|\r/g, "")
+    .replace(/\t/g, "")
+    .replace(/>\s+</g, "><")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function renderAppearanceRpCode(result){
   const box = document.getElementById("captureRpCodeBox");
   if(!box) return;
 
-  const rpHtml = buildAppearanceRpHtml(result);
+  const rpHtml = minifyForumHtml(buildAppearanceRpHtml(result));
 
   box.classList.remove("hidden");
   box.innerHTML = `
@@ -1607,7 +1616,7 @@ function renderCaptureRpCode(result){
   const box = document.getElementById("captureRpCodeBox");
   if(!box) return;
 
-  const rpHtml = buildCaptureRpHtml(result);
+  const rpHtml = minifyForumHtml(buildCaptureRpHtml(result));
   const previewHtml = rpHtml;
 
   box.classList.remove("hidden");
