@@ -509,16 +509,6 @@
       </article>
 
       
-      <article class="tool-card wide">
-        <h2>👁️ Aperçu du rendu sur le forum</h2>
-        <div class="result-box">
-          <p class="muted" style="margin-top:0;">
-            Exemple de ce que verra le joueur une fois le code HTML RP copié/collé dans Forumactif.
-          </p>
-          <div id="forumPreviewExample"></div>
-        </div>
-      </article>
-
 
       <article class="tool-card wide">
         <h2>📊 Équilibrage des types</h2>
@@ -1669,45 +1659,6 @@ runTests();
 loadData().catch(error => {
   console.error(error);
   document.getElementById("loginError").textContent = "Erreur de chargement du Google Sheets.";
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const preview = document.getElementById("forumPreviewExample");
-  if (!preview) return;
-
-  const basePokemon = {
-    id: "025",
-    french: "Pikachu",
-    sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
-    shiny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/25.png",
-    "type 1": "Électrik",
-    spawn: "commun"
-  };
-
-  const appearanceExample = {
-    pokemon: basePokemon,
-    rank: "B",
-    isShiny: false
-  };
-
-  const captureExample = {
-    pokemon: basePokemon,
-    rank: "B",
-    isShiny: false,
-    captureChance: 60,
-    roll: 24,
-    success: true,
-    rarityLabel: "Commun"
-  };
-
-  if (typeof buildAppearanceRpHtml === "function" && typeof buildCaptureRpHtml === "function") {
-    preview.innerHTML = `
-      <div class="summary-line">Exemple de post d’apparition</div>
-      ${buildAppearanceRpHtml(appearanceExample)}
-      <div class="summary-line" style="margin-top:16px;">Exemple de post de capture</div>
-      ${buildCaptureRpHtml(captureExample)}
-    `;
-  }
 });
 
 </script>
