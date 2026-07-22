@@ -1552,7 +1552,7 @@ function buildCaptureRpHtml(result){
   const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#6aa9c4;color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
   return `<div style="max-width:620px;margin:18px auto;padding:18px;border-radius:16px;background:#eef4f6;background-image:linear-gradient(rgba(98,135,148,0.12) 1px, transparent 1px),linear-gradient(90deg, rgba(98,135,148,0.12) 1px, transparent 1px);background-size:28px 28px;border:1px solid rgba(91,125,138,0.20);font-family:Arial,Helvetica,sans-serif;color:#405965;">
-  <div style="padding:22px 18px;border-radius:14px;background:linear-gradient(135deg,#b7def1 0%,#f3d3dc 100%);border:1px solid rgba(106,169,196,0.28);text-align:center;">
+ <div style="padding:22px 18px;border-radius:14px;background:linear-gradient(90deg,#DC7156 0%,#E69A5F 18%,#F0F3F4 50%,#A6C6D6 82%,#72A9C0 100%);border:1px solid rgba(106,169,196,0.28);text-align:center;">
     <div style="font-family:Georgia,serif;font-size:34px;line-height:1;text-transform:uppercase;color:#15202a;font-weight:900;letter-spacing:1px;">Capture</div>
     <div style="margin-top:8px;display:inline-block;padding:7px 12px;border-radius:999px;background:${statusBg};color:${statusColor};font-size:12px;font-weight:900;text-transform:uppercase;">${escapeHtmlForRp(successText)}</div>
   </div>
