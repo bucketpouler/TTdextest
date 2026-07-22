@@ -142,7 +142,6 @@
       font-weight: 800;
     }
 
-    .type:nth-child(2) { background: var(--coral); }
     .tag { background: var(--coral); margin: 2px; }
 
     .status {
@@ -454,6 +453,44 @@ function getPokemonName(p){ return p.french || p.nom || p.name || "Nom inconnu";
 function getPokemonKey(p){ return normalizeName(getPokemonName(p)); }
 function getType1(p){ return p["type 1"] || p.type1 || ""; }
 function getType2(p){ return p["type 2"] || p.type2 || ""; }
+
+const TYPE_COLORS = {
+  normal: "#A8A77A",
+  feu: "#EE8130",
+  eau: "#6390F0",
+  electrik: "#F7D02C",
+  plante: "#7AC74C",
+  glace: "#96D9D6",
+  combat: "#C22E28",
+  poison: "#A33EA1",
+  sol: "#E2BF65",
+  vol: "#A98FF3",
+  psy: "#F95587",
+  insecte: "#A6B91A",
+  roche: "#B6A136",
+  spectre: "#735797",
+  dragon: "#6F35FC",
+  tenebres: "#705746",
+  acier: "#B7B7CE",
+  fee: "#D685AD"
+};
+
+const TYPES_WITH_DARK_TEXT = new Set(["electrik", "glace", "sol", "acier"]);
+
+function normalizeTypeName(type){
+  return normalizeText(type)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function typeBadge(type){
+  if(!type) return "";
+  const key = normalizeTypeName(type);
+  const background = TYPE_COLORS[key] || "#78909C";
+  const color = TYPES_WITH_DARK_TEXT.has(key) ? "#263238" : "#FFFFFF";
+  return `<span class="type" style="background:${background};color:${color}">${type}</span>`;
+}
 function getZones(p){ return normalizeText(p.zone).split(",").map(z => z.trim()).filter(Boolean); }
 function getEvolutionCondition(p){ return p.evolution_condition || p["condition évolution"] || p["condition evolution"] || p.evolutioncondition || ""; }
 function hasZone(p){ return getZones(p).length > 0; }
@@ -569,8 +606,8 @@ function render(data){
       <img src="${p.sprite || ""}" alt="${getPokemonName(p)}">
       <div class="pokemon-name">${getPokemonName(p)}</div>
       <div class="types">
-        ${getType1(p) ? `<span class="type">${getType1(p)}</span>` : ""}
-        ${getType2(p) ? `<span class="type">${getType2(p)}</span>` : ""}
+        ${typeBadge(getType1(p))}
+        ${typeBadge(getType2(p))}
       </div>
     `;
 
@@ -658,8 +695,8 @@ function showPokemon(p){
         <strong>${p["mega_1_name"]}</strong>
         <img src="${p["mega_1_sprite"] || ""}" alt="${p["mega_1_name"]}">
         <div class="types">
-          ${p["mega_1_type_1"] ? `<span class="type">${p["mega_1_type_1"]}</span>` : ""}
-          ${p["mega_1_type_2"] ? `<span class="type">${p["mega_1_type_2"]}</span>` : ""}
+          ${typeBadge(p["mega_1_type_1"])}
+          ${typeBadge(p["mega_1_type_2"])}
         </div>
       </div>
     ` : "",
@@ -668,8 +705,8 @@ function showPokemon(p){
         <strong>${p["mega_2_name"]}</strong>
         <img src="${p["mega_2_sprite"] || ""}" alt="${p["mega_2_name"]}">
         <div class="types">
-          ${p["mega_2_type_1"] ? `<span class="type">${p["mega_2_type_1"]}</span>` : ""}
-          ${p["mega_2_type_2"] ? `<span class="type">${p["mega_2_type_2"]}</span>` : ""}
+          ${typeBadge(p["mega_2_type_1"])}
+          ${typeBadge(p["mega_2_type_2"])}
         </div>
       </div>
     ` : ""
@@ -691,8 +728,8 @@ function showPokemon(p){
         <div class="modal-id">#${p.id || "?"}</div>
         <h2 class="modal-title">${name}</h2>
         <div class="types">
-          ${type1 ? `<span class="type">${type1}</span>` : ""}
-          ${type2 ? `<span class="type">${type2}</span>` : ""}
+          ${typeBadge(type1)}
+          ${typeBadge(type2)}
         </div>
       </div>
     </div>
