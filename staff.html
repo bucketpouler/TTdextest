@@ -1436,10 +1436,20 @@ function buildAppearanceRpHtml(result){
   const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#6aa9c4;color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
   return `<div style="max-width:620px;margin:18px auto;padding:18px;border-radius:16px;background:#eef4f6;background-image:linear-gradient(rgba(98,135,148,0.12) 1px, transparent 1px),linear-gradient(90deg, rgba(98,135,148,0.12) 1px, transparent 1px);background-size:28px 28px;border:1px solid rgba(91,125,138,0.20);font-family:Arial,Helvetica,sans-serif;color:#405965;">
-  <div style="padding:22px 18px;border-radius:14px;background:linear-gradient(135deg,#b7def1 0%,#f3d3dc 100%);border:1px solid rgba(106,169,196,0.28);text-align:center;">
-    <div style="font-family:Georgia,serif;font-size:34px;line-height:1;text-transform:uppercase;color:#15202a;font-weight:900;letter-spacing:1px;">Apparition</div>
-    <div style="margin-top:8px;display:inline-block;padding:7px 12px;border-radius:999px;background:rgba(106,169,196,0.20);color:#3f6473;font-size:12px;font-weight:900;text-transform:uppercase;">Un Pokémon apparaît</div>
+  <div style="position:relative;overflow:hidden;padding:22px 18px;border-radius:14px;background:linear-gradient(135deg,#DC7156 0%,#f0f3f4 30%,#f0f3f4 70%,#72a9c0 100%);border:1px solid rgba(91,125,138,0.20);text-align:center;">
+
+  <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.16);top:-110px;left:-70px;"></div>
+
+  <div style="position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.14);right:-65px;bottom:-100px;"></div>
+
+  <div style="position:relative;z-index:1;font-family:Georgia,serif;font-size:34px;line-height:1;text-transform:uppercase;color:#15202a;font-weight:900;letter-spacing:1px;">
+    Apparition
   </div>
+
+  <div style="position:relative;z-index:1;margin-top:8px;display:inline-block;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,0.48);color:#3f6473;font-size:12px;font-weight:900;text-transform:uppercase;border:1px solid rgba(255,255,255,0.35);">
+    Un Pokémon apparaît
+  </div>
+</div>
 
   <div style="margin-top:14px;padding:14px;border-radius:14px;background:#eef6f8;border:1px solid rgba(91,125,138,0.16);">
     <div style="display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;">
