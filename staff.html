@@ -445,6 +445,7 @@
         <div class="talents">
           <label class="talent-check"><input id="talentAuraFarmer" type="checkbox" /> Aura Farmer</label>
           <label class="talent-check"><input id="talentShasseur" type="checkbox" /> Shasseur</label>
+          <label class="talent-check"><input id="talentForceShiny" type="checkbox" /> ✨ Shiny garanti</label>
           <label class="talent-check"><input id="talentBattleRoyale" type="checkbox" /> Battle Royale</label>
         </div>
 
@@ -773,6 +774,7 @@ function getSelectedTalents(){
   return {
     auraFarmer: document.getElementById("talentAuraFarmer").checked,
     shasseur: document.getElementById("talentShasseur").checked,
+    forceShiny: document.getElementById("talentForceShiny").checked,
     battleRoyale: document.getElementById("talentBattleRoyale").checked
   };
 }
@@ -788,6 +790,8 @@ function getEncounterCount(talents){
 }
 
 function rollShiny(talents){
+  if(talents.forceShiny) return true;
+
   const rate = talents.shasseur ? 150 : 300;
   return Math.floor(Math.random() * rate) === 0;
 }
@@ -980,7 +984,9 @@ function generateEncounter(){
 
   const talentSummary = [
     talents.auraFarmer ? "Aura Farmer actif : 10% rang +1, même au-delà du rang joueur" : "Aura Farmer inactif",
-    talents.shasseur ? "Shasseur actif : shiny 1/150" : "Shiny : 1/300",
+    talents.forceShiny
+      ? "Shiny garanti : 100%"
+      : (talents.shasseur ? "Shasseur actif : shiny 1/150" : "Shiny : 1/300"),
     talents.battleRoyale ? "Battle Royale actif" : "Battle Royale inactif"
   ].join(" • ");
 
