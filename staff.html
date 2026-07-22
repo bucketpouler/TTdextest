@@ -445,7 +445,6 @@
         <div class="talents">
           <label class="talent-check"><input id="talentAuraFarmer" type="checkbox" /> Aura Farmer</label>
           <label class="talent-check"><input id="talentShasseur" type="checkbox" /> Shasseur</label>
-          <label class="talent-check"><input id="talentForceShiny" type="checkbox" /> ✨ Shiny garanti</label>
           <label class="talent-check"><input id="talentBattleRoyale" type="checkbox" /> Battle Royale</label>
         </div>
 
@@ -534,6 +533,29 @@ let allTypes = [];
 let typePairs = [];
 let lastEncounterResults = [];
 let lastManualCaptureResult = null;
+
+const TYPE_COLORS = {
+  normal: "#A8A77A",
+  feu: "#EE8130",
+  eau: "#6390F0",
+  electrik: "#F7D02C",
+  plante: "#7AC74C",
+  glace: "#96D9D6",
+  combat: "#C22E28",
+  poison: "#A33EA1",
+  sol: "#E2BF65",
+  vol: "#A98FF3",
+  psy: "#F95587",
+  insecte: "#A6B91A",
+  roche: "#B6A136",
+  spectre: "#735797",
+  dragon: "#6F35FC",
+  tenebres: "#705746",
+  acier: "#B7B7CE",
+  fee: "#D685AD"
+};
+function typeBadgeColor(t){return TYPE_COLORS[(t||'').toLowerCase()]||'#6aa9c4';}
+
 
 function normalizeText(value){ return (value || "").toString().trim(); }
 function normalizeName(value){ return normalizeText(value).toLowerCase(); }
@@ -774,7 +796,6 @@ function getSelectedTalents(){
   return {
     auraFarmer: document.getElementById("talentAuraFarmer").checked,
     shasseur: document.getElementById("talentShasseur").checked,
-    forceShiny: document.getElementById("talentForceShiny").checked,
     battleRoyale: document.getElementById("talentBattleRoyale").checked
   };
 }
@@ -790,8 +811,6 @@ function getEncounterCount(talents){
 }
 
 function rollShiny(talents){
-  if(talents.forceShiny) return true;
-
   const rate = talents.shasseur ? 150 : 300;
   return Math.floor(Math.random() * rate) === 0;
 }
@@ -984,9 +1003,7 @@ function generateEncounter(){
 
   const talentSummary = [
     talents.auraFarmer ? "Aura Farmer actif : 10% rang +1, même au-delà du rang joueur" : "Aura Farmer inactif",
-    talents.forceShiny
-      ? "Shiny garanti : 100%"
-      : (talents.shasseur ? "Shasseur actif : shiny 1/150" : "Shiny : 1/300"),
+    talents.shasseur ? "Shasseur actif : shiny 1/150" : "Shiny : 1/300",
     talents.battleRoyale ? "Battle Royale actif" : "Battle Royale inactif"
   ].join(" • ");
 
@@ -1429,7 +1446,7 @@ function buildAppearanceRpHtml(result){
   const type1 = getType1(p);
   const type2 = getType2(p);
   const rarity = getRarityInfo(p);
-  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#6aa9c4;color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
+  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:${typeBadgeColor(type)};color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
   return `<div style="max-width:620px;margin:18px auto;padding:18px;border-radius:16px;background:#eef4f6;background-image:linear-gradient(rgba(98,135,148,0.12) 1px, transparent 1px),linear-gradient(90deg, rgba(98,135,148,0.12) 1px, transparent 1px);background-size:28px 28px;border:1px solid rgba(91,125,138,0.20);font-family:Arial,Helvetica,sans-serif;color:#405965;">
 <div style="padding:22px 18px;border-radius:14px;background:linear-gradient(135deg, #DC7156 0%, #f0f3f4 30%, #f0f3f4 70%, #72a9c0 100%);border:1px solid rgba(106,169,196,0.28);text-align:center;">
@@ -1478,20 +1495,11 @@ function buildAppearanceRpHtml(result){
 </div>`;
 }
 
-function minifyForumHtml(html){
-  return String(html)
-    .replace(/\r?\n|\r/g, "")
-    .replace(/\t/g, "")
-    .replace(/>\s+</g, "><")
-    .replace(/\s{2,}/g, " ")
-    .trim();
-}
-
 function renderAppearanceRpCode(result){
   const box = document.getElementById("captureRpCodeBox");
   if(!box) return;
 
-  const rpHtml = minifyForumHtml(buildAppearanceRpHtml(result));
+  const rpHtml = buildAppearanceRpHtml(result);
 
   box.classList.remove("hidden");
   box.innerHTML = `
@@ -1564,7 +1572,7 @@ function buildCaptureRpHtml(result){
   const introText = getCaptureFlavorText(result.success);
   const statusColor = result.success ? "#77b475" : "#e8755f";
   const statusBg = result.success ? "rgba(119,180,117,0.18)" : "rgba(232,117,95,0.18)";
-  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:#6aa9c4;color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
+  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 10px;border-radius:8px;background:${typeBadgeColor(type)};color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
   return `<div style="max-width:620px;margin:18px auto;padding:18px;border-radius:16px;background:#eef4f6;background-image:linear-gradient(rgba(98,135,148,0.12) 1px, transparent 1px),linear-gradient(90deg, rgba(98,135,148,0.12) 1px, transparent 1px);background-size:28px 28px;border:1px solid rgba(91,125,138,0.20);font-family:Arial,Helvetica,sans-serif;color:#405965;">
  <div style="padding:22px 18px;border-radius:14px;background:linear-gradient(135deg, #DC7156 0%, #f0f3f4 30%, #f0f3f4 70%, #72a9c0 100%);border:1px solid rgba(106,169,196,0.28);text-align:center;">
@@ -1616,7 +1624,7 @@ function renderCaptureRpCode(result){
   const box = document.getElementById("captureRpCodeBox");
   if(!box) return;
 
-  const rpHtml = minifyForumHtml(buildCaptureRpHtml(result));
+  const rpHtml = buildCaptureRpHtml(result);
   const previewHtml = rpHtml;
 
   box.classList.remove("hidden");
