@@ -445,10 +445,23 @@
         <div class="talents">
           <label class="talent-check"><input id="talentAuraFarmer" type="checkbox" /> Aura Farmer</label>
           <label class="talent-check"><input id="talentShasseur" type="checkbox" /> Shasseur</label>
+          <label class="talent-check"><input id="talentForceShiny" type="checkbox" /> ✨ Shiny garanti</label>
           <label class="talent-check"><input id="talentBattleRoyale" type="checkbox" /> Battle Royale</label>
         </div>
 
         <div id="encounterResult" class="result-box">Choisis une zone ou génère parmi toute la base.</div>
+      </article>
+
+      <article class="tool-card wide">
+        <h2>🌀 Apparitions Paradoxe hebdomadaires</h2>
+        <div class="summary-line">Chaque semaine, deux Pokémon Paradoxe et une zone sont tirés au hasard. Le tirage reste enregistré jusqu’à la semaine suivante.</div>
+        <div class="control-line" style="margin-top:12px;">
+          <button class="primary" onclick="drawWeeklyParadoxes()">Effectuer le tirage de la semaine</button>
+          <button class="coral" onclick="generateWeeklyParadoxEncounter()">Lancer une apparition Paradoxe</button>
+        </div>
+        <div id="weeklyParadoxResult" class="result-box">Aucun tirage hebdomadaire effectué.</div>
+
+
       </article>
 
       <article class="tool-card wide">
@@ -534,6 +547,8 @@ let typePairs = [];
 let lastEncounterResults = [];
 let lastManualCaptureResult = null;
 
+let lastWeeklyParadoxDraw = null;
+
 const TYPE_COLORS = {
   normal: "#A8A77A",
   feu: "#EE8130",
@@ -554,15 +569,19 @@ const TYPE_COLORS = {
   acier: "#B7B7CE",
   fee: "#D685AD"
 };
-function typeBadgeColor(t){return TYPE_COLORS[(t||'').toLowerCase()]||'#6aa9c4';}
-
+function typeBadgeColor(t){ return TYPE_COLORS[(t || "").toLowerCase()] || "#6aa9c4"; }
 
 function normalizeText(value){ return (value || "").toString().trim(); }
 function normalizeName(value){ return normalizeText(value).toLowerCase(); }
 function getPokemonName(p){ return p.french || p.nom || p.name || "Nom inconnu"; }
 function getType1(p){ return p["type 1"] || p.type1 || ""; }
 function getType2(p){ return p["type 2"] || p.type2 || ""; }
-function getZones(p){ return normalizeText(p.zone).split(",").map(z => z.trim()).filter(Boolean); }
+function getZones(p){
+  return normalizeText(p.zone)
+    .split(/[;,]/)
+    .map(z => z.trim())
+    .filter(Boolean);
+}
 function hasZone(p){ return getZones(p).length > 0; }
 function hasEvolutionPrevious(p){ return normalizeText(p.evolves_from_species).length > 0; }
 function isMissingBasePokemonZone(p){ return !hasZone(p) && !hasEvolutionPrevious(p); }
@@ -579,7 +598,11 @@ async function loadData(){
     return clean;
   }).filter(p => p.id || p.french || p.nom || p.name);
 
-  allZones = [...new Set(allPokemon.flatMap(getZones))].sort();
+  allZones = [...new Set(
+    allPokemon
+      .flatMap(getZones)
+      .filter(zone => normalizeName(zone) !== "paradoxe")
+  )].sort();
   allTypes = [...new Set(allPokemon.flatMap(p => [getType1(p), getType2(p)]).filter(Boolean))].sort();
   typePairs = buildOptimizedTypePairs();
 
@@ -591,6 +614,7 @@ async function loadData(){
   renderStats();
   renderMissingZones();
   renderTypeBalance();
+  loadWeeklyParadoxDraw();
 }
 
 function fillSelect(id, values, label){
@@ -796,6 +820,7 @@ function getSelectedTalents(){
   return {
     auraFarmer: document.getElementById("talentAuraFarmer").checked,
     shasseur: document.getElementById("talentShasseur").checked,
+    forceShiny: document.getElementById("talentForceShiny").checked,
     battleRoyale: document.getElementById("talentBattleRoyale").checked
   };
 }
@@ -811,6 +836,8 @@ function getEncounterCount(talents){
 }
 
 function rollShiny(talents){
+  if(talents.forceShiny) return true;
+
   const rate = talents.shasseur ? 150 : 300;
   return Math.floor(Math.random() * rate) === 0;
 }
@@ -958,6 +985,138 @@ function pokemonMiniHtml(result, index){
   `;
 }
 
+function getIsoWeekKey(date = new Date()){
+  const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = utcDate.getUTCDay() || 7;
+  utcDate.setUTCDate(utcDate.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
+  const week = Math.ceil((((utcDate - yearStart) / 86400000) + 1) / 7);
+  return `${utcDate.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+function isParadoxPokemon(p){
+  return getZones(p).some(zone => normalizeName(zone) === "paradoxe");
+}
+
+function getParadoxPool(){
+  return allPokemon.filter(isParadoxPokemon);
+}
+
+function randomItem(list){
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function getStoredWeeklyParadoxDraw(){
+  try {
+    const raw = localStorage.getItem("themisWeeklyParadoxDraw");
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    if(parsed.weekKey !== getIsoWeekKey()) return null;
+    return parsed;
+  } catch(error){
+    return null;
+  }
+}
+
+function resolveWeeklyParadoxPokemon(draw){
+  if(!draw || !Array.isArray(draw.pokemonIds)) return [];
+  return draw.pokemonIds
+    .map(id => allPokemon.find(p => parseInt(p.id, 10) === parseInt(id, 10)))
+    .filter(Boolean);
+}
+
+function renderWeeklyParadoxDraw(){
+  const container = document.getElementById("weeklyParadoxResult");
+  if(!container) return;
+
+  const draw = lastWeeklyParadoxDraw;
+  const pokemon = resolveWeeklyParadoxPokemon(draw);
+
+  if(!draw || pokemon.length !== 2){
+    container.innerHTML = "Aucun tirage hebdomadaire effectué.";
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="summary-line"><strong>Semaine ${draw.weekKey}</strong> • Zone : <strong>${draw.zone}</strong></div>
+    ${pokemon.map(p => `
+      <div class="list-item">
+        <img src="${p.sprite || ""}" alt="${getPokemonName(p)}" />
+        <div>
+          <div class="list-title">#${p.id || "?"} — ${getPokemonName(p)}</div>
+          <div class="badges">
+            ${getType1(p) ? `<span class="badge" style="background:${typeBadgeColor(getType1(p))};color:#fff;">${getType1(p)}</span>` : ""}
+            ${getType2(p) ? `<span class="badge" style="background:${typeBadgeColor(getType2(p))};color:#fff;">${getType2(p)}</span>` : ""}
+          </div>
+        </div>
+      </div>
+    `).join("")}
+  `;
+}
+
+function loadWeeklyParadoxDraw(){
+  lastWeeklyParadoxDraw = getStoredWeeklyParadoxDraw();
+  renderWeeklyParadoxDraw();
+}
+
+function drawWeeklyParadoxes(){
+  const stored = getStoredWeeklyParadoxDraw();
+  if(stored){
+    lastWeeklyParadoxDraw = stored;
+    renderWeeklyParadoxDraw();
+    return;
+  }
+
+  const pool = getParadoxPool();
+  if(pool.length < 2 || allZones.length === 0){
+    document.getElementById("weeklyParadoxResult").innerHTML = "Impossible d’effectuer le tirage : il faut au moins deux Pokémon avec « Paradoxe » dans la colonne Zone et au moins une autre zone disponible.";
+    return;
+  }
+
+  const first = randomItem(pool);
+  const remaining = pool.filter(p => p !== first);
+  const second = randomItem(remaining);
+
+  lastWeeklyParadoxDraw = {
+    weekKey: getIsoWeekKey(),
+    zone: randomItem(allZones),
+    pokemonIds: [first.id, second.id]
+  };
+
+  localStorage.setItem("themisWeeklyParadoxDraw", JSON.stringify(lastWeeklyParadoxDraw));
+  renderWeeklyParadoxDraw();
+}
+
+function generateWeeklyParadoxEncounter(){
+  if(!lastWeeklyParadoxDraw){
+    drawWeeklyParadoxes();
+  }
+
+  const pokemonPool = resolveWeeklyParadoxPokemon(lastWeeklyParadoxDraw);
+  if(pokemonPool.length !== 2){
+    document.getElementById("weeklyParadoxResult").innerHTML = "Le tirage hebdomadaire est incomplet.";
+    return;
+  }
+
+  const pokemon = randomItem(pokemonPool);
+  const talents = getSelectedTalents();
+  const rank = rollRank(talents);
+  const captureChance = getCaptureChance(pokemon, rank, talents);
+
+  lastEncounterResults = [{
+    pokemon,
+    isShiny: rollShiny(talents),
+    rank,
+    captureChance,
+    paradoxZone: lastWeeklyParadoxDraw.zone
+  }];
+
+  document.getElementById("weeklyParadoxResult").innerHTML = `
+    <div class="summary-line"><strong>Zone : ${lastWeeklyParadoxDraw.zone}</strong> • Tirage parmi les deux Paradoxes de la semaine</div>
+    ${pokemonMiniHtml(lastEncounterResults[0], 0)}
+  `;
+}
+
 function generateEncounter(){
   const zone = document.getElementById("zoneSelect").value;
   const type = document.getElementById("typeSelect").value;
@@ -967,7 +1126,15 @@ function generateEncounter(){
   const talents = getSelectedTalents();
 
   const pool = allPokemon.filter(p => {
-    const matchesZone = !zone || getZones(p).includes(zone);
+    const zones = getZones(p);
+    const playableZones = zones.filter(item => normalizeName(item) !== "paradoxe");
+
+    // Un Pokémon marqué uniquement « Paradoxe » reste réservé au tirage hebdomadaire.
+    // Dès qu’une autre zone est indiquée (ex. « Paradoxe;Forêt »), il rejoint
+    // normalement le pool d’apparition de cette zone.
+    if(isParadoxPokemon(p) && playableZones.length === 0) return false;
+
+    const matchesZone = !zone || playableZones.some(item => normalizeName(item) === normalizeName(zone));
     const matchesType = !type || getType1(p) === type || getType2(p) === type;
     const matchesPair = pairTypes.length === 0 || pokemonHasAnyType(p, pairTypes);
     return matchesZone && (type ? matchesType : matchesPair);
@@ -1003,7 +1170,9 @@ function generateEncounter(){
 
   const talentSummary = [
     talents.auraFarmer ? "Aura Farmer actif : 10% rang +1, même au-delà du rang joueur" : "Aura Farmer inactif",
-    talents.shasseur ? "Shasseur actif : shiny 1/150" : "Shiny : 1/300",
+    talents.forceShiny
+      ? "Shiny garanti : 100%"
+      : (talents.shasseur ? "Shasseur actif : shiny 1/150" : "Shiny : 1/300"),
     talents.battleRoyale ? "Battle Royale actif" : "Battle Royale inactif"
   ].join(" • ");
 
@@ -1366,6 +1535,24 @@ const TYPE_APPEARANCE_TEXTS = {
   ]
 };
 
+const PARADOX_APPEARANCE_TEXTS = [
+  "L’air se déforme brusquement, comme traversé par une faille invisible. Un {name} apparaît au cœur de la distorsion.",
+  "Les environs semblent se figer un court instant avant qu’un {name} ne surgisse d’une époque impossible à déterminer.",
+  "Une onde inconnue parcourt la zone. Lorsque le calme revient, un {name} se tient devant toi.",
+  "L’espace vacille autour d’une silhouette anormale : un {name} vient de franchir la frontière du temps.",
+  "Les Pokémon alentour prennent soudainement la fuite. Un {name} avance dans le silence qu’ils ont laissé derrière eux.",
+  "Un grondement sourd résonne sans origine visible, puis un {name} émerge d’une étrange distorsion.",
+  "La lumière se trouble et les couleurs paraissent se décaler. Un {name} se matérialise devant toi.",
+  "Une énergie inhabituelle s’accumule dans l’air avant de révéler la présence d’un {name}.",
+  "Pendant une seconde, le paysage semble appartenir à un autre temps. Un {name} en profite pour apparaître.",
+  "Une brèche lumineuse fend brièvement l’espace et laisse derrière elle un {name} à l’allure irréelle.",
+  "Les appareils à proximité s’affolent sans raison. Une silhouette se précise : celle d’un {name}.",
+  "Une vibration profonde traverse le sol tandis qu’un {name} surgit, comme arraché à son époque.",
+  "L’atmosphère devient lourde et silencieuse. Quelque chose d’impossible approche : un {name}.",
+  "Un éclat étrange illumine les environs, puis s’éteint en révélant un {name} venu d’ailleurs.",
+  "Le temps paraît hésiter, suspendu entre deux battements. Lorsqu’il reprend son cours, un {name} est là."
+];
+
 const SHINY_APPEARANCE_TEXTS = [
   "Une lueur inhabituelle attire ton regard… Ce {name} est chromatique !",
   "Des éclats scintillants entourent ce {name} aux couleurs exceptionnelles.",
@@ -1428,7 +1615,9 @@ function getAppearanceText(result){
 
   let pool = [];
 
-  if(result.isShiny){
+  if(isParadoxPokemon(p)){
+    pool = PARADOX_APPEARANCE_TEXTS;
+  } else if(result.isShiny){
     pool = SHINY_APPEARANCE_TEXTS;
   } else if(TYPE_APPEARANCE_TEXTS[type1]) {
     pool = TYPE_APPEARANCE_TEXTS[type1];
@@ -1495,11 +1684,20 @@ function buildAppearanceRpHtml(result){
 </div>`;
 }
 
+function minifyForumHtml(html){
+  return String(html)
+    .replace(/\r?\n|\r/g, "")
+    .replace(/\t/g, "")
+    .replace(/>\s+</g, "><")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function renderAppearanceRpCode(result){
   const box = document.getElementById("captureRpCodeBox");
   if(!box) return;
 
-  const rpHtml = buildAppearanceRpHtml(result);
+  const rpHtml = minifyForumHtml(buildAppearanceRpHtml(result));
 
   box.classList.remove("hidden");
   box.innerHTML = `
@@ -1624,7 +1822,7 @@ function renderCaptureRpCode(result){
   const box = document.getElementById("captureRpCodeBox");
   if(!box) return;
 
-  const rpHtml = buildCaptureRpHtml(result);
+  const rpHtml = minifyForumHtml(buildCaptureRpHtml(result));
   const previewHtml = rpHtml;
 
   box.classList.remove("hidden");
