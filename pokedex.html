@@ -491,7 +491,13 @@ function typeBadge(type){
   const color = TYPES_WITH_DARK_TEXT.has(key) ? "#263238" : "#FFFFFF";
   return `<span class="type" style="background:${background};color:${color}">${type}</span>`;
 }
-function getZones(p){ return normalizeText(p.zone).split(",").map(z => z.trim()).filter(Boolean); }
+function getZones(p){
+  return normalizeText(p.zone)
+    .split(/[;,]/)
+    .map(z => z.trim())
+    .filter(Boolean);
+}
+function isParadoxPokemon(p){ return getZones(p).some(zone => normalizeName(zone) === "paradoxe"); }
 function getEvolutionCondition(p){ return p.evolution_condition || p["condition évolution"] || p["condition evolution"] || p.evolutioncondition || ""; }
 function hasZone(p){ return getZones(p).length > 0; }
 
@@ -608,6 +614,7 @@ function render(data){
       <div class="types">
         ${typeBadge(getType1(p))}
         ${typeBadge(getType2(p))}
+        ${isParadoxPokemon(p) ? `<span class="tag">Paradoxe</span>` : ""}
       </div>
     `;
 
@@ -730,6 +737,7 @@ function showPokemon(p){
         <div class="types">
           ${typeBadge(type1)}
           ${typeBadge(type2)}
+          ${isParadoxPokemon(p) ? `<span class="tag">Paradoxe</span>` : ""}
         </div>
       </div>
     </div>
