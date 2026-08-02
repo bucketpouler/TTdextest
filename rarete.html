@@ -91,15 +91,32 @@
     }
 
     .summary-card {
+      appearance: none;
+      width: 100%;
       padding: 12px;
       border-radius: var(--radius);
       background: var(--panel);
       border: 1px solid rgba(91,125,138,.2);
       text-align: center;
+      color: inherit;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(63,100,115,.45);
+    }
+
+    .summary-card.active {
+      background: var(--panel-light);
+      border-color: var(--blue-dark);
+      box-shadow: 0 0 0 2px rgba(63,100,115,.1);
     }
 
     .summary-card strong { display: block; font: 900 28px Georgia, serif; color: #15202a; }
     .summary-card span { font-size: 11px; font-weight: 900; text-transform: uppercase; color: var(--muted); }
+    .summary-card.active span { color: var(--blue-dark); }
 
     .panels { display: grid; gap: 14px; }
     .rarity-panel h2 { margin: 0; color: #15202a; font-family: Georgia, serif; }
@@ -161,12 +178,12 @@
     <a class="button staff" href="staff.html">Staff Tools</a>
   </div>
 
-  <div class="summary">
-    <div class="summary-card"><strong id="countCommun">0</strong><span>Communs</span></div>
-    <div class="summary-card"><strong id="countPeuCommun">0</strong><span>Peu communs</span></div>
-    <div class="summary-card"><strong id="countRare">0</strong><span>Rares</span></div>
-    <div class="summary-card"><strong id="countParadoxe">0</strong><span>Paradoxes</span></div>
-    <div class="summary-card"><strong id="countMissing">0</strong><span>Sans rareté</span></div>
+  <div class="summary" role="tablist" aria-label="Catégories de rareté">
+    <button class="summary-card active" type="button" role="tab" aria-selected="true" data-category="commun"><strong id="countCommun">0</strong><span>Communs</span></button>
+    <button class="summary-card" type="button" role="tab" aria-selected="false" data-category="peu-commun"><strong id="countPeuCommun">0</strong><span>Peu communs</span></button>
+    <button class="summary-card" type="button" role="tab" aria-selected="false" data-category="rare"><strong id="countRare">0</strong><span>Rares</span></button>
+    <button class="summary-card" type="button" role="tab" aria-selected="false" data-category="paradoxe"><strong id="countParadoxe">0</strong><span>Paradoxes</span></button>
+    <button class="summary-card" type="button" role="tab" aria-selected="false" data-category="missing"><strong id="countMissing">0</strong><span>Sans rareté</span></button>
   </div>
 
   <div id="status" class="rarity-panel status">Chargement des Pokémon...</div>
@@ -176,6 +193,7 @@
 <script>
 const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1";
 let allPokemon = [];
+let activeCategory = "commun";
 
 const TYPE_COLORS = {
   normal: "#A8A77A", feu: "#EE8130", eau: "#6390F0", electrik: "#F7D02C",
@@ -249,7 +267,14 @@ function render(){
   filtered.forEach(p => groups[categoryOf(p)].push(p));
   Object.values(groups).forEach(list => list.sort((a,b) => Number(a.id || 99999) - Number(b.id || 99999) || getName(a).localeCompare(getName(b), "fr")));
 
-  document.getElementById("panels").innerHTML = CATEGORY_META.map(meta => panelHtml(meta, groups[meta.key])).join("");
+  const activeMeta = CATEGORY_META.find(meta => meta.key === activeCategory) || CATEGORY_META[0];
+  document.getElementById("panels").innerHTML = panelHtml(activeMeta, groups[activeMeta.key]);
+
+  document.querySelectorAll(".summary-card").forEach(tab => {
+    const isActive = tab.dataset.category === activeCategory;
+    tab.classList.toggle("active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+  });
   document.getElementById("countCommun").textContent = groups.commun.length;
   document.getElementById("countPeuCommun").textContent = groups["peu-commun"].length;
   document.getElementById("countRare").textContent = groups.rare.length;
@@ -279,6 +304,14 @@ async function load(){
 }
 
 document.getElementById("searchInput").addEventListener("input", render);
+
+document.querySelectorAll(".summary-card").forEach(tab => {
+  tab.addEventListener("click", () => {
+    activeCategory = tab.dataset.category;
+    render();
+  });
+});
+
 load();
 </script>
 </body>
