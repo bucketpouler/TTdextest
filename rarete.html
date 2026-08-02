@@ -66,12 +66,12 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1fr auto auto;
+      grid-template-columns: 1fr auto auto auto;
       gap: 10px;
       margin-bottom: 14px;
     }
 
-    input, a.button {
+    input, a.button, button.zone-toggle {
       padding: 10px 12px;
       border-radius: 8px;
       border: 1px solid rgba(91,125,138,.2);
@@ -81,6 +81,8 @@
     }
 
     a.button { text-decoration: none; text-align: center; white-space: nowrap; }
+    button.zone-toggle { cursor: pointer; white-space: nowrap; }
+    button.zone-toggle.active { background: var(--blue-dark); color: white; border-color: var(--blue-dark); }
     a.button.staff { background: var(--coral); color: white; border-color: transparent; }
 
     .summary {
@@ -190,6 +192,7 @@
     <input id="searchInput" type="search" placeholder="Rechercher un Pokémon..." autocomplete="off" />
     <a class="button" href="pokedex.html">Pokédex</a>
     <a class="button staff" href="staff.html">Staff Tools</a>
+    <button id="zoneToggle" class="zone-toggle" type="button" aria-pressed="false">Masquer ceux déjà placés</button>
   </div>
 
   <div class="summary" role="tablist" aria-label="Catégories de rareté">
@@ -209,6 +212,7 @@ const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea
 let allPokemon = [];
 let activeCategory = "commun";
 let missingBaseOnly = false;
+let hideAssignedZones = false;
 
 const TYPE_COLORS = {
   normal: "#A8A77A", feu: "#EE8130", eau: "#6390F0", electrik: "#F7D02C",
@@ -239,7 +243,9 @@ function getPreEvolution(p){
     p.preevolution
   );
 }
-function isParadox(p){ return getZones(p).split(/[;,|]/).some(zone => normalize(zone) === "paradoxe"); }
+function zoneList(p){ return getZones(p).split(/[;,|]/).map(normalize).filter(Boolean); }
+function isParadox(p){ return zoneList(p).includes("paradoxe"); }
+function hasCaptureZone(p){ return zoneList(p).some(zone => zone !== "paradoxe"); }
 function hasPreEvolution(p){ return normalize(getPreEvolution(p)).length > 0; }
 function hasDirectEvolution(p){
   const name = normalize(getName(p));
@@ -298,7 +304,11 @@ function panelHtml(meta, list){
 
 function render(){
   const query = normalize(document.getElementById("searchInput").value);
-  const filtered = allPokemon.filter(p => !query || normalize(getName(p)).includes(query) || normalize(p.id).includes(query));
+  const filtered = allPokemon.filter(p => {
+    const matchesSearch = !query || normalize(getName(p)).includes(query) || normalize(p.id).includes(query);
+    const matchesZone = !hideAssignedZones || !hasCaptureZone(p);
+    return matchesSearch && matchesZone;
+  });
   const groups = Object.fromEntries(CATEGORY_META.map(meta => [meta.key, []]));
   filtered.forEach(p => groups[categoryOf(p)].push(p));
   Object.values(groups).forEach(list => list.sort((a,b) => Number(a.id || 99999) - Number(b.id || 99999) || getName(a).localeCompare(getName(b), "fr")));
@@ -352,6 +362,15 @@ async function load(){
 }
 
 document.getElementById("searchInput").addEventListener("input", render);
+
+const zoneToggle = document.getElementById("zoneToggle");
+zoneToggle.addEventListener("click", () => {
+  hideAssignedZones = !hideAssignedZones;
+  zoneToggle.classList.toggle("active", hideAssignedZones);
+  zoneToggle.setAttribute("aria-pressed", String(hideAssignedZones));
+  zoneToggle.textContent = hideAssignedZones ? "Afficher tous les Pokémon" : "Masquer ceux déjà placés";
+  render();
+});
 
 document.querySelectorAll(".summary-card").forEach(tab => {
   tab.addEventListener("click", () => {
