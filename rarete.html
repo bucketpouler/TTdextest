@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rareté — Staff</title>
+  <style>
+    :root {
+      --page-bg: #eef4f6;
+      --grid-line: rgba(98,135,148,.12);
+      --panel: #dfeaf0;
+      --panel-light: #eef6f8;
+      --blue: #6aa9c4;
+      --blue-dark: #3f6473;
+      --coral: #e8755f;
+      --green: #77b475;
+      --purple: #7869a8;
+      --text: #405965;
+      --muted: #7d99a5;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background-color: var(--page-bg);
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    header {
+      max-width: 1180px;
+      margin: 28px auto 12px;
+      padding: 30px 24px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #DC7156 0%, #f0f3f4 30%, #f0f3f4 70%, #72a9c0 100%);
+      border: 1px solid rgba(106,169,196,.28);
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: clamp(38px, 7vw, 76px);
+      text-transform: uppercase;
+      color: #15202a;
+    }
+
+    header p { margin: 8px 0 0; font-weight: 800; color: var(--blue-dark); }
+
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px 54px; }
+
+    .toolbar,
+    .rarity-panel {
+      padding: 14px;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid rgba(91,125,138,.2);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    input, a.button {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(91,125,138,.2);
+      background: var(--panel-light);
+      color: var(--text);
+      font: 700 14px Arial, sans-serif;
+    }
+
+    a.button { text-decoration: none; text-align: center; white-space: nowrap; }
+    a.button.staff { background: var(--coral); color: white; border-color: transparent; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .summary-card {
+      padding: 12px;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid rgba(91,125,138,.2);
+      text-align: center;
+    }
+
+    .summary-card strong { display: block; font: 900 28px Georgia, serif; color: #15202a; }
+    .summary-card span { font-size: 11px; font-weight: 900; text-transform: uppercase; color: var(--muted); }
+
+    .panels { display: grid; gap: 14px; }
+    .rarity-panel h2 { margin: 0; color: #15202a; font-family: Georgia, serif; }
+    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+
+    .count-badge,
+    .rarity-badge,
+    .type-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: white;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .count-badge { background: var(--blue-dark); }
+    .rarity-commun { background: var(--green); }
+    .rarity-peu-commun { background: var(--blue); }
+    .rarity-rare { background: var(--coral); }
+    .rarity-paradoxe { background: var(--purple); }
+    .rarity-missing { background: var(--muted); }
+    .type-badge { border-radius: 6px; margin: 2px; }
+
+    .table-wrap { overflow-x: auto; border-radius: 9px; }
+    table { width: 100%; border-collapse: collapse; min-width: 680px; background: rgba(255,255,255,.24); }
+    th, td { padding: 9px 10px; border-bottom: 1px solid rgba(91,125,138,.15); text-align: left; vertical-align: middle; }
+    th { font-size: 10px; text-transform: uppercase; color: var(--muted); background: rgba(255,255,255,.3); }
+    td { font-size: 13px; font-weight: 700; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: rgba(255,255,255,.24); }
+
+    .pokemon-cell { display: flex; align-items: center; gap: 9px; }
+    .pokemon-cell img { width: 42px; height: 42px; object-fit: contain; border-radius: 50%; padding: 3px; background: rgba(255,255,255,.45); }
+    .pokemon-name { color: var(--blue-dark); font-weight: 900; }
+    .empty { padding: 22px; text-align: center; color: var(--muted); font-weight: 800; }
+    .status { padding: 24px; text-align: center; font-weight: 800; color: var(--muted); }
+
+    @media (max-width: 760px) {
+      header { margin: 12px; }
+      .container { padding: 0 12px 32px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-card:last-child { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Rareté</h1>
+  <p>Classement réservé au staff</p>
+</header>
+
+<main class="container">
+  <div class="toolbar">
+    <input id="searchInput" type="search" placeholder="Rechercher un Pokémon..." autocomplete="off" />
+    <a class="button" href="pokedex.html">Pokédex</a>
+    <a class="button staff" href="staff.html">Staff Tools</a>
+  </div>
+
+  <div class="summary">
+    <div class="summary-card"><strong id="countCommun">0</strong><span>Communs</span></div>
+    <div class="summary-card"><strong id="countPeuCommun">0</strong><span>Peu communs</span></div>
+    <div class="summary-card"><strong id="countRare">0</strong><span>Rares</span></div>
+    <div class="summary-card"><strong id="countParadoxe">0</strong><span>Paradoxes</span></div>
+    <div class="summary-card"><strong id="countMissing">0</strong><span>Sans rareté</span></div>
+  </div>
+
+  <div id="status" class="rarity-panel status">Chargement des Pokémon...</div>
+  <div id="panels" class="panels" hidden></div>
+</main>
+
+<script>
+const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1";
+let allPokemon = [];
+
+const TYPE_COLORS = {
+  normal: "#A8A77A", feu: "#EE8130", eau: "#6390F0", electrik: "#F7D02C",
+  plante: "#7AC74C", glace: "#96D9D6", combat: "#C22E28", poison: "#A33EA1",
+  sol: "#E2BF65", vol: "#A98FF3", psy: "#F95587", insecte: "#A6B91A",
+  roche: "#B6A136", spectre: "#735797", dragon: "#6F35FC", tenebres: "#705746",
+  acier: "#B7B7CE", fee: "#D685AD"
+};
+
+function text(value){ return (value ?? "").toString().trim(); }
+function normalize(value){
+  return text(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+}
+function escapeHtml(value){
+  return text(value).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+}
+function getName(p){ return p.french || p.nom || p.name || "Nom inconnu"; }
+function getType1(p){ return p["type 1"] || p.type1 || ""; }
+function getType2(p){ return p["type 2"] || p.type2 || ""; }
+function getRarity(p){ return text(p.rare || p.rarete || p["rareté"]); }
+function getZones(p){ return text(p.zone || p.zones); }
+function isParadox(p){ return getZones(p).split(/[;,|]/).some(zone => normalize(zone) === "paradoxe"); }
+
+function typeBadge(type){
+  if(!text(type)) return "";
+  const key = normalize(type);
+  return `<span class="type-badge" style="background:${TYPE_COLORS[key] || "#6aa9c4"}">${escapeHtml(type)}</span>`;
+}
+
+function categoryOf(p){
+  if(isParadox(p)) return "paradoxe";
+  const rarity = normalize(getRarity(p));
+  if(rarity === "commun") return "commun";
+  if(rarity === "peu commun") return "peu-commun";
+  if(rarity === "rare") return "rare";
+  return "missing";
+}
+
+const CATEGORY_META = [
+  { key: "commun", title: "Commun", className: "rarity-commun" },
+  { key: "peu-commun", title: "Peu Commun", className: "rarity-peu-commun" },
+  { key: "rare", title: "Rare", className: "rarity-rare" },
+  { key: "paradoxe", title: "Paradoxe", className: "rarity-paradoxe" },
+  { key: "missing", title: "Sans rareté", className: "rarity-missing" }
+];
+
+function pokemonRow(p, category){
+  const rawRarity = getRarity(p);
+  const rarityDisplay = category === "paradoxe" ? (rawRarity || "—") : (rawRarity || "Non renseignée");
+  return `<tr>
+    <td>#${escapeHtml(p.id || "?")}</td>
+    <td><div class="pokemon-cell"><img src="${escapeHtml(p.sprite || "")}" alt=""><span class="pokemon-name">${escapeHtml(getName(p))}</span></div></td>
+    <td>${typeBadge(getType1(p))}${typeBadge(getType2(p))}</td>
+    <td>${escapeHtml(getZones(p) || "—")}</td>
+    <td>${escapeHtml(rarityDisplay)}</td>
+  </tr>`;
+}
+
+function panelHtml(meta, list){
+  const rows = list.length ? list.map(p => pokemonRow(p, meta.key)).join("") : `<tr><td colspan="5" class="empty">Aucun Pokémon dans cette catégorie.</td></tr>`;
+  return `<section class="rarity-panel">
+    <div class="panel-heading"><h2><span class="rarity-badge ${meta.className}">${meta.title}</span></h2><span class="count-badge">${list.length} Pokémon</span></div>
+    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Pokémon</th><th>Types</th><th>Zone</th><th>Valeur « Rare »</th></tr></thead><tbody>${rows}</tbody></table></div>
+  </section>`;
+}
+
+function render(){
+  const query = normalize(document.getElementById("searchInput").value);
+  const filtered = allPokemon.filter(p => !query || normalize(getName(p)).includes(query) || normalize(p.id).includes(query));
+  const groups = Object.fromEntries(CATEGORY_META.map(meta => [meta.key, []]));
+  filtered.forEach(p => groups[categoryOf(p)].push(p));
+  Object.values(groups).forEach(list => list.sort((a,b) => Number(a.id || 99999) - Number(b.id || 99999) || getName(a).localeCompare(getName(b), "fr")));
+
+  document.getElementById("panels").innerHTML = CATEGORY_META.map(meta => panelHtml(meta, groups[meta.key])).join("");
+  document.getElementById("countCommun").textContent = groups.commun.length;
+  document.getElementById("countPeuCommun").textContent = groups["peu-commun"].length;
+  document.getElementById("countRare").textContent = groups.rare.length;
+  document.getElementById("countParadoxe").textContent = groups.paradoxe.length;
+  document.getElementById("countMissing").textContent = groups.missing.length;
+}
+
+async function load(){
+  try {
+    const response = await fetch(SHEET_URL);
+    if(!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
+    const raw = await response.json();
+    if(!Array.isArray(raw)) throw new Error("La feuille n'a pas renvoyé une liste.");
+
+    allPokemon = raw.map(row => {
+      const clean = {};
+      Object.keys(row).forEach(key => clean[normalize(key)] = row[key]);
+      return clean;
+    }).filter(p => p.id || p.french || p.nom || p.name);
+
+    document.getElementById("status").hidden = true;
+    document.getElementById("panels").hidden = false;
+    render();
+  } catch(error) {
+    document.getElementById("status").textContent = `Impossible de charger les données : ${error.message}`;
+  }
+}
+
+document.getElementById("searchInput").addEventListener("input", render);
+load();
+</script>
+</body>
+</html>
