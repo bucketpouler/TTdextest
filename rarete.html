@@ -121,6 +121,20 @@
     .panels { display: grid; gap: 14px; }
     .rarity-panel h2 { margin: 0; color: #15202a; font-family: Georgia, serif; }
     .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .panel-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+    .evolution-filter {
+      appearance: none;
+      padding: 8px 11px;
+      border-radius: 8px;
+      border: 1px solid rgba(91,125,138,.25);
+      background: var(--panel-light);
+      color: var(--blue-dark);
+      font: 800 12px Arial, sans-serif;
+      cursor: pointer;
+      transition: background .18s ease, color .18s ease, border-color .18s ease;
+    }
+    .evolution-filter:hover { border-color: var(--blue-dark); }
+    .evolution-filter.active { background: var(--blue-dark); color: white; border-color: var(--blue-dark); }
 
     .count-badge,
     .rarity-badge,
@@ -194,6 +208,7 @@
 const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1";
 let allPokemon = [];
 let activeCategory = "commun";
+let missingBaseOnly = false;
 
 const TYPE_COLORS = {
   normal: "#A8A77A", feu: "#EE8130", eau: "#6390F0", electrik: "#F7D02C",
@@ -215,7 +230,22 @@ function getType1(p){ return p["type 1"] || p.type1 || ""; }
 function getType2(p){ return p["type 2"] || p.type2 || ""; }
 function getRarity(p){ return text(p.rare || p.rarete || p["rareté"]); }
 function getZones(p){ return text(p.zone || p.zones); }
+function getPreEvolution(p){
+  return text(
+    p["evolves from species"] ||
+    p.evolves_from_species ||
+    p["pré évolution"] ||
+    p["pre evolution"] ||
+    p.preevolution
+  );
+}
 function isParadox(p){ return getZones(p).split(/[;,|]/).some(zone => normalize(zone) === "paradoxe"); }
+function hasPreEvolution(p){ return normalize(getPreEvolution(p)).length > 0; }
+function hasDirectEvolution(p){
+  const name = normalize(getName(p));
+  return allPokemon.some(candidate => normalize(getPreEvolution(candidate)) === name);
+}
+function isEvolutionaryBase(p){ return !hasPreEvolution(p) && hasDirectEvolution(p); }
 
 function typeBadge(type){
   if(!text(type)) return "";
@@ -254,8 +284,14 @@ function pokemonRow(p, category){
 
 function panelHtml(meta, list){
   const rows = list.length ? list.map(p => pokemonRow(p, meta.key)).join("") : `<tr><td colspan="5" class="empty">Aucun Pokémon dans cette catégorie.</td></tr>`;
+  const evolutionButton = meta.key === "missing"
+    ? `<button id="missingEvolutionFilter" class="evolution-filter${missingBaseOnly ? " active" : ""}" type="button" aria-pressed="${missingBaseOnly}">${missingBaseOnly ? "Voir tous les sans rareté" : "Voir ceux avec une évolution"}</button>`
+    : "";
   return `<section class="rarity-panel">
-    <div class="panel-heading"><h2><span class="rarity-badge ${meta.className}">${meta.title}</span></h2><span class="count-badge">${list.length} Pokémon</span></div>
+    <div class="panel-heading">
+      <h2><span class="rarity-badge ${meta.className}">${meta.title}</span></h2>
+      <div class="panel-actions">${evolutionButton}<span class="count-badge">${list.length} Pokémon</span></div>
+    </div>
     <div class="table-wrap"><table><thead><tr><th>ID</th><th>Pokémon</th><th>Types</th><th>Zone</th><th>Valeur « Rare »</th></tr></thead><tbody>${rows}</tbody></table></div>
   </section>`;
 }
@@ -268,7 +304,19 @@ function render(){
   Object.values(groups).forEach(list => list.sort((a,b) => Number(a.id || 99999) - Number(b.id || 99999) || getName(a).localeCompare(getName(b), "fr")));
 
   const activeMeta = CATEGORY_META.find(meta => meta.key === activeCategory) || CATEGORY_META[0];
-  document.getElementById("panels").innerHTML = panelHtml(activeMeta, groups[activeMeta.key]);
+  let activeList = groups[activeMeta.key];
+  if(activeMeta.key === "missing" && missingBaseOnly){
+    activeList = activeList.filter(isEvolutionaryBase);
+  }
+  document.getElementById("panels").innerHTML = panelHtml(activeMeta, activeList);
+
+  const missingEvolutionFilter = document.getElementById("missingEvolutionFilter");
+  if(missingEvolutionFilter){
+    missingEvolutionFilter.addEventListener("click", () => {
+      missingBaseOnly = !missingBaseOnly;
+      render();
+    });
+  }
 
   document.querySelectorAll(".summary-card").forEach(tab => {
     const isActive = tab.dataset.category === activeCategory;
@@ -308,6 +356,7 @@ document.getElementById("searchInput").addEventListener("input", render);
 document.querySelectorAll(".summary-card").forEach(tab => {
   tab.addEventListener("click", () => {
     activeCategory = tab.dataset.category;
+    if(activeCategory !== "missing") missingBaseOnly = false;
     render();
   });
 });
