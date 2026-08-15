@@ -137,7 +137,13 @@
     .pokemon-tab:hover { background: rgba(255,255,255,.36); transform: translateX(2px); }
     .pokemon-tab.active { background: var(--panel-light); box-shadow: inset 3px 0 0 var(--coral); }
     .pokemon-tab img { width: 42px; height: 42px; object-fit: contain; }
-    .pokemon-tab span { min-width: 0; font-size: 12px; font-weight: 900; line-height: 1.15; }
+    .pokemon-tab span {
+  min-width: 0;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.15;
+}
     .pokemon-tab small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; text-transform: uppercase; }
 
     .pokemon-sheet { overflow: hidden; }
@@ -164,7 +170,13 @@
 
     .sprite-wrap img { width: min(210px, 100%); height: 210px; object-fit: contain; image-rendering: auto; }
     .pokemon-id { margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 900; text-transform: uppercase; }
-    .pokemon-title { margin: 0; color: #15202a; font-family: Georgia, serif; font-size: clamp(30px, 5vw, 52px); line-height: .95; }
+    .pokemon-title {
+  margin: 0;
+  color: #15202a;
+  font-family: Arial, sans-serif;
+  font-size: clamp(30px, 5vw, 52px);
+  line-height: .95;
+}
 
     .types { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
     .type-badge {
@@ -179,7 +191,11 @@
     }
 
     .moves-section { padding: 20px; }
-    .moves-section > h2 { margin: 0 0 14px; color: #15202a; font: 900 25px Georgia, serif; }
+    .moves-section > h2 {
+  margin: 0 0 14px;
+  color: #15202a;
+  font: 900 25px Arial, sans-serif;
+}
 
     .rank-grid {
       display: grid;
@@ -204,7 +220,10 @@
       border-bottom: 1px solid rgba(91,125,138,.13);
     }
 
-    .rank-title strong { color: #15202a; font: 900 18px Georgia, serif; }
+    .rank-title strong {
+  color: #15202a;
+  font: 900 18px Arial, sans-serif;
+}
     .rank-title span { color: var(--muted); font-size: 9px; font-weight: 900; text-transform: uppercase; }
 
     .move-list { display: flex; flex-wrap: wrap; gap: 6px; }
