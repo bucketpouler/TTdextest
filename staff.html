@@ -416,6 +416,8 @@
   <h1>Staff Tools</h1>
 </header>
 
+<div style="max-width:1180px;margin:0 auto 12px;padding:0 24px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;"><a href="eleftheria.html" style="padding:10px 14px;border-radius:8px;background:#6aa9c4;color:white;text-decoration:none;font-weight:800;">Pokémon d'Eleftheria</a><a href="rarete.html" style="padding:10px 14px;border-radius:8px;background:#e8755f;color:white;text-decoration:none;font-weight:800;">Gérer les raretés</a></div>
+
 <main class="container">
 <section id="dashboard" class="panel">
     <div class="stats">
@@ -433,6 +435,7 @@
           <select id="typeSelect"><option value="">Tous les types</option></select>
           <select id="typePairSelect"><option value="">Aucun binôme</option></select>
           <select id="playerRankSelect">
+            <option value="D">Rang joueur D</option>
             <option value="C">Rang joueur C</option>
             <option value="B">Rang joueur B</option>
             <option value="A">Rang joueur A</option>
@@ -476,6 +479,7 @@
                 </select>
               </div>
               <select id="captureRankSelect" onchange="renderCapturePreview()">
+                <option value="D">Rang D</option>
                 <option value="C">Rang C</option>
                 <option value="B">Rang B</option>
                 <option value="A">Rang A</option>
@@ -485,6 +489,7 @@
               <select id="captureRaritySelect" onchange="renderCapturePreview()">
                 <option value="auto">Rareté auto</option>
                 <option value="commun">Commun</option>
+                <option value="peucommun">Peu Commun</option>
                 <option value="rare">Rare</option>
               </select>
               <button class="green" onclick="tryManualCapture()">Tester la capture</button>
@@ -533,11 +538,30 @@
 
 <script>
 const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1";
-const RANKS = ["C", "B", "A", "S", "X"];
-const RANK_WEIGHTS = { C: 60, B: 25, A: 10, S: 4, X: 1 };
+const RANKS = ["D", "C", "B", "A", "S", "X"];
+
+// Chances de rang (d100) selon le rang du dresseur.
+const RANK_TABLE_NORMAL = {
+  D: { D: 100 },
+  C: { D: 70, C: 30 },
+  B: { D: 50, C: 30, B: 20 },
+  A: { D: 40, C: 25, B: 20, A: 15 },
+  S: { D: 35, C: 22, B: 18, A: 15, S: 10 },
+  X: { D: 30, C: 20, B: 17, A: 14, S: 11, X: 8 }
+};
+
+// Aura Farmer est disponible à partir du rang A et ne permet jamais
+// de rencontrer un Pokémon situé à plus d'un rang au-dessus du dresseur.
+const RANK_TABLE_AURA = {
+  A: { D: 30, C: 20, B: 20, A: 20, S: 10 },
+  S: { D: 25, C: 20, B: 17, A: 15, S: 13, X: 10 },
+  X: { D: 20, C: 15, B: 15, A: 15, S: 15, X: 20 }
+};
+
 const CAPTURE_TABLE = {
-  commun: { C: 70, B: 60, A: 50, S: 40, X: 30 },
-  rare: { C: 45, B: 35, A: 25, S: 18, X: 10 }
+  commun:    { D: 70, C: 65, B: 55, A: 45, S: 35, X: 30 },
+  peucommun: { D: 55, C: 50, B: 40, A: 35, S: 30, X: 25 },
+  rare:      { D: 40, C: 35, B: 30, A: 25, S: 20, X: 15 }
 };
 
 let allPokemon = [];
@@ -784,14 +808,15 @@ function getRarityKey(p){
   const num = parseFloat(raw);
 
   if(raw === "rare" || num === 2) return "rare";
+  if(raw === "peu commun" || raw === "peu-commun" || raw === "peucommun") return "peucommun";
   return "commun";
 }
 
 function getRarityInfo(p){
   const rarity = getRarityKey(p);
-  return rarity === "rare"
-    ? { label: "Rare", className: "coral" }
-    : { label: "Commun", className: "green" };
+  if(rarity === "rare") return { label: "Rare", className: "coral" };
+  if(rarity === "peucommun") return { label: "Peu Commun", className: "blue" };
+  return { label: "Commun", className: "green" };
 }
 
 function getSpawnWeight(p){
@@ -838,45 +863,28 @@ function getEncounterCount(talents){
 function rollShiny(talents){
   if(talents.forceShiny) return true;
 
-  const rate = talents.shasseur ? 150 : 300;
-  return Math.floor(Math.random() * rate) === 0;
+  // Sans Shasseur : 91–100 = 10 %. Avec Shasseur : 86–100 = 15 %.
+  const roll = Math.floor(Math.random() * 100) + 1;
+  return talents.shasseur ? roll >= 86 : roll >= 91;
 }
 
-function getAllowedRanks(playerRank){
-  const maxIndex = RANKS.indexOf(playerRank);
-  return RANKS.slice(0, maxIndex + 1);
-}
+function weightedRankFromTable(table){
+  const roll = Math.floor(Math.random() * 100) + 1;
+  let cumulative = 0;
 
-function weightedRankFromAllowed(allowedRanks){
-  const total = allowedRanks.reduce((sum, rank) => sum + RANK_WEIGHTS[rank], 0);
-  let roll = Math.random() * total;
-
-  for(const rank of allowedRanks){
-    roll -= RANK_WEIGHTS[rank];
-    if(roll <= 0) return rank;
+  for(const rank of RANKS){
+    cumulative += table[rank] || 0;
+    if(roll <= cumulative) return rank;
   }
 
-  return allowedRanks[0];
-}
-
-function upgradeRank(rank){
-  const index = RANKS.indexOf(rank);
-  if(index === -1 || index >= RANKS.length - 1) return rank;
-  return RANKS[index + 1];
+  return Object.keys(table).pop() || "D";
 }
 
 function rollRank(talents){
-  const playerRank = document.getElementById("playerRankSelect").value || "C";
-  const allowedRanks = getAllowedRanks(playerRank);
-  let rank = weightedRankFromAllowed(allowedRanks);
-
-  // Aura Farmer peut dépasser la limite normale du joueur d'un rang.
-  // Exemple : joueur rang B → rang A possible si le 10% proc.
-  if(talents.auraFarmer && Math.random() < 0.10){
-    rank = upgradeRank(rank);
-  }
-
-  return rank;
+  const playerRank = document.getElementById("playerRankSelect").value || "D";
+  const canUseAura = talents.auraFarmer && ["A", "S", "X"].includes(playerRank);
+  const table = canUseAura ? RANK_TABLE_AURA[playerRank] : RANK_TABLE_NORMAL[playerRank];
+  return weightedRankFromTable(table);
 }
 
 function getCaptureChance(pokemon, rank, talents){
@@ -1169,10 +1177,10 @@ function generateEncounter(){
   ].join(" • ");
 
   const talentSummary = [
-    talents.auraFarmer ? "Aura Farmer actif : 10% rang +1, même au-delà du rang joueur" : "Aura Farmer inactif",
+    talents.auraFarmer && ["A", "S", "X"].includes(playerRank) ? "Aura Farmer actif : rang amélioré, maximum +1" : (talents.auraFarmer ? "Aura Farmer indisponible avant le rang A" : "Aura Farmer inactif"),
     talents.forceShiny
       ? "Shiny garanti : 100%"
-      : (talents.shasseur ? "Shasseur actif : shiny 1/150" : "Shiny : 1/300"),
+      : (talents.shasseur ? "Shasseur actif : shiny 15%" : "Shiny : 10%"),
     talents.battleRoyale ? "Battle Royale actif" : "Battle Royale inactif"
   ].join(" • ");
 
@@ -1862,11 +1870,12 @@ function runTests(){
   console.assert(getSpawnWeight({ spawn: "commun" }) === 10, "Test spawn commun échoué");
   console.assert(getSpawnWeight({ spawn: "rare" }) === 2, "Test spawn rare échoué");
   console.assert(getEncounterCount({ battleRoyale: false }) === 1, "Test Battle Royale désactivé échoué");
-  console.assert(getAllowedRanks("B").join("") === "CB", "Test rangs autorisés échoué");
-  console.assert(upgradeRank("B") === "A", "Test upgrade rang échoué");
-  console.assert(getCaptureChance({ spawn: "commun" }, "C", { auraFarmer: false }) === 70, "Test capture commun C échoué");
+  console.assert(Object.values(RANK_TABLE_NORMAL.A).reduce((a,b) => a+b, 0) === 100, "Test table rang normale A échoué");
+  console.assert(Object.values(RANK_TABLE_AURA.A).reduce((a,b) => a+b, 0) === 100, "Test Aura Farmer A échoué");
+  console.assert(!("X" in RANK_TABLE_AURA.A), "Aura Farmer A ne doit pas permettre le rang X");
+  console.assert(getCaptureChance({ spawn: "commun" }, "C", { auraFarmer: false }) === 65, "Test capture commun C échoué");
   console.assert(getCaptureChance({ spawn: "rare" }, "X", { auraFarmer: true }) === 5, "Test capture minimum échoué");
-  console.assert(CAPTURE_TABLE.commun.C === 70, "Test table capture manuelle échoué");
+  console.assert(CAPTURE_TABLE.commun.C === 65, "Test table capture manuelle échoué");
   console.info("Tests staff tools terminés.");
 }
 
