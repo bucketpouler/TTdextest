@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coffres des Écuries — Themis Trials</title>
+
+<style>
+:root {
+  --txt-noir: #151B1E;
+  --txt-noir-neutre: #3F515A;
+  --txt-blanc-neutre: #F0F3F4;
+  --txt-neutre: #889FAA;
+  --txt-neutre-second: #2A363C;
+  --txt-neutre-dis: #A5B7C0;
+  --txt-orange: #D44D2B;
+  --txt-orange-def: #DC7156;
+  --txt-brand-neutre: #F0F3F4;
+  --txt-blue-def: #72A9C0;
+
+  --bord-neutre: rgba(9, 9, 11, 0.1);
+  --bord-neutre-second: #A5B7C0;
+  --bord-surface: #C9D6DD;
+  --bord-bleu: #72A9C0;
+  --bord-bleu-second: #4F93B0;
+  --bord-orange: #DC7156;
+  --bord-orange-second: #D44D2B;
+
+  --bg-fond: #F0F3F4;
+  --bg-transparent: rgba(255, 255, 255, 0.72);
+  --bg-neutre: #E1E7EA;
+  --bg-bleu-light: #B9D4DF;
+  --bg-bleu-second: #72A9C0;
+  --bg-orange-light: #EEB8AA;
+  --bg-orange-second: #DC7156;
+
+  --bronze: #A66F4A;
+  --argent: #8999A3;
+  --or: #D3A63C;
+
+  --fond-droit: radial-gradient(circle, rgba(126,170,198,2) 0%, rgba(126,170,198,1) 28%, rgba(126,170,198,.18) 48%, rgba(126,170,198,.08) 68%, rgba(126,170,198,.025) 84%, rgba(126,170,198,0) 100%);
+  --fond-gauche: radial-gradient(circle, rgba(217,122,93,2) 0%, rgba(217,122,93,1) 28%, rgba(217,122,93,.18) 48%, rgba(217,122,93,.08) 68%, rgba(217,122,93,.025) 84%, rgba(217,122,93,0) 100%);
+}
+
+* { box-sizing: border-box; }
+
+@font-face {
+  font-family: Coolvetica;
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://cdn.jsdelivr.net/gh/Pandariesw/TOY/CoolveticaRg-Regular%20400.ttf');
+}
+
+html {
+  min-height: 100%;
+  background-image: url('https://2img.net/i.imgur.com/XO5FwwW.png');
+  background-color: var(--bg-fond);
+  background-repeat: repeat;
+  background-position: top center;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  color: var(--txt-noir-neutre);
+  font-family: Inter, Arial, sans-serif;
+  background: transparent;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 950px;
+  height: 950px;
+  border-radius: 50%;
+  filter: blur(95px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  right: -480px;
+  top: -500px;
+  background: var(--fond-droit);
+}
+
+body::after {
+  left: -500px;
+  bottom: -500px;
+  background: var(--fond-gauche);
+}
+
+button, input { font: inherit; }
+
+.themis-chest-shell {
+  width: min(1500px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 70px;
+}
+
+.themis-panel {
+  background: var(--bg-transparent);
+  border: 1px solid var(--bord-neutre);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+
+/* HERO */
+.themis-chest-hero {
+  position: relative;
+  min-height: 250px;
+  padding: 38px 42px;
+  overflow: hidden;
+  border-radius: 12px;
+  background:
+    linear-gradient(110deg, rgba(220,113,86,.95), rgba(114,169,192,.84)),
+    url('https://2img.net/i.imgur.com/JoUhDEV.png') center / cover;
+  color: #fff;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 16px;
+}
+
+.themis-chest-hero::after {
+  content: "";
+  position: absolute;
+  right: -80px;
+  top: -150px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  border: 55px solid rgba(255,255,255,.08);
+}
+
+.themis-chest-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 850px;
+}
+
+.themis-kicker {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  opacity: .88;
+}
+
+.themis-title {
+  margin: 0;
+  font: 400 62px/.95 Coolvetica, Arial, sans-serif;
+}
+
+.themis-intro {
+  margin: 18px 0 0;
+  max-width: 760px;
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 500;
+}
+
+.themis-chest-hero-mark {
+  position: relative;
+  z-index: 2;
+  width: 150px;
+  height: 150px;
+  flex: 0 0 150px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  display: grid;
+  place-items: center;
+  font-size: 66px;
+  backdrop-filter: blur(10px);
+}
+
+/* MAIN */
+.themis-chest-layout {
+  display: grid;
+  grid-template-columns: 390px minmax(0,1fr);
+  gap: 16px;
+}
+
+.themis-chest-sidebar {
+  padding: 24px;
+  align-self: start;
+  position: sticky;
+  top: 18px;
+}
+
+.themis-section-title {
+  margin: 0 0 5px;
+  font: 400 28px Coolvetica, Arial, sans-serif;
+  color: var(--txt-noir-neutre);
+}
+
+.themis-section-desc {
+  margin: 0 0 18px;
+  color: var(--txt-neutre);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.themis-field {
+  margin-bottom: 14px;
+}
+
+.themis-field label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--txt-neutre);
+}
+
+.themis-field input {
+  width: 100%;
+  border: 1px solid var(--bord-surface);
+  border-radius: 8px;
+  background: var(--bg-neutre);
+  color: var(--txt-noir-neutre);
+  padding: 12px 13px;
+  outline: none;
+}
+
+.themis-field input:focus {
+  border-color: var(--bord-bleu-second);
+}
+
+/* CHEST SELECTOR */
+.themis-chest-selector {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.themis-chest-choice {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--bord-surface);
+  border-radius: 9px;
+  background: var(--bg-neutre);
+  color: var(--txt-noir-neutre);
+  cursor: pointer;
+  transition: .22s ease;
+  text-align: left;
+}
+
+.themis-chest-choice:hover {
+  transform: translateX(3px);
+}
+
+.themis-chest-choice.is-active {
+  border-color: currentColor;
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+.themis-chest-choice[data-chest="or"] { color: var(--or); }
+.themis-chest-choice[data-chest="argent"] { color: var(--argent); }
+.themis-chest-choice[data-chest="bronze"] { color: var(--bronze); }
+
+.themis-chest-choice-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,.58);
+  font-size: 22px;
+}
+
+.themis-chest-choice strong {
+  display: block;
+  color: var(--txt-noir-neutre);
+  font-size: 13px;
+}
+
+.themis-chest-choice small {
+  display: block;
+  margin-top: 3px;
+  color: var(--txt-neutre);
+  font-size: 10px;
+}
+
+.themis-chest-choice-rank {
+  font: 400 22px Coolvetica, Arial, sans-serif;
+}
+
+.themis-open-btn,
+.themis-copy-btn {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid var(--bord-orange-second);
+  border-radius: 8px;
+  background: var(--bg-orange-second);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.themis-open-btn:hover,
+.themis-copy-btn:hover {
+  filter: brightness(.96);
+  transform: translateY(-1px);
+}
+
+.themis-copy-btn {
+  margin-top: 10px;
+  border-color: var(--bord-bleu-second);
+  background: var(--bg-bleu-second);
+}
+
+.themis-copy-btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* RESULTS */
+.themis-chest-main {
+  min-width: 0;
+}
+
+.themis-current-chest {
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.themis-current-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.themis-current-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.themis-current-medal {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 25px;
+  background: var(--or);
+}
+
+.themis-current-name {
+  margin: 0;
+  font: 400 35px Coolvetica, Arial, sans-serif;
+}
+
+.themis-current-sub {
+  margin-top: 3px;
+  color: var(--txt-neutre);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.themis-open-state {
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: var(--bg-neutre);
+  border: 1px solid var(--bord-surface);
+  color: var(--txt-neutre);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.themis-result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 12px;
+}
+
+.themis-result-card {
+  position: relative;
+  min-height: 260px;
+  padding: 22px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--bord-surface);
+  background: var(--bg-neutre);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.themis-result-card:nth-child(2) {
+  background: rgba(185,212,223,.42);
+}
+
+.themis-result-card:nth-child(3) {
+  background: rgba(238,184,170,.34);
+}
+
+.themis-result-index {
+  color: var(--txt-neutre);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.themis-result-category {
+  margin-top: 6px;
+  font: 400 27px Coolvetica, Arial, sans-serif;
+  color: var(--txt-noir-neutre);
+}
+
+.themis-result-icon {
+  margin: auto 0 12px;
+  font-size: 42px;
+}
+
+.themis-result-value {
+  min-height: 48px;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 800;
+  color: var(--txt-noir-neutre);
+}
+
+.themis-result-proba {
+  margin-top: 7px;
+  color: var(--txt-neutre);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.themis-result-card.is-rolling .themis-result-value {
+  animation: pulseText .18s linear infinite alternate;
+}
+
+@keyframes pulseText {
+  from { opacity:.35; transform: translateY(2px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* HISTORY */
+.themis-history {
+  padding: 24px;
+}
+
+.themis-history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.themis-history-empty {
+  padding: 24px;
+  text-align: center;
+  border: 1px dashed var(--bord-surface);
+  border-radius: 10px;
+  color: var(--txt-neutre);
+  font-size: 12px;
+}
+
+.themis-history-item {
+  display: grid;
+  grid-template-columns: 94px minmax(120px,.7fr) minmax(0,1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 13px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--bord-neutre);
+  background: rgba(225,231,234,.72);
+}
+
+.themis-history-chest {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.themis-history-player {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.themis-history-results {
+  color: var(--txt-neutre);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.themis-history-clear {
+  margin-top: 12px;
+  border: 0;
+  background: transparent;
+  color: var(--txt-orange);
+  cursor: pointer;
+  padding: 0;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Probability modal-ish tables */
+.themis-probabilities {
+  margin-top: 16px;
+  padding: 24px;
+}
+
+.themis-proba-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 14px;
+}
+
+.themis-proba-block {
+  padding: 16px;
+  border: 1px solid var(--bord-surface);
+  border-radius: 10px;
+  background: rgba(225,231,234,.6);
+}
+
+.themis-proba-block h3 {
+  margin: 0 0 10px;
+  font: 400 22px Coolvetica, Arial, sans-serif;
+}
+
+.themis-proba-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--bord-neutre);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.themis-proba-line:last-child {
+  border-bottom: 0;
+}
+
+.themis-proba-line strong {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1050px) {
+  .themis-chest-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .themis-chest-sidebar {
+    position: static;
+  }
+
+  .themis-result-grid,
+  .themis-proba-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .themis-result-card {
+    min-height: 210px;
+  }
+}
+
+@media (max-width: 700px) {
+  .themis-chest-shell {
+    width: calc(100% - 24px);
+    padding-top: 20px;
+  }
+
+  .themis-chest-hero {
+    min-height: 300px;
+    padding: 28px 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .themis-title {
+    font-size: 47px;
+  }
+
+  .themis-chest-hero-mark {
+    width: 95px;
+    height: 95px;
+    flex-basis: 95px;
+    font-size: 42px;
+  }
+
+  .themis-current-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .themis-history-item {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="themis-chest-shell">
+
+  <section class="themis-chest-hero">
+    <div class="themis-chest-hero-content">
+      <div class="themis-kicker">Odyssey • Défi des Écuries</div>
+      <h1 class="themis-title">Ouverture des Coffres</h1>
+      <p class="themis-intro">
+        Sélectionnez le coffre remporté par le membre de l'écurie puis lancez l'ouverture.
+        Chaque coffre contient trois tirages garantis : Ressources, Récompense spéciale et Chance.
+      </p>
+    </div>
+    <div class="themis-chest-hero-mark">🎁</div>
+  </section>
+
+  <div class="themis-chest-layout">
+
+    <aside class="themis-panel themis-chest-sidebar">
+      <h2 class="themis-section-title">Préparer le tirage</h2>
+      <p class="themis-section-desc">Les champs sont facultatifs mais apparaîtront dans l'historique et dans le résultat copié.</p>
+
+      <div class="themis-field">
+        <label for="playerName">Membre</label>
+        <input id="playerName" type="text" placeholder="Nom du personnage">
+      </div>
+
+      <div class="themis-field">
+        <label for="stableName">Écurie</label>
+        <input id="stableName" type="text" placeholder="Nom de l'écurie">
+      </div>
+
+      <div class="themis-chest-selector">
+        <button class="themis-chest-choice is-active" data-chest="or" type="button">
+          <span class="themis-chest-choice-icon">🏆</span>
+          <span>
+            <strong>Coffre Or</strong>
+            <small>Récompense du Top 1</small>
+          </span>
+          <span class="themis-chest-choice-rank">01</span>
+        </button>
+
+        <button class="themis-chest-choice" data-chest="argent" type="button">
+          <span class="themis-chest-choice-icon">🥈</span>
+          <span>
+            <strong>Coffre Argent</strong>
+            <small>Récompense du Top 2</small>
+          </span>
+          <span class="themis-chest-choice-rank">02</span>
+        </button>
+
+        <button class="themis-chest-choice" data-chest="bronze" type="button">
+          <span class="themis-chest-choice-icon">🥉</span>
+          <span>
+            <strong>Coffre Bronze</strong>
+            <small>Récompense du Top 3</small>
+          </span>
+          <span class="themis-chest-choice-rank">03</span>
+        </button>
+      </div>
+
+      <button id="openChest" class="themis-open-btn" type="button">Ouvrir le coffre</button>
+      <button id="copyResult" class="themis-copy-btn" type="button" disabled>Copier le résultat</button>
+    </aside>
+
+    <section class="themis-chest-main">
+
+      <div class="themis-panel themis-current-chest">
+        <div class="themis-current-top">
+          <div class="themis-current-title-wrap">
+            <div class="themis-current-medal" id="currentMedal">🏆</div>
+            <div>
+              <h2 class="themis-current-name" id="currentChestName">Coffre Or</h2>
+              <div class="themis-current-sub">3 tirages garantis</div>
+            </div>
+          </div>
+
+          <div class="themis-open-state" id="openState">Prêt à ouvrir</div>
+        </div>
+
+        <div class="themis-result-grid">
+          <article class="themis-result-card" data-result="resources">
+            <div class="themis-result-index">Tirage 01</div>
+            <div class="themis-result-category">Ressources</div>
+            <div class="themis-result-icon">🎒</div>
+            <div class="themis-result-value">—</div>
+            <div class="themis-result-proba">Le résultat apparaîtra ici.</div>
+          </article>
+
+          <article class="themis-result-card" data-result="special">
+            <div class="themis-result-index">Tirage 02</div>
+            <div class="themis-result-category">Récompense spéciale</div>
+            <div class="themis-result-icon">💎</div>
+            <div class="themis-result-value">—</div>
+            <div class="themis-result-proba">Le résultat apparaîtra ici.</div>
+          </article>
+
+          <article class="themis-result-card" data-result="chance">
+            <div class="themis-result-index">Tirage 03</div>
+            <div class="themis-result-category">Chance</div>
+            <div class="themis-result-icon">✨</div>
+            <div class="themis-result-value">—</div>
+            <div class="themis-result-proba">Le résultat apparaîtra ici.</div>
+          </article>
+        </div>
+      </div>
+
+      <div class="themis-panel themis-history">
+        <h2 class="themis-section-title">Historique des ouvertures</h2>
+        <p class="themis-section-desc">Conservé uniquement tant que cette page reste ouverte.</p>
+
+        <div class="themis-history-list" id="historyList">
+          <div class="themis-history-empty">Aucun coffre ouvert pour le moment.</div>
+        </div>
+
+        <button class="themis-history-clear" id="clearHistory" type="button">Effacer l'historique</button>
+      </div>
+
+      <div class="themis-panel themis-probabilities">
+        <h2 class="themis-section-title">Probabilités du coffre sélectionné</h2>
+        <p class="themis-section-desc">Les trois roulettes sont indépendantes et donnent chacune exactement une récompense.</p>
+        <div class="themis-proba-columns" id="probabilityTables"></div>
+      </div>
+
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+
+  const CHESTS = {
+    or: {
+      name: "Coffre Or",
+      icon: "🏆",
+      color: "#D3A63C",
+      resources: [
+        { reward: "5 Hyper Balls", chance: 25 },
+        { reward: "5 Balls spé-type", chance: 25 },
+        { reward: "3 Hyper Balls + 3 Balls spé-type", chance: 20 },
+        { reward: "2 objets évolutifs aléatoires", chance: 15 },
+        { reward: "1 objet évolutif aléatoire + 3 Hyper Balls", chance: 15 }
+      ],
+      special: [
+        { reward: "1 CT aléatoire", chance: 40 },
+        { reward: "2 CT aléatoires", chance: 30 },
+        { reward: "1 CT au choix", chance: 20 },
+        { reward: "2 CT au choix", chance: 10 }
+      ],
+      chance: [
+        { reward: "40 PO", chance: 18 },
+        { reward: "80 PO", chance: 12 },
+        { reward: "120 PO", chance: 6 },
+        { reward: "1 PT", chance: 15 },
+        { reward: "2 PT", chance: 8 },
+        { reward: "3 PT", chance: 4 },
+        { reward: "1 Fossile aléatoire", chance: 8 },
+        { reward: "1 Œuf aléatoire", chance: 7 },
+        { reward: "1 Pokémon aléatoire", chance: 6 },
+        { reward: "1 montée gratuite d'un rang", chance: 5 },
+        { reward: "2 Œufs aléatoires", chance: 4 },
+        { reward: "2 Pokémon aléatoires", chance: 4 },
+        { reward: "1 Pokémon Rare aléatoire", chance: 3 }
+      ]
+    },
+
+    argent: {
+      name: "Coffre Argent",
+      icon: "🥈",
+      color: "#8999A3",
+      resources: [
+        { reward: "4 Super Balls", chance: 25 },
+        { reward: "3 Hyper Balls", chance: 20 },
+        { reward: "3 Balls spé-type", chance: 20 },
+        { reward: "2 Super Balls + 2 Hyper Balls", chance: 15 },
+        { reward: "1 objet évolutif aléatoire", chance: 10 },
+        { reward: "1 objet évolutif aléatoire + 2 Super Balls", chance: 10 }
+      ],
+      special: [
+        { reward: "1 CT aléatoire", chance: 55 },
+        { reward: "2 CT aléatoires", chance: 25 },
+        { reward: "1 CT au choix", chance: 20 }
+      ],
+      chance: [
+        { reward: "20 PO", chance: 25 },
+        { reward: "40 PO", chance: 20 },
+        { reward: "80 PO", chance: 10 },
+        { reward: "1 PT", chance: 20 },
+        { reward: "2 PT", chance: 10 },
+        { reward: "1 Fossile aléatoire", chance: 7 },
+        { reward: "1 Œuf aléatoire", chance: 5 },
+        { reward: "1 Pokémon aléatoire", chance: 3 }
+      ]
+    },
+
+    bronze: {
+      name: "Coffre Bronze",
+      icon: "🥉",
+      color: "#A66F4A",
+      resources: [
+        { reward: "4 Poké Balls", chance: 25 },
+        { reward: "3 Super Balls", chance: 25 },
+        { reward: "2 Hyper Balls", chance: 15 },
+        { reward: "2 Balls spé-type", chance: 15 },
+        { reward: "2 Poké Balls + 2 Super Balls", chance: 10 },
+        { reward: "1 objet évolutif aléatoire", chance: 10 }
+      ],
+      special: [
+        { reward: "1 CT aléatoire", chance: 70 },
+        { reward: "2 CT aléatoires", chance: 20 },
+        { reward: "1 CT au choix", chance: 10 }
+      ],
+      chance: [
+        { reward: "10 PO", chance: 28 },
+        { reward: "20 PO", chance: 27 },
+        { reward: "40 PO", chance: 18 },
+        { reward: "1 PT", chance: 20 },
+        { reward: "2 PT", chance: 4 },
+        { reward: "1 Fossile aléatoire", chance: 1.5 },
+        { reward: "1 Œuf aléatoire", chance: 1 },
+        { reward: "1 Pokémon aléatoire", chance: 0.5 }
+      ]
+    }
+  };
+
+  let selectedChest = "or";
+  let lastResult = null;
+  const history = [];
+
+  const choiceButtons = document.querySelectorAll(".themis-chest-choice");
+  const currentChestName = document.getElementById("currentChestName");
+  const currentMedal = document.getElementById("currentMedal");
+  const openState = document.getElementById("openState");
+  const openChestBtn = document.getElementById("openChest");
+  const copyResultBtn = document.getElementById("copyResult");
+  const historyList = document.getElementById("historyList");
+  const probabilityTables = document.getElementById("probabilityTables");
+
+  function weightedPick(items) {
+    const roll = Math.random() * 100;
+    let cumulative = 0;
+
+    for (const item of items) {
+      cumulative += item.chance;
+      if (roll < cumulative) return item;
+    }
+
+    return items[items.length - 1];
+  }
+
+  function setChest(type) {
+    selectedChest = type;
+    const chest = CHESTS[type];
+
+    choiceButtons.forEach(btn => {
+      btn.classList.toggle("is-active", btn.dataset.chest === type);
+    });
+
+    currentChestName.textContent = chest.name;
+    currentMedal.textContent = chest.icon;
+    currentMedal.style.background = chest.color;
+    openState.textContent = "Prêt à ouvrir";
+
+    renderProbabilityTables();
+  }
+
+  function renderProbabilityTables() {
+    const chest = CHESTS[selectedChest];
+
+    const configs = [
+      ["🎒 Ressources", chest.resources],
+      ["💎 Récompense spéciale", chest.special],
+      ["✨ Chance", chest.chance]
+    ];
+
+    probabilityTables.innerHTML = "";
+
+    configs.forEach(([title, rows]) => {
+      const block = document.createElement("div");
+      block.className = "themis-proba-block";
+
+      const h3 = document.createElement("h3");
+      h3.textContent = title;
+      block.appendChild(h3);
+
+      rows.forEach(row => {
+        const line = document.createElement("div");
+        line.className = "themis-proba-line";
+
+        const reward = document.createElement("span");
+        reward.textContent = row.reward;
+
+        const chance = document.createElement("strong");
+        chance.textContent = `${row.chance}%`;
+
+        line.append(reward, chance);
+        block.appendChild(line);
+      });
+
+      probabilityTables.appendChild(block);
+    });
+  }
+
+  function setRollingState(isRolling) {
+    document.querySelectorAll(".themis-result-card").forEach(card => {
+      card.classList.toggle("is-rolling", isRolling);
+    });
+  }
+
+  function animateCategory(card, pool, duration) {
+    return new Promise(resolve => {
+      const value = card.querySelector(".themis-result-value");
+      const proba = card.querySelector(".themis-result-proba");
+      const start = performance.now();
+
+      function tick(now) {
+        const elapsed = now - start;
+        const temp = pool[Math.floor(Math.random() * pool.length)];
+
+        value.textContent = temp.reward;
+        proba.textContent = "Tirage en cours…";
+
+        if (elapsed < duration) {
+          requestAnimationFrame(tick);
+        } else {
+          const result = weightedPick(pool);
+          value.textContent = result.reward;
+          proba.textContent = `Probabilité : ${result.chance}%`;
+          resolve(result);
+        }
+      }
+
+      requestAnimationFrame(tick);
+    });
+  }
+
+  async function openChest() {
+    openChestBtn.disabled = true;
+    copyResultBtn.disabled = true;
+    openState.textContent = "Ouverture en cours…";
+    setRollingState(true);
+
+    const chest = CHESTS[selectedChest];
+
+    const resourcesCard = document.querySelector('[data-result="resources"]');
+    const specialCard = document.querySelector('[data-result="special"]');
+    const chanceCard = document.querySelector('[data-result="chance"]');
+
+    const resources = await animateCategory(resourcesCard, chest.resources, 650);
+    const special = await animateCategory(specialCard, chest.special, 780);
+    const chance = await animateCategory(chanceCard, chest.chance, 950);
+
+    setRollingState(false);
+
+    const player = document.getElementById("playerName").value.trim();
+    const stable = document.getElementById("stableName").value.trim();
+
+    lastResult = {
+      chestKey: selectedChest,
+      chestName: chest.name,
+      icon: chest.icon,
+      player,
+      stable,
+      resources: resources.reward,
+      special: special.reward,
+      chance: chance.reward
+    };
+
+    history.unshift(lastResult);
+    renderHistory();
+
+    openState.textContent = "Coffre ouvert";
+    openChestBtn.disabled = false;
+    copyResultBtn.disabled = false;
+  }
+
+  function renderHistory() {
+    historyList.innerHTML = "";
+
+    if (!history.length) {
+      const empty = document.createElement("div");
+      empty.className = "themis-history-empty";
+      empty.textContent = "Aucun coffre ouvert pour le moment.";
+      historyList.appendChild(empty);
+      return;
+    }
+
+    history.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "themis-history-item";
+
+      const chest = document.createElement("div");
+      chest.className = "themis-history-chest";
+      chest.textContent = `${item.icon} ${item.chestName}`;
+
+      const player = document.createElement("div");
+      player.className = "themis-history-player";
+      player.textContent = item.player || "Membre non renseigné";
+
+      const results = document.createElement("div");
+      results.className = "themis-history-results";
+      const stableText = item.stable ? ` • ${item.stable}` : "";
+      results.textContent = `${item.resources} • ${item.special} • ${item.chance}${stableText}`;
+
+      row.append(chest, player, results);
+      historyList.appendChild(row);
+    });
+  }
+
+  async function copyResult() {
+    if (!lastResult) return;
+
+    const parts = [
+      `${lastResult.icon} ${lastResult.chestName}`,
+      lastResult.player ? `Membre : ${lastResult.player}` : null,
+      lastResult.stable ? `Écurie : ${lastResult.stable}` : null,
+      `🎒 Ressources : ${lastResult.resources}`,
+      `💎 Récompense spéciale : ${lastResult.special}`,
+      `✨ Chance : ${lastResult.chance}`
+    ].filter(Boolean);
+
+    const text = parts.join("\n");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      copyResultBtn.textContent = "Résultat copié !";
+      setTimeout(() => copyResultBtn.textContent = "Copier le résultat", 1400);
+    } catch (e) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+
+      copyResultBtn.textContent = "Résultat copié !";
+      setTimeout(() => copyResultBtn.textContent = "Copier le résultat", 1400);
+    }
+  }
+
+  choiceButtons.forEach(btn => {
+    btn.addEventListener("click", () => setChest(btn.dataset.chest));
+  });
+
+  openChestBtn.addEventListener("click", openChest);
+  copyResultBtn.addEventListener("click", copyResult);
+
+  document.getElementById("clearHistory").addEventListener("click", () => {
+    history.length = 0;
+    renderHistory();
+  });
+
+  setChest("or");
+})();
+</script>
+
+</body>
+</html>
