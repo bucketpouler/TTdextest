@@ -193,6 +193,8 @@
     }
 
     .talent-check input { width: auto; padding: 0; margin: 0; }
+    .talent-check.disabled { opacity: .45; cursor: not-allowed; }
+
 
     .capture-search-group {
       display: grid;
@@ -434,7 +436,7 @@
           <select id="zoneSelect"><option value="">Toutes les zones</option></select>
           <select id="typeSelect"><option value="">Tous les types</option></select>
           <select id="typePairSelect"><option value="">Aucun binôme</option></select>
-          <select id="playerRankSelect">
+          <select id="playerRankSelect" onchange="updateAuraFarmerAvailability()">
             <option value="D">Rang joueur D</option>
             <option value="C">Rang joueur C</option>
             <option value="B">Rang joueur B</option>
@@ -707,12 +709,19 @@ function getManualCaptureRarityKey(pokemon){
   return getRarityKey(pokemon);
 }
 
-function getManualCaptureChance(pokemon){
-  const rank = document.getElementById("captureRankSelect")?.value || "C";
-  const rarity = getManualCaptureRarityKey(pokemon);
-  const baseChance = CAPTURE_TABLE[rarity][rank] ?? 30;
-  const auraMalus = document.getElementById("captureAuraFarmer")?.checked ? 10 : 0;
+function getCaptureChanceByRarity(rarity, rank, auraFarmer = false){
+  const safeRarity = CAPTURE_TABLE[rarity] ? rarity : "commun";
+  const safeRank = RANKS.includes(rank) ? rank : "D";
+  const baseChance = CAPTURE_TABLE[safeRarity][safeRank];
+  const auraMalus = auraFarmer ? 10 : 0;
   return Math.max(baseChance - auraMalus, 5);
+}
+
+function getManualCaptureChance(pokemon){
+  const rank = document.getElementById("captureRankSelect")?.value || "D";
+  const rarity = getManualCaptureRarityKey(pokemon);
+  const auraFarmer = document.getElementById("captureAuraFarmer")?.checked || false;
+  return getCaptureChanceByRarity(rarity, rank, auraFarmer);
 }
 
 function renderCapturePreview(){
@@ -733,7 +742,9 @@ function renderCapturePreview(){
   const sprite = shiny && pokemon.shiny ? pokemon.shiny : pokemon.sprite;
   const rarityInfo = rarity === "rare"
     ? { label: "Rare", className: "coral" }
-    : { label: "Commun", className: "green" };
+    : rarity === "peucommun"
+      ? { label: "Peu Commun", className: "blue" }
+      : { label: "Commun", className: "green" };
 
   preview.innerHTML = `
     <img src="${sprite || ""}" alt="${getPokemonName(pokemon)}" />
@@ -763,7 +774,7 @@ function tryManualCapture(){
   const chance = getManualCaptureChance(pokemon);
   const roll = Math.floor(Math.random() * 100) + 1;
   const success = roll <= chance;
-  const rank = document.getElementById("captureRankSelect")?.value || "C";
+  const rank = document.getElementById("captureRankSelect")?.value || "D";
   const isShiny = document.getElementById("captureShinyToggle")?.checked || false;
   const rarity = getRarityInfo({ spawn: getManualCaptureRarityKey(pokemon) });
 
@@ -841,9 +852,23 @@ function weightedRandom(pool){
   return pool[pool.length - 1];
 }
 
+function updateAuraFarmerAvailability(){
+  const rank = document.getElementById("playerRankSelect")?.value || "D";
+  const checkbox = document.getElementById("talentAuraFarmer");
+  if(!checkbox) return;
+
+  const available = ["A", "S", "X"].includes(rank);
+  checkbox.disabled = !available;
+  if(!available) checkbox.checked = false;
+  checkbox.closest("label")?.classList.toggle("disabled", !available);
+  checkbox.closest("label")?.setAttribute("title", available ? "" : "Aura Farmer est disponible à partir du rang A.");
+}
+
 function getSelectedTalents(){
+  const playerRank = document.getElementById("playerRankSelect")?.value || "D";
+  const auraAllowed = ["A", "S", "X"].includes(playerRank);
   return {
-    auraFarmer: document.getElementById("talentAuraFarmer").checked,
+    auraFarmer: auraAllowed && document.getElementById("talentAuraFarmer").checked,
     shasseur: document.getElementById("talentShasseur").checked,
     forceShiny: document.getElementById("talentForceShiny").checked,
     battleRoyale: document.getElementById("talentBattleRoyale").checked
@@ -889,9 +914,7 @@ function rollRank(talents){
 
 function getCaptureChance(pokemon, rank, talents){
   const rarity = getRarityKey(pokemon);
-  const baseChance = CAPTURE_TABLE[rarity][rank] ?? 30;
-  const auraMalus = talents.auraFarmer ? 10 : 0;
-  return Math.max(baseChance - auraMalus, 5);
+  return getCaptureChanceByRarity(rarity, rank, !!talents.auraFarmer);
 }
 
 
@@ -1177,7 +1200,7 @@ function generateEncounter(){
   ].join(" • ");
 
   const talentSummary = [
-    talents.auraFarmer && ["A", "S", "X"].includes(playerRank) ? "Aura Farmer actif : rang amélioré, maximum +1" : (talents.auraFarmer ? "Aura Farmer indisponible avant le rang A" : "Aura Farmer inactif"),
+    talents.auraFarmer ? "Aura Farmer actif : rang amélioré, maximum +1" : "Aura Farmer inactif",
     talents.forceShiny
       ? "Shiny garanti : 100%"
       : (talents.shasseur ? "Shasseur actif : shiny 15%" : "Shiny : 10%"),
@@ -1875,7 +1898,12 @@ function runTests(){
   console.assert(!("X" in RANK_TABLE_AURA.A), "Aura Farmer A ne doit pas permettre le rang X");
   console.assert(getCaptureChance({ spawn: "commun" }, "C", { auraFarmer: false }) === 65, "Test capture commun C échoué");
   console.assert(getCaptureChance({ spawn: "rare" }, "X", { auraFarmer: true }) === 5, "Test capture minimum échoué");
-  console.assert(CAPTURE_TABLE.commun.C === 65, "Test table capture manuelle échoué");
+  console.assert(CAPTURE_TABLE.commun.C === 65, "Test table capture manuelle C échoué");
+  console.assert(CAPTURE_TABLE.commun.D === 70, "Test capture commun D échoué");
+  console.assert(CAPTURE_TABLE.peucommun.D === 55, "Test capture peu commun D échoué");
+  console.assert(CAPTURE_TABLE.rare.D === 40, "Test capture rare D échoué");
+  console.assert(RANK_TABLE_NORMAL.D.D === 100, "Test rencontre dresseur D échoué");
+  console.assert(Object.values(RANK_TABLE_NORMAL.D).reduce((a,b) => a+b, 0) === 100, "Test table rang D échoué");
   console.info("Tests staff tools terminés.");
 }
 
@@ -1884,6 +1912,12 @@ runTests();
 loadData().catch(error => {
   console.error(error);
   document.getElementById("loginError").textContent = "Erreur de chargement du Google Sheets.";
+});
+
+
+// Rang D est un rang de première classe dans tout le système : rencontre + capture.
+document.addEventListener("DOMContentLoaded", () => {
+  updateAuraFarmerAvailability();
 });
 
 </script>
