@@ -630,8 +630,7 @@ button {
           <h2>Génération de la grille</h2>
         </div>
         <p>
-          À chaque génération, 25 missions sont tirées au hasard. Les types, raretés,
-          Balls et zones variables sont déterminés automatiquement.
+          À chaque génération, 25 missions sont tirées au hasard. Les missions variables peuvent apparaître plusieurs fois avec des paramètres différents : types, raretés, Balls ou zones.
         </p>
       </div>
 
@@ -681,7 +680,7 @@ button {
 
     <div class="themis-bingo-panel themis-bingo-stat">
       <div class="themis-bingo-stat-label">Missions disponibles</div>
-      <div class="themis-bingo-stat-value">26</div>
+      <div class="themis-bingo-stat-value">35+</div>
     </div>
   </div>
 
@@ -700,10 +699,35 @@ button {
 
   const balls = ["Poké Ball", "Super Ball", "Hyper Ball", "Ball spé-type"];
 
-  const missionPool = [
-    { tag:"Capture", text:() => `Capturer un Pokémon de type ${pick(types)}.` },
-    { tag:"Capture", text:() => `Capturer un Pokémon ${pick(raretes)}.` },
-    { tag:"Capture", text:() => `Capturer un Pokémon avec une ${pick(balls)}.` },
+  /*
+   * Les missions variables peuvent apparaître plusieurs fois dans une même grille.
+   * Elles sont générées en plusieurs exemplaires AVANT le tirage final.
+   * Les doublons exacts sont ensuite retirés automatiquement.
+   */
+  const variableMissions = [
+    {
+      tag:"Capture",
+      copies:4,
+      text:() => `Capturer un Pokémon de type ${pick(types)}.`
+    },
+    {
+      tag:"Capture",
+      copies:3,
+      text:() => `Capturer un Pokémon ${pick(raretes)}.`
+    },
+    {
+      tag:"Capture",
+      copies:3,
+      text:() => `Capturer un Pokémon avec une ${pick(balls)}.`
+    },
+    {
+      tag:"Exploration",
+      copies:3,
+      text:() => `Commencer un RP dans ${randomZone()}.`
+    }
+  ];
+
+  const fixedMissions = [
     { tag:"Capture", text:() => `Réussir une capture du premier coup.` },
     { tag:"Hasard", text:() => `Rater 3 lancers de Ball au total en tant qu'équipe.` },
     { tag:"Capture", text:() => `Capturer deux Pokémon partageant un même type.` },
@@ -713,7 +737,6 @@ button {
     { tag:"Écurie", text:() => `Faire une capture avec un autre membre de l'écurie.` },
     { tag:"Écurie", text:() => `Deux membres capturent chacun un Pokémon du même type.` },
 
-    { tag:"Exploration", text:() => `Commencer un RP dans ${randomZone()}.` },
     { tag:"Exploration", text:() => `RP dans une zone de capture où aucun membre de l'écurie n'a RP durant la saison dernière.` },
     { tag:"Exploration", text:() => `Visiter 5 zones de capture différentes avec l'écurie.` },
 
@@ -734,6 +757,40 @@ button {
     { tag:"Défi", text:() => `Capturer un Pokémon dont le nom commence par la même lettre que le prénom du personnage.` },
     { tag:"Défi", text:() => `Capturer un Pokémon pesant plus lourd que son dresseur.` }
   ];
+
+  function buildMissionPool() {
+    const generated = [];
+
+    variableMissions.forEach(mission => {
+      let tries = 0;
+      let added = 0;
+
+      while (added < mission.copies && tries < 100) {
+        tries++;
+
+        const candidate = {
+          tag: mission.tag,
+          text: mission.text()
+        };
+
+        const alreadyExists = generated.some(item => item.text === candidate.text);
+
+        if (!alreadyExists) {
+          generated.push(candidate);
+          added++;
+        }
+      }
+    });
+
+    fixedMissions.forEach(mission => {
+      generated.push({
+        tag: mission.tag,
+        text: mission.text()
+      });
+    });
+
+    return generated;
+  }
 
   const grid = document.getElementById("bingoGrid");
   const zonesField = document.getElementById("zonesList");
@@ -783,6 +840,7 @@ button {
   function generateBingo() {
     grid.innerHTML = "";
 
+    const missionPool = buildMissionPool();
     const selected = shuffle(missionPool).slice(0, 25);
 
     selected.forEach((mission, index) => {
@@ -802,7 +860,7 @@ button {
 
       const text = document.createElement("span");
       text.className = "themis-bingo-cell-text";
-      text.textContent = mission.text();
+      text.textContent = mission.text;
 
       const check = document.createElement("span");
       check.className = "themis-bingo-cell-check";
