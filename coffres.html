@@ -734,7 +734,7 @@ button, input { font: inherit; }
 
       <div class="themis-panel themis-probabilities">
         <h2 class="themis-section-title">Probabilités du coffre sélectionné</h2>
-        <p class="themis-section-desc">Les trois roulettes sont indépendantes et donnent chacune exactement une récompense.</p>
+        <p class="themis-section-desc">Les trois roulettes sont indépendantes et donnent chacune exactement une récompense. Les CT aléatoires utilisent la liste de Paldea (9e génération) et affichent uniquement le nom de la capacité.</p>
         <div class="themis-proba-columns" id="probabilityTables"></div>
       </div>
 
@@ -744,6 +744,55 @@ button, input { font: inherit; }
 
 <script>
 (function () {
+
+
+  const CT_GEN9 = ["Bélier", "Charme", "Croco Larme", "Hâte", "Coud'Boue", "Grimace", "Abri", "Crocs Feu", "Crocs Éclair", "Crocs Givre", "Vibraqua", "Balayage", "Bombe Acide", "Acrobatie", "Survinsecte", "Rafale Psy", "Onde Folie", "Larcin", "Voix Enjôleuse", "Désherbaffe", "Bond", "Douche Froide", "Rayon Chargé", "Danse Flammes", "Façade", "Queue-Poison", "Aéropique", "Piétisol", "Châtiment", "Aboiement", "Griffe Acier", "Météores", "Feuille Magik", "Vent Glace", "Tir de Boue", "Tomberoche", "Vampibaiser", "Nitrocharge", "Balayette", "Tranch'Air", "Force Ajoutée", "Ombre Nocturne", "Dégommage", "Draco-Queue", "Choc Venin", "Avalanche", "Ténacité", "Change Éclair", "Zénith", "Danse Pluie", "Tempête de Sable", "Chute de Neige", "Estocorne", "Choc Psy", "Tunnel", "Balle Graine", "Faux-Chage", "Casse-Brique", "Psykoud'Boul", "Demi-Tour", "Griffe Ombre", "Tricherie", "Psycho-Croc", "Gonflette", "Lame d'Air", "Plaquage", "Poing Feu", "Poing Éclair", "Poing Glace", "Blabla Dodo", "Bombe Graine", "Boule Élek", "Vampi-Poing", "Protection", "Mur Lumière", "Boule Roc", "Cascade", "Draco-Griffe", "Éclat Magique", "Métronome", "Nœud Herbe", "Cage Éclair", "Direct Toxik", "Trépignement", "Repos", "Éboulement", "Provoc", "Danse-Lames", "Big Splash", "Picots", "Pics Toxik", "Possessif", "Luminocanon", "Vibrobscur", "Vampirisme", "Ondes Étranges", "Vol", "Échange", "Tête de Fer", "Danse Draco", "Rayon Gemme", "Détricanon", "Clonage", "Mur de Fer", "Plaie Croix", "Tunnelier", "Feu Follet", "Mâchouille", "Tour de Magie", "Aqua-Brèche", "Giga-Sangsue", "Aurasphère", "Vent Arrière", "Ball'Ombre", "Draco-Choc", "Piège de Roc", "Mégaphone", "Canicule", "Éco-Sphère", "Psyko", "Tacle Lourd", "Encore", "Surf", "Cryo-Pirouette", "Lance-Flammes", "Tonnerre", "Câlinerie", "Amnésie", "Plénitude", "Coup d'Main", "Boule Pollen", "Relais", "Telluriforce", "Contre", "Laser Glace", "Champ Électrifié", "Champ Herbu", "Champ Psychique", "Champ Brumeux", "Machination", "Déflagration", "Hydrocanon", "Blizzard", "Aire de Feu", "Aire d'Eau", "Aire d'Herbe", "Éclair Fou", "Bombe Beurk", "Séisme", "Lame de Roc", "Hantise", "Giga Impact", "Rafale Feu", "Hydroblast", "Végé-Attaque", "Colère", "Surchauffe", "Exploforce", "Tempête Verte", "Vent Violent", "Distorsion", "Bourdon", "Ultralaser", "Rapace", "Boutefeu", "Fatal-Foudre", "Close Combat", "Lance-Soleil", "Draco-Météore", "Métalaser", "Téra Explosion"];
+  const FOSSILES = ["Fossile Dôme", "Fossile Nautile", "Vieil Ambre", "Fossile Racine", "Fossile Griffe", "Fossile Crâne", "Fossile Armure", "Fossile Plaque", "Fossile Plume", "Fossile Mâchoire", "Fossile Nageoire", "Fossile Oiseau", "Fossile Poisson", "Fossile Dragon", "Fossile Aileron"];
+  const EVOLUTION_ITEMS = ["Pierre Soleil", "Pierre Lune", "Pierre Feu", "Pierre Foudre", "Pierre Eau", "Pierre Plante", "Pierre Éclat", "Pierre Nuit", "Pierre Aube", "Pierre Glace", "Roche Royale", "Peau Métal", "Écaille Draco", "Améliorator", "CD Douteux", "Protecteur", "Électriseur", "Magmariseur", "Tissu Fauche", "Écaille Belle", "Sachet Senteur", "Chantibonbon", "Pierre Ovale", "Griffe Rasoir", "Croc Rasoir", "Dent Océan", "Écaille Océan", "Pomme Sucrée", "Pomme Acidulée", "Théière Fêlée", "Théière Ébréchée", "Bracelet Galanoa", "Couronne Galanoa", "Rouleau des Ténèbres", "Rouleau de l'Eau", "Obsidienne", "Bloc de Tourbe", "Fil de Liaison", "Armure de la Fortune", "Armure de la Rancune", "Pomme Nectar", "Bol Médiocre", "Bol Exceptionnel", "Alliage Métallique"];
+
+  function randomFrom(list) {
+    return list[Math.floor(Math.random() * list.length)];
+  }
+
+  function randomDistinct(list, count) {
+    const copy = [...list];
+    const out = [];
+    while (out.length < count && copy.length) {
+      const i = Math.floor(Math.random() * copy.length);
+      out.push(copy.splice(i, 1)[0]);
+    }
+    return out;
+  }
+
+  function resolveRandomReward(label) {
+    if (label === "1 CT aléatoire") return "CT : " + randomFrom(CT_GEN9);
+
+    if (label === "2 CT aléatoires") {
+      return "CT : " + randomDistinct(CT_GEN9, 2).join(" + ");
+    }
+
+    if (label === "1 Fossile aléatoire") {
+      return "Fossile : " + randomFrom(FOSSILES);
+    }
+
+    if (label === "1 objet évolutif aléatoire") {
+      return "Objet évolutif : " + randomFrom(EVOLUTION_ITEMS);
+    }
+
+    if (label === "2 objets évolutifs aléatoires") {
+      return "Objets évolutifs : " + randomDistinct(EVOLUTION_ITEMS, 2).join(" + ");
+    }
+
+    if (label === "1 objet évolutif aléatoire + 3 Hyper Balls") {
+      return "Objet évolutif : " + randomFrom(EVOLUTION_ITEMS) + " + 3 Hyper Balls";
+    }
+
+    if (label === "1 objet évolutif aléatoire + 2 Super Balls") {
+      return "Objet évolutif : " + randomFrom(EVOLUTION_ITEMS) + " + 2 Super Balls";
+    }
+
+    return label;
+  }
 
   const CHESTS = {
     or: {
@@ -940,9 +989,10 @@ button, input { font: inherit; }
           requestAnimationFrame(tick);
         } else {
           const result = weightedPick(pool);
-          value.textContent = result.reward;
+          const resolvedReward = resolveRandomReward(result.reward);
+          value.textContent = resolvedReward;
           proba.textContent = `Probabilité : ${result.chance}%`;
-          resolve(result);
+          resolve({ reward: resolvedReward, chance: result.chance });
         }
       }
 
