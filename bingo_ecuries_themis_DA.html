@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Défi des Écuries — Themis Trials</title>
+
+<style>
+:root {
+  --txt-noir: #151B1E;
+  --txt-noir-neutre: #3F515A;
+  --txt-blanc-neutre: #F0F3F4;
+  --txt-neutre: #889FAA;
+  --txt-neutre-second: #2A363C;
+  --txt-neutre-dis: #A5B7C0;
+  --txt-orange: #D44D2B;
+  --txt-orange-def: #DC7156;
+  --txt-brand-neutre: #F0F3F4;
+  --txt-blue-def: #72A9C0;
+
+  --bouton-clr: #E1E7EA;
+
+  --bord-neutre: rgba(9, 9, 11, 0.1);
+  --bord-neutre-second: #A5B7C0;
+  --bord-neutre-terti: #889FAA;
+  --bord-surface: #C9D6DD;
+  --bord-neutre-opa: rgb(9 9 11 / 10%);
+  --bord-bleu: #72A9C0;
+  --bord-bleu-second: #4F93B0;
+  --bord-bleu-terti: #3F768D;
+  --bord-orange: #DC7156;
+  --bord-orange-second: #D44D2B;
+  --bord-orange-terti: #A93E23;
+
+  --bg-second: #C9D6DD;
+  --bg-fond: #F0F3F4;
+  --bg-transparent: rgba(255, 255, 255, 0.70);
+  --bg-neutre: #E1E7EA;
+  --bg-neutre-prim: #2A363C;
+  --bg-neutre-terti: #A5B7C0;
+  --bg-bleu-light: #B9D4DF;
+  --bg-bleu: #95BED0;
+  --bg-bleu-second: #72A9C0;
+  --bg-bleu-terti: #4F93B0;
+  --bg-orange-light: #EEB8AA;
+  --bg-orange-second: #DC7156;
+  --bg-orange-terti: #D44D2B;
+
+  --fond-droit: radial-gradient(circle, rgba(126,170,198,2) 0%, rgba(126,170,198,1) 28%, rgba(126,170,198,.18) 48%, rgba(126,170,198,.08) 68%, rgba(126,170,198,.025) 84%, rgba(126,170,198,0) 100%);
+  --fond-gauche: radial-gradient(circle, rgba(217,122,93,2) 0%, rgba(217,122,93,1) 28%, rgba(217,122,93,.18) 48%, rgba(217,122,93,.08) 68%, rgba(217,122,93,.025) 84%, rgba(217,122,93,0) 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background-image: url('https://2img.net/i.imgur.com/XO5FwwW.png');
+  background-color: var(--bg-fond);
+  background-repeat: repeat;
+  background-position: top center;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background: transparent;
+  color: var(--txt-noir-neutre);
+  font-family: Inter, Arial, sans-serif;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  width: 1100px;
+  height: 1100px;
+  left: -550px;
+  bottom: -550px;
+  border-radius: 50%;
+  background: var(--fond-gauche);
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  width: 1100px;
+  height: 1100px;
+  right: -550px;
+  top: -550px;
+  border-radius: 50%;
+  background: var(--fond-droit);
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+@font-face {
+  font-family: Coolvetica;
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://cdn.jsdelivr.net/gh/Pandariesw/TOY/CoolveticaRg-Regular%20400.ttf');
+}
+
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 100 900;
+  src: local("Inter");
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.themis-bingo-shell {
+  width: min(1560px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 64px;
+}
+
+/* HERO */
+.themis-bingo-hero {
+  position: relative;
+  min-height: 255px;
+  padding: 36px 40px;
+  border: 1px solid var(--bord-neutre);
+  border-radius: 12px;
+  overflow: hidden;
+  background:
+    linear-gradient(110deg, rgba(220,113,86,.95), rgba(114,169,192,.83)),
+    url('https://2img.net/i.imgur.com/JoUhDEV.png') center / cover;
+  color: var(--txt-brand-neutre);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 16px;
+}
+
+.themis-bingo-hero::after {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  right: -110px;
+  top: -180px;
+  border: 58px solid rgba(255,255,255,.09);
+}
+
+.themis-bingo-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 850px;
+}
+
+.themis-bingo-kicker {
+  margin-bottom: 8px;
+  font: 700 12px Inter, Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  opacity: .9;
+}
+
+.themis-bingo-title {
+  margin: 0;
+  font: 400 64px/0.95 Coolvetica, Arial, sans-serif;
+  letter-spacing: .01em;
+}
+
+.themis-bingo-intro {
+  margin: 18px 0 0;
+  max-width: 760px;
+  font: 500 14px/1.6 Inter, Arial, sans-serif;
+}
+
+.themis-bingo-season {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  min-width: 180px;
+  padding: 18px 20px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.24);
+  backdrop-filter: blur(8px);
+}
+
+.themis-bingo-season span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  opacity: .78;
+}
+
+.themis-bingo-season strong {
+  display: block;
+  margin-top: 4px;
+  font: 400 32px Coolvetica, Arial, sans-serif;
+}
+
+/* TOOLBAR */
+.themis-bingo-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.themis-bingo-panel {
+  background: var(--bg-transparent);
+  border: 1px solid var(--bord-neutre);
+  border-radius: 12px;
+  background-clip: padding-box;
+}
+
+.themis-bingo-settings {
+  padding: 22px 24px;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(260px,.55fr);
+  gap: 24px;
+  align-items: center;
+}
+
+.themis-bingo-settings-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.themis-bingo-settings-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-orange-second);
+  border: 1px solid var(--bord-orange-second);
+  color: var(--txt-brand-neutre);
+  font-weight: 900;
+}
+
+.themis-bingo-settings-title h2 {
+  margin: 0;
+  font: 400 27px Coolvetica, Arial, sans-serif;
+  color: var(--txt-noir-neutre);
+}
+
+.themis-bingo-settings p {
+  margin: 0;
+  color: var(--txt-neutre);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.themis-bingo-zone-wrap label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--txt-noir-neutre);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.themis-bingo-zone-wrap textarea {
+  width: 100%;
+  height: 76px;
+  resize: vertical;
+  padding: 11px 12px;
+  border: 1px solid var(--bord-surface);
+  border-radius: 8px;
+  outline: 0;
+  background: var(--bg-neutre);
+  color: var(--txt-noir-neutre);
+  font: 500 12px/1.45 Inter, Arial, sans-serif;
+}
+
+.themis-bingo-zone-wrap textarea:focus {
+  border-color: var(--bord-bleu-second);
+}
+
+.themis-bingo-actions {
+  min-width: 250px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.themis-bingo-btn {
+  min-height: 48px;
+  border-radius: 8px;
+  border: 1px solid var(--bord-orange-second);
+  background: var(--bg-orange-second);
+  color: var(--txt-brand-neutre);
+  font: 700 13px Inter, Arial, sans-serif;
+  transition: .25s ease;
+}
+
+.themis-bingo-btn:hover {
+  background: var(--bg-orange-terti);
+  border-color: var(--bord-orange-terti);
+}
+
+.themis-bingo-btn.is-blue {
+  background: var(--bg-bleu-second);
+  border-color: var(--bord-bleu-second);
+}
+
+.themis-bingo-btn.is-blue:hover {
+  background: var(--bg-bleu-terti);
+  border-color: var(--bord-bleu-terti);
+}
+
+/* BOARD HEADER */
+.themis-bingo-board {
+  padding: 24px;
+}
+
+.themis-bingo-board-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.themis-bingo-board-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.themis-bingo-board-title h2 {
+  margin: 0;
+  font: 400 40px Coolvetica, Arial, sans-serif;
+  color: var(--txt-noir-neutre);
+}
+
+.themis-bingo-board-title span {
+  font: 600 12px Inter, Arial, sans-serif;
+  color: var(--txt-neutre);
+}
+
+.themis-bingo-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 310px;
+}
+
+.themis-bingo-progress {
+  flex: 1;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-neutre);
+  border: 1px solid var(--bord-surface);
+}
+
+.themis-bingo-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--bg-orange-second), var(--bg-bleu-second));
+  transition: width .3s ease;
+}
+
+.themis-bingo-progress-text {
+  min-width: 58px;
+  text-align: right;
+  font: 800 12px Inter, Arial, sans-serif;
+  color: var(--txt-noir-neutre);
+}
+
+/* GRID */
+.themis-bingo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.themis-bingo-cell {
+  position: relative;
+  min-width: 0;
+  min-height: 205px;
+  padding: 46px 20px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--bord-surface);
+  background: var(--bg-neutre);
+  color: var(--txt-noir-neutre);
+  text-align: left;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform .25s ease, border-color .25s ease, background .25s ease;
+}
+
+.themis-bingo-cell:nth-child(even) {
+  background: rgba(185,212,223,.42);
+  border-color: rgba(79,147,176,.28);
+}
+
+.themis-bingo-cell:hover {
+  transform: translateY(-3px);
+  border-color: var(--bord-orange);
+}
+
+.themis-bingo-cell-number {
+  position: absolute;
+  left: 16px;
+  top: 15px;
+  color: var(--txt-neutre);
+  font: 800 11px Inter, Arial, sans-serif;
+  letter-spacing: .08em;
+}
+
+.themis-bingo-cell-tag {
+  position: absolute;
+  right: 12px;
+  top: 11px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: var(--bg-transparent);
+  border: 1px solid var(--bord-neutre);
+  color: var(--txt-neutre);
+  font: 800 9px Inter, Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.themis-bingo-cell-text {
+  display: block;
+  max-width: 100%;
+  font: 600 14px/1.5 Inter, Arial, sans-serif;
+}
+
+.themis-bingo-cell-check {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--txt-neutre);
+  font: 700 10px Inter, Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.themis-bingo-cell-check::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid var(--bord-neutre-second);
+  background: rgba(255,255,255,.42);
+}
+
+.themis-bingo-cell.is-done {
+  background: rgba(128,174,119,.19);
+  border-color: rgba(128,174,119,.58);
+}
+
+.themis-bingo-cell.is-done .themis-bingo-cell-check {
+  color: #62875b;
+}
+
+.themis-bingo-cell.is-done .themis-bingo-cell-check::before {
+  content: "✓";
+  display: grid;
+  place-items: center;
+  background: #80AE77;
+  border-color: #80AE77;
+  color: #fff;
+  font-size: 12px;
+}
+
+/* LINE BONUS */
+.themis-bingo-footer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.themis-bingo-stat {
+  min-height: 92px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.themis-bingo-stat:nth-child(1) {
+  background: var(--bg-orange-second);
+  border-color: var(--bord-orange-second);
+  color: var(--txt-brand-neutre);
+}
+
+.themis-bingo-stat:nth-child(2) {
+  background: var(--bg-bleu-second);
+  border-color: var(--bord-bleu-second);
+  color: var(--txt-brand-neutre);
+}
+
+.themis-bingo-stat:nth-child(3) {
+  background: var(--bg-neutre);
+}
+
+.themis-bingo-stat-label {
+  font: 700 11px Inter, Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  opacity: .82;
+}
+
+.themis-bingo-stat-value {
+  font: 400 36px Coolvetica, Arial, sans-serif;
+}
+
+/* responsive */
+@media (max-width: 1180px) {
+  .themis-bingo-grid {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+  .themis-bingo-toolbar {
+    grid-template-columns: 1fr;
+  }
+  .themis-bingo-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .themis-bingo-shell {
+    width: min(100% - 24px, 1560px);
+    padding-top: 20px;
+  }
+
+  .themis-bingo-hero {
+    padding: 28px 24px;
+    min-height: 270px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .themis-bingo-title {
+    font-size: 48px;
+  }
+
+  .themis-bingo-settings {
+    grid-template-columns: 1fr;
+  }
+
+  .themis-bingo-board-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .themis-bingo-progress-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .themis-bingo-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  .themis-bingo-footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .themis-bingo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .themis-bingo-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .themis-bingo-cell {
+    min-height: 165px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="themis-bingo-shell">
+
+  <section class="themis-bingo-hero">
+    <div class="themis-bingo-hero-content">
+      <div class="themis-bingo-kicker">Odyssey présente</div>
+      <h1 class="themis-bingo-title">Défi des Écuries</h1>
+      <p class="themis-bingo-intro">
+        Tous les deux mois, les écuries s'affrontent autour d'une nouvelle grille de défis.
+        Chaque mission ne peut être validée qu'une seule fois par écurie. Coopérez,
+        explorez Eleftheria et complétez un maximum de cases avant la fin de la saison.
+      </p>
+    </div>
+
+    <div class="themis-bingo-season">
+      <span>Format</span>
+      <strong>5 × 5</strong>
+    </div>
+  </section>
+
+  <div class="themis-bingo-toolbar">
+
+    <section class="themis-bingo-panel themis-bingo-settings">
+      <div>
+        <div class="themis-bingo-settings-title">
+          <div class="themis-bingo-settings-icon">✦</div>
+          <h2>Génération de la grille</h2>
+        </div>
+        <p>
+          À chaque génération, 25 missions sont tirées au hasard. Les types, raretés,
+          Balls et zones variables sont déterminés automatiquement.
+        </p>
+      </div>
+
+      <div class="themis-bingo-zone-wrap">
+        <label for="zonesList">Zones de capture</label>
+        <textarea id="zonesList" placeholder="Une zone par ligne&#10;Forêt pétrifiée&#10;Mont Tellus&#10;Archipel Kharadra"></textarea>
+      </div>
+    </section>
+
+    <section class="themis-bingo-panel themis-bingo-actions">
+      <button class="themis-bingo-btn" id="generateBingo">Générer une nouvelle grille</button>
+      <button class="themis-bingo-btn is-blue" id="resetChecks">Réinitialiser les validations</button>
+    </section>
+
+  </div>
+
+  <section class="themis-bingo-panel themis-bingo-board">
+
+    <div class="themis-bingo-board-top">
+      <div class="themis-bingo-board-title">
+        <h2>Grille de saison</h2>
+        <span>25 objectifs</span>
+      </div>
+
+      <div class="themis-bingo-progress-wrap">
+        <div class="themis-bingo-progress">
+          <div class="themis-bingo-progress-bar" id="progressBar"></div>
+        </div>
+        <div class="themis-bingo-progress-text" id="progressText">0 / 25</div>
+      </div>
+    </div>
+
+    <div class="themis-bingo-grid" id="bingoGrid"></div>
+
+  </section>
+
+  <div class="themis-bingo-footer">
+    <div class="themis-bingo-panel themis-bingo-stat">
+      <div class="themis-bingo-stat-label">Cases validées</div>
+      <div class="themis-bingo-stat-value" id="doneCount">0</div>
+    </div>
+
+    <div class="themis-bingo-panel themis-bingo-stat">
+      <div class="themis-bingo-stat-label">Cases restantes</div>
+      <div class="themis-bingo-stat-value" id="remainingCount">25</div>
+    </div>
+
+    <div class="themis-bingo-panel themis-bingo-stat">
+      <div class="themis-bingo-stat-label">Missions disponibles</div>
+      <div class="themis-bingo-stat-value">26</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+(function () {
+
+  const types = [
+    "Normal", "Feu", "Eau", "Électrik", "Plante", "Glace", "Combat",
+    "Poison", "Sol", "Vol", "Psy", "Insecte", "Roche", "Spectre",
+    "Dragon", "Ténèbres", "Acier", "Fée"
+  ];
+
+  const raretes = ["Commun", "Peu Commun", "Rare"];
+
+  const balls = ["Poké Ball", "Super Ball", "Hyper Ball", "Ball spé-type"];
+
+  const missionPool = [
+    { tag:"Capture", text:() => `Capturer un Pokémon de type ${pick(types)}.` },
+    { tag:"Capture", text:() => `Capturer un Pokémon ${pick(raretes)}.` },
+    { tag:"Capture", text:() => `Capturer un Pokémon avec une ${pick(balls)}.` },
+    { tag:"Capture", text:() => `Réussir une capture du premier coup.` },
+    { tag:"Hasard", text:() => `Rater 3 lancers de Ball au total en tant qu'équipe.` },
+    { tag:"Capture", text:() => `Capturer deux Pokémon partageant un même type.` },
+    { tag:"Capture", text:() => `Capturer un Pokémon dont aucun membre de l'écurie ne possède encore l'espèce.` },
+    { tag:"Capture", text:() => `Capturer un Pokémon déjà possédé par un membre de l'écurie.` },
+
+    { tag:"Écurie", text:() => `Faire une capture avec un autre membre de l'écurie.` },
+    { tag:"Écurie", text:() => `Deux membres capturent chacun un Pokémon du même type.` },
+
+    { tag:"Exploration", text:() => `Commencer un RP dans ${randomZone()}.` },
+    { tag:"Exploration", text:() => `RP dans une zone de capture où aucun membre de l'écurie n'a RP durant la saison dernière.` },
+    { tag:"Exploration", text:() => `Visiter 5 zones de capture différentes avec l'écurie.` },
+
+    { tag:"Pokémon", text:() => `Faire évoluer un Pokémon.` },
+    { tag:"Pokémon", text:() => `Augmenter le rang d'un Pokémon.` },
+    { tag:"Pokémon", text:() => `Faire éclore un Œuf.` },
+    { tag:"Pokémon", text:() => `Apprendre une nouvelle capacité hors-niveau à un Pokémon.` },
+    { tag:"Écurie", text:() => `Posséder collectivement 10 types différents parmi les équipes de l'écurie.` },
+
+    { tag:"Hasard", text:() => `Obtenir deux fois la même espèce lors de rencontres différentes.` },
+    { tag:"Hasard", text:() => `Rencontrer un Pokémon shiny.` },
+
+    { tag:"Combat", text:() => `Remporter un combat.` },
+    { tag:"Combat", text:() => `Perdre un combat.` },
+    { tag:"Combat", text:() => `Affronter un Champion.` },
+
+    { tag:"Écurie", text:() => `Capturer le même Pokémon qu'un membre d'une écurie adverse pendant la saison.` },
+    { tag:"Défi", text:() => `Capturer un Pokémon dont le nom commence par la même lettre que le prénom du personnage.` },
+    { tag:"Défi", text:() => `Capturer un Pokémon pesant plus lourd que son dresseur.` }
+  ];
+
+  const grid = document.getElementById("bingoGrid");
+  const zonesField = document.getElementById("zonesList");
+  const progressBar = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressText");
+  const doneCount = document.getElementById("doneCount");
+  const remainingCount = document.getElementById("remainingCount");
+
+  function pick(array) {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  function shuffle(array) {
+    const copy = [...array];
+
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+
+    return copy;
+  }
+
+  function getZones() {
+    return zonesField.value
+      .split(/\n|,/)
+      .map(zone => zone.trim())
+      .filter(Boolean);
+  }
+
+  function randomZone() {
+    const zones = getZones();
+    return zones.length ? pick(zones) : "une zone aléatoire";
+  }
+
+  function updateProgress() {
+    const total = grid.querySelectorAll(".themis-bingo-cell").length || 25;
+    const done = grid.querySelectorAll(".themis-bingo-cell.is-done").length;
+    const percent = total ? (done / total) * 100 : 0;
+
+    progressBar.style.width = percent + "%";
+    progressText.textContent = `${done} / ${total}`;
+    doneCount.textContent = done;
+    remainingCount.textContent = Math.max(total - done, 0);
+  }
+
+  function generateBingo() {
+    grid.innerHTML = "";
+
+    const selected = shuffle(missionPool).slice(0, 25);
+
+    selected.forEach((mission, index) => {
+
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "themis-bingo-cell";
+      cell.setAttribute("aria-pressed", "false");
+
+      const number = document.createElement("span");
+      number.className = "themis-bingo-cell-number";
+      number.textContent = String(index + 1).padStart(2, "0");
+
+      const tag = document.createElement("span");
+      tag.className = "themis-bingo-cell-tag";
+      tag.textContent = mission.tag;
+
+      const text = document.createElement("span");
+      text.className = "themis-bingo-cell-text";
+      text.textContent = mission.text();
+
+      const check = document.createElement("span");
+      check.className = "themis-bingo-cell-check";
+      check.textContent = "À accomplir";
+
+      cell.append(number, tag, text, check);
+
+      cell.addEventListener("click", function () {
+        const isDone = cell.classList.toggle("is-done");
+        cell.setAttribute("aria-pressed", String(isDone));
+        check.textContent = isDone ? "Validée" : "À accomplir";
+        updateProgress();
+      });
+
+      grid.appendChild(cell);
+    });
+
+    updateProgress();
+  }
+
+  document.getElementById("generateBingo").addEventListener("click", generateBingo);
+
+  document.getElementById("resetChecks").addEventListener("click", function () {
+    grid.querySelectorAll(".themis-bingo-cell").forEach(cell => {
+      cell.classList.remove("is-done");
+      cell.setAttribute("aria-pressed", "false");
+
+      const check = cell.querySelector(".themis-bingo-cell-check");
+      if (check) check.textContent = "À accomplir";
+    });
+
+    updateProgress();
+  });
+
+  generateBingo();
+
+})();
+</script>
+
+</body>
+</html>
