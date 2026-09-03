@@ -461,8 +461,10 @@
         <h2>🌀 Apparitions Paradoxe hebdomadaires</h2>
         <div class="summary-line">Chaque semaine, deux Pokémon Paradoxe et une zone sont tirés au hasard. Le tirage reste enregistré jusqu’à la semaine suivante.</div>
         <div class="control-line" style="margin-top:12px;">
+          <select id="weeklyParadoxZone"><option value="">Zone aléatoire</option></select>
           <button class="primary" onclick="drawWeeklyParadoxes()">Effectuer le tirage de la semaine</button>
-          <button class="coral" onclick="generateWeeklyParadoxEncounter()">Lancer une apparition Paradoxe</button>
+          <button class="coral" onclick="forceWeeklyParadoxesInZone()">Ajouter 2 Paradoxes à cette zone</button>
+          <button onclick="generateWeeklyParadoxEncounter()">Lancer une apparition Paradoxe</button>
         </div>
         <div id="weeklyParadoxResult" class="result-box">Aucun tirage hebdomadaire effectué.</div>
 
@@ -634,6 +636,7 @@ async function loadData(){
 
   fillSelect("zoneSelect", allZones, "Toutes les zones");
   fillSelect("zoneInspect", allZones, "Choisir une zone");
+  fillSelect("weeklyParadoxZone", allZones, "Zone aléatoire");
   fillSelect("typeSelect", allTypes, "Tous les types");
   fillTypePairSelect();
   fillCapturePokemonSelect();
@@ -1026,7 +1029,8 @@ function getIsoWeekKey(date = new Date()){
 }
 
 function isParadoxPokemon(p){
-  return getZones(p).some(zone => normalizeName(zone) === "paradoxe");
+  const rarity = normalizeName(p.rare || p.rarete || p["rareté"] || p.rarity || p.spawn);
+  return rarity === "paradoxe" || rarity === "paradox" || getZones(p).some(zone => normalizeName(zone) === "paradoxe");
 }
 
 function getParadoxPool(){
@@ -1100,7 +1104,7 @@ function drawWeeklyParadoxes(){
 
   const pool = getParadoxPool();
   if(pool.length < 2 || allZones.length === 0){
-    document.getElementById("weeklyParadoxResult").innerHTML = "Impossible d’effectuer le tirage : il faut au moins deux Pokémon avec « Paradoxe » dans la colonne Zone et au moins une autre zone disponible.";
+    document.getElementById("weeklyParadoxResult").innerHTML = "Impossible d’effectuer le tirage : il faut au moins deux Pokémon avec la rareté « Paradoxe » et au moins une zone disponible.";
     return;
   }
 
@@ -1114,6 +1118,24 @@ function drawWeeklyParadoxes(){
     pokemonIds: [first.id, second.id]
   };
 
+  localStorage.setItem("themisWeeklyParadoxDraw", JSON.stringify(lastWeeklyParadoxDraw));
+  renderWeeklyParadoxDraw();
+}
+
+function forceWeeklyParadoxesInZone(){
+  const selectedZone = document.getElementById("weeklyParadoxZone").value;
+  if(!selectedZone){
+    document.getElementById("weeklyParadoxResult").innerHTML = "Choisis d’abord la zone dans laquelle tu veux ajouter artificiellement les deux Paradoxes.";
+    return;
+  }
+  const pool = getParadoxPool();
+  if(pool.length < 2){
+    document.getElementById("weeklyParadoxResult").innerHTML = "Impossible : il faut au moins deux Pokémon avec la rareté « Paradoxe » dans la BDD.";
+    return;
+  }
+  const first = randomItem(pool);
+  const second = randomItem(pool.filter(p => p !== first));
+  lastWeeklyParadoxDraw = {weekKey:getIsoWeekKey(),zone:selectedZone,pokemonIds:[first.id,second.id],forcedZone:true};
   localStorage.setItem("themisWeeklyParadoxDraw", JSON.stringify(lastWeeklyParadoxDraw));
   renderWeeklyParadoxDraw();
 }
