@@ -436,6 +436,8 @@
           <select id="zoneSelect"><option value="">Toutes les zones</option></select>
           <select id="typeSelect"><option value="">Tous les types</option></select>
           <select id="typePairSelect"><option value="">Aucun binôme</option></select>
+          <select id="encounterParadox1"><option value="">Paradoxe 1 — aucun</option></select>
+          <select id="encounterParadox2"><option value="">Paradoxe 2 — aucun</option></select>
           <select id="playerRankSelect" onchange="updateAuraFarmerAvailability()">
             <option value="D">Rang joueur D</option>
             <option value="C">Rang joueur C</option>
@@ -637,6 +639,7 @@ async function loadData(){
   fillSelect("zoneSelect", allZones, "Toutes les zones");
   fillSelect("zoneInspect", allZones, "Choisir une zone");
   fillSelect("weeklyParadoxZone", allZones, "Zone aléatoire");
+  fillEncounterParadoxSelects();
   fillSelect("typeSelect", allTypes, "Tous les types");
   fillTypePairSelect();
   fillCapturePokemonSelect();
@@ -1170,6 +1173,26 @@ function generateWeeklyParadoxEncounter(){
   `;
 }
 
+function fillEncounterParadoxSelects(){
+  const paradoxes = allPokemon
+    .filter(isParadoxPokemon)
+    .slice()
+    .sort((a,b) => getPokemonName(a).localeCompare(getPokemonName(b), "fr"));
+
+  ["encounterParadox1","encounterParadox2"].forEach((id, index) => {
+    const select = document.getElementById(id);
+    if(!select) return;
+
+    const current = select.value;
+    select.innerHTML = `<option value="">Paradoxe ${index + 1} — aucun</option>` +
+      paradoxes.map(p => `<option value="${p.id}">${getPokemonName(p)}</option>`).join("");
+
+    if([...select.options].some(option => option.value === current)){
+      select.value = current;
+    }
+  });
+}
+
 function generateEncounter(){
   const zone = document.getElementById("zoneSelect").value;
   const type = document.getElementById("typeSelect").value;
@@ -1178,7 +1201,7 @@ function generateEncounter(){
   const playerRank = document.getElementById("playerRankSelect").value;
   const talents = getSelectedTalents();
 
-  const pool = allPokemon.filter(p => {
+  const basePool = allPokemon.filter(p => {
     const zones = getZones(p);
     const playableZones = zones.filter(item => normalizeName(item) !== "paradoxe");
 
@@ -1191,6 +1214,25 @@ function generateEncounter(){
     const matchesType = !type || getType1(p) === type || getType2(p) === type;
     const matchesPair = pairTypes.length === 0 || pokemonHasAnyType(p, pairTypes);
     return matchesZone && (type ? matchesType : matchesPair);
+  });
+
+  const selectedParadoxIds = [
+    document.getElementById("encounterParadox1")?.value,
+    document.getElementById("encounterParadox2")?.value
+  ].filter(Boolean);
+
+  const injectedParadoxes = selectedParadoxIds
+    .map(id => allPokemon.find(p => String(p.id) === String(id)))
+    .filter(Boolean)
+    .filter((p, index, arr) => arr.findIndex(other => String(other.id) === String(p.id)) === index);
+
+  // Les deux Paradoxes choisis sont ajoutés artificiellement au pool de la zone,
+  // sans modifier la BDD ni leur colonne Zone.
+  const pool = [...basePool];
+  injectedParadoxes.forEach(p => {
+    if(!pool.some(existing => String(existing.id) === String(p.id))){
+      pool.push(p);
+    }
   });
 
   if(pool.length === 0){
@@ -1218,6 +1260,7 @@ function generateEncounter(){
     zone ? `Zone : ${zone}` : "Toutes les zones",
     type ? `Type seul : ${type}` : (pairTypes.length ? `Binôme : ${pairTypes.join(" + ")}` : "Tous les types"),
     `Rang joueur : ${playerRank}`,
+    injectedParadoxes.length ? `Paradoxes ajoutés : ${injectedParadoxes.map(getPokemonName).join(" + ")}` : "Aucun Paradoxe ajouté",
     `Pool : ${pool.length} Pokémon`
   ].join(" • ");
 
