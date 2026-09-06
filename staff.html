@@ -837,18 +837,20 @@ function renderStats(){
 
 function getRarityKey(p){
   if(p && p.__encounterParadox) return "peucommun";
-  const raw = normalizeName(p.spawn);
-  const num = parseFloat(raw);
 
-  if(raw === "rare" || num === 2) return "rare";
+  const raw = normalizeName(
+    p.rare || p.rarete || p["rareté"] || p.rarity || ""
+  );
+
+  if(raw === "paradoxe" || raw === "paradox") return "peucommun";
+  if(raw === "rare") return "rare";
   if(
     raw === "peu commun" ||
     raw === "peu-commun" ||
     raw === "peucommun" ||
-    raw === "uncommon" ||
-    num === 1 ||
-    num === 5
+    raw === "uncommon"
   ) return "peucommun";
+
   return "commun";
 }
 
