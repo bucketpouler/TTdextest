@@ -436,8 +436,8 @@
           <select id="zoneSelect" onchange="fillRadarSelects()"><option value="">Toutes les zones</option></select>
           <select id="typeSelect" onchange="fillRadarSelects()"><option value="">Tous les types</option></select>
           <select id="typePairSelect" onchange="fillRadarSelects()"><option value="">Aucun binôme</option></select>
-          <select id="encounterParadox1"><option value="">Paradoxe 1 — aucun</option></select>
-          <select id="encounterParadox2"><option value="">Paradoxe 2 — aucun</option></select>
+          <select id="encounterParadox1" onchange="fillRadarSelects()"><option value="">Paradoxe 1 — aucun</option></select>
+          <select id="encounterParadox2" onchange="fillRadarSelects()"><option value="">Paradoxe 2 — aucun</option></select>
           <select id="playerRankSelect" onchange="updateAuraFarmerAvailability()">
             <option value="D">Rang joueur D</option>
             <option value="C">Rang joueur C</option>
@@ -841,7 +841,14 @@ function getRarityKey(p){
   const num = parseFloat(raw);
 
   if(raw === "rare" || num === 2) return "rare";
-  if(raw === "peu commun" || raw === "peu-commun" || raw === "peucommun") return "peucommun";
+  if(
+    raw === "peu commun" ||
+    raw === "peu-commun" ||
+    raw === "peucommun" ||
+    raw === "uncommon" ||
+    num === 1 ||
+    num === 5
+  ) return "peucommun";
   return "commun";
 }
 
@@ -1247,7 +1254,7 @@ function fillRadarSelects(){
   const pair = document.getElementById("typePairSelect")?.value || "";
   const pairTypes = pair ? pair.split("|") : [];
 
-  const pool = allPokemon.filter(p => {
+  const basePool = allPokemon.filter(p => {
     if(isParadoxPokemon(p)) return false;
     const zones = getZones(p).filter(z => normalizeName(z) !== "paradoxe");
     const zoneOk = !zone || zones.some(z => normalizeName(z) === normalizeName(zone));
@@ -1255,6 +1262,18 @@ function fillRadarSelects(){
     const pairOk = !pairTypes.length || pokemonHasAnyType(p, pairTypes);
     return zoneOk && (type ? typeOk : pairOk);
   });
+
+  const selectedParadoxIds = [
+    document.getElementById("encounterParadox1")?.value,
+    document.getElementById("encounterParadox2")?.value
+  ].filter(Boolean);
+
+  const injectedParadoxes = selectedParadoxIds
+    .map(id => allPokemon.find(p => String(p.id) === String(id)))
+    .filter(Boolean)
+    .map(p => ({ ...p, __encounterParadox: true }));
+
+  const pool = [...basePool, ...injectedParadoxes];
 
   [
     ["radarCommun","commun","Radar — Commun"],
@@ -1273,6 +1292,7 @@ function fillRadarSelects(){
 }
 
 function pickEncounterPokemon(pool, paradoxes, talents){
+  // Radar : le joueur fixe 1 espèce de chaque rareté, puis 50 / 35 / 15.
   if(talents.radar){
     const picks = {
       commun: getRadarPokemon("radarCommun"),
@@ -1280,31 +1300,45 @@ function pickEncounterPokemon(pool, paradoxes, talents){
       rare: getRadarPokemon("radarRare")
     };
     if(!picks.commun || !picks.peucommun || !picks.rare) return null;
-    return picks[rollRarity({commun:50, peucommun:35, rare:15})];
+    return picks[rollRarity({ commun: 50, peucommun: 35, rare: 15 })];
   }
 
-  if(talents.aimantRaretes){
-    const rarity = rollRarity({peucommun:70, rare:30});
-    if(rarity === "peucommun" && talents.traqueur && paradoxes.length && Math.random() < 0.50){
+  // Le tirage normal se fait D'ABORD par rareté.
+  // C'est ce qui garantit réellement 50 % Commun / 35 % Peu Commun / 15 % Rare.
+  const rarity = talents.aimantRaretes
+    ? rollRarity({ peucommun: 70, rare: 30 })
+    : rollRarity({ commun: 50, peucommun: 35, rare: 15 });
+
+  const regularPool = pool.filter(p => !p.__encounterParadox);
+  const regularCandidates = regularPool.filter(p => getRarityKey(p) === rarity);
+
+  // Les Paradoxes du Bulletin comptent comme Peu Communs.
+  if(rarity === "peucommun"){
+    if(talents.traqueur && paradoxes.length){
+      // Traqueur : 50 % Paradoxe / 50 % Peu Commun classique.
+      if(Math.random() < 0.50){
+        return randomItem(paradoxes);
+      }
+      if(regularCandidates.length){
+        return randomItem(regularCandidates);
+      }
       return randomItem(paradoxes);
     }
-    const candidates = pool.filter(p => !isParadoxPokemon(p) && getRarityKey(p) === rarity);
-    return candidates.length ? weightedRandom(candidates) : weightedRandom(pool);
+
+    // Sans Traqueur, les Paradoxes font simplement partie du pool Peu Commun.
+    const uncommonPool = [...regularCandidates, ...paradoxes];
+    if(uncommonPool.length){
+      return randomItem(uncommonPool);
+    }
   }
 
-  const normalPool = pool.filter(p => !isParadoxPokemon(p));
-  const pokemon = weightedRandom(normalPool.length ? normalPool : pool);
-
-  if(
-    talents.traqueur &&
-    pokemon &&
-    getRarityKey(pokemon) === "peucommun" &&
-    paradoxes.length &&
-    Math.random() < 0.50
-  ){
-    return randomItem(paradoxes);
+  if(regularCandidates.length){
+    return randomItem(regularCandidates);
   }
-  return pokemon;
+
+  // Sécurité seulement si une zone ne possède exceptionnellement aucun Pokémon
+  // de la rareté tirée.
+  return randomItem(pool);
 }
 
 function generateEncounter(){
