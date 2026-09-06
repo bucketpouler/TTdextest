@@ -433,9 +433,9 @@
       <article class="tool-card wide">
         <h2>🎲 Générateur de rencontre</h2>
         <div class="filters">
-          <select id="zoneSelect"><option value="">Toutes les zones</option></select>
-          <select id="typeSelect"><option value="">Tous les types</option></select>
-          <select id="typePairSelect"><option value="">Aucun binôme</option></select>
+          <select id="zoneSelect" onchange="fillRadarSelects()"><option value="">Toutes les zones</option></select>
+          <select id="typeSelect" onchange="fillRadarSelects()"><option value="">Tous les types</option></select>
+          <select id="typePairSelect" onchange="fillRadarSelects()"><option value="">Aucun binôme</option></select>
           <select id="encounterParadox1"><option value="">Paradoxe 1 — aucun</option></select>
           <select id="encounterParadox2"><option value="">Paradoxe 2 — aucun</option></select>
           <select id="playerRankSelect" onchange="updateAuraFarmerAvailability()">
@@ -454,6 +454,16 @@
           <label class="talent-check"><input id="talentShasseur" type="checkbox" /> Shasseur</label>
           <label class="talent-check"><input id="talentForceShiny" type="checkbox" /> ✨ Shiny garanti</label>
           <label class="talent-check"><input id="talentBattleRoyale" type="checkbox" /> Battle Royale</label>
+          <label class="talent-check"><input id="talentAmiPokemon" type="checkbox" /> Ami des Pokémon (+10)</label>
+          <label class="talent-check"><input id="talentRecyclage" type="checkbox" /> Recyclage (30%)</label>
+          <label class="talent-check"><input id="talentRadar" type="checkbox" onchange="updateRadarControls()" /> Radar</label>
+          <label class="talent-check"><input id="talentTraqueur" type="checkbox" /> Traqueur</label>
+          <label class="talent-check"><input id="talentAimantRaretes" type="checkbox" /> Aimant à raretés</label>
+        </div>
+        <div id="radarControls" class="filters hidden" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+          <select id="radarCommun"><option value="">Radar — Commun</option></select>
+          <select id="radarPeuCommun"><option value="">Radar — Peu Commun</option></select>
+          <select id="radarRare"><option value="">Radar — Rare</option></select>
         </div>
 
         <div id="encounterResult" class="result-box">Choisis une zone ou génère parmi toute la base.</div>
@@ -504,6 +514,8 @@
             <div class="talents" style="margin-top:10px;">
               <label class="talent-check"><input id="captureAuraFarmer" type="checkbox" onchange="renderCapturePreview()" /> Aura Farmer</label>
               <label class="talent-check"><input id="captureShiny" type="checkbox" onchange="renderCapturePreview()" /> Pokémon shiny</label>
+              <label class="talent-check"><input id="captureAmiPokemon" type="checkbox" onchange="renderCapturePreview()" /> Ami des Pokémon (+10)</label>
+              <label class="talent-check"><input id="captureRecyclage" type="checkbox" /> Recyclage (30%)</label>
             </div>
 
             <div id="captureManualResult" class="capture-manual-result">Choisis un Pokémon pour calculer ses chances de capture.</div>
@@ -727,7 +739,8 @@ function getManualCaptureChance(pokemon){
   const rank = document.getElementById("captureRankSelect")?.value || "D";
   const rarity = getManualCaptureRarityKey(pokemon);
   const auraFarmer = document.getElementById("captureAuraFarmer")?.checked || false;
-  return getCaptureChanceByRarity(rarity, rank, auraFarmer);
+  const amiPokemon = document.getElementById("captureAmiPokemon")?.checked || false;
+  return Math.min(getCaptureChanceByRarity(rarity, rank, auraFarmer) + (amiPokemon ? 10 : 0), 100);
 }
 
 function renderCapturePreview(){
@@ -781,12 +794,14 @@ function tryManualCapture(){
   const roll = Math.floor(Math.random() * 100) + 1;
   const success = roll <= chance;
   const rank = document.getElementById("captureRankSelect")?.value || "D";
-  const isShiny = document.getElementById("captureShinyToggle")?.checked || false;
+  const isShiny = document.getElementById("captureShiny")?.checked || false;
   const rarity = getRarityInfo({ spawn: getManualCaptureRarityKey(pokemon) });
+  const recyclage = document.getElementById("captureRecyclage")?.checked || false;
+  const ballRecovered = !success && recyclage && Math.random() < 0.30;
 
   result.textContent = success
     ? `✅ Capture réussie ! Jet : ${roll}/100 — taux ${chance}%.`
-    : `❌ Échec de capture. Jet : ${roll}/100 — taux ${chance}%.`;
+    : `❌ Échec de capture. Jet : ${roll}/100 — taux ${chance}%.${recyclage ? (ballRecovered ? " ♻️ Ball récupérée !" : " ♻️ Ball non récupérée.") : ""}`;
 
   lastManualCaptureResult = {
     pokemon,
@@ -821,6 +836,7 @@ function renderStats(){
 }
 
 function getRarityKey(p){
+  if(p && p.__encounterParadox) return "peucommun";
   const raw = normalizeName(p.spawn);
   const num = parseFloat(raw);
 
@@ -877,7 +893,12 @@ function getSelectedTalents(){
     auraFarmer: auraAllowed && document.getElementById("talentAuraFarmer").checked,
     shasseur: document.getElementById("talentShasseur").checked,
     forceShiny: document.getElementById("talentForceShiny").checked,
-    battleRoyale: document.getElementById("talentBattleRoyale").checked
+    battleRoyale: document.getElementById("talentBattleRoyale").checked,
+    amiPokemon: document.getElementById("talentAmiPokemon")?.checked || false,
+    recyclage: document.getElementById("talentRecyclage")?.checked || false,
+    radar: document.getElementById("talentRadar")?.checked || false,
+    traqueur: document.getElementById("talentTraqueur")?.checked || false,
+    aimantRaretes: document.getElementById("talentAimantRaretes")?.checked || false
   };
 }
 
@@ -920,7 +941,10 @@ function rollRank(talents){
 
 function getCaptureChance(pokemon, rank, talents){
   const rarity = getRarityKey(pokemon);
-  return getCaptureChanceByRarity(rarity, rank, !!talents.auraFarmer);
+  return Math.min(
+    getCaptureChanceByRarity(rarity, rank, !!talents.auraFarmer) + (talents.amiPokemon ? 10 : 0),
+    100
+  );
 }
 
 
@@ -983,11 +1007,13 @@ function tryCapture(index){
   const success = roll <= chance;
   result.roll = roll;
   result.success = success;
+  const talents = getSelectedTalents();
+  result.ballRecovered = !success && talents.recyclage && Math.random() < 0.30;
 
   const container = document.getElementById(`captureResult-${index}`);
   container.textContent = success
     ? `✅ Capture réussie ! (${roll}/${chance})`
-    : `❌ Échec de capture. (${roll}/${chance})`;
+    : `❌ Échec de capture. (${roll}/${chance})${talents.recyclage ? (result.ballRecovered ? " — ♻️ Ball récupérée !" : " — ♻️ Ball non récupérée.") : ""}`;
 }
 
 function pokemonHasAnyType(p, types){
@@ -1154,7 +1180,7 @@ function generateWeeklyParadoxEncounter(){
     return;
   }
 
-  const pokemon = randomItem(pokemonPool);
+  const pokemon = { ...randomItem(pokemonPool), __encounterParadox: true };
   const talents = getSelectedTalents();
   const rank = rollRank(talents);
   const captureChance = getCaptureChance(pokemon, rank, talents);
@@ -1193,6 +1219,94 @@ function fillEncounterParadoxSelects(){
   });
 }
 
+
+function rollRarity(weights){
+  const roll = Math.random() * 100;
+  let cumulative = 0;
+  for(const [rarity, chance] of Object.entries(weights)){
+    cumulative += chance;
+    if(roll < cumulative) return rarity;
+  }
+  return Object.keys(weights).pop();
+}
+
+function getRadarPokemon(id){
+  const value = document.getElementById(id)?.value;
+  return value ? allPokemon.find(p => String(p.id) === String(value)) : null;
+}
+
+function updateRadarControls(){
+  const active = document.getElementById("talentRadar")?.checked || false;
+  document.getElementById("radarControls")?.classList.toggle("hidden", !active);
+  if(active) fillRadarSelects();
+}
+
+function fillRadarSelects(){
+  const zone = document.getElementById("zoneSelect")?.value || "";
+  const type = document.getElementById("typeSelect")?.value || "";
+  const pair = document.getElementById("typePairSelect")?.value || "";
+  const pairTypes = pair ? pair.split("|") : [];
+
+  const pool = allPokemon.filter(p => {
+    if(isParadoxPokemon(p)) return false;
+    const zones = getZones(p).filter(z => normalizeName(z) !== "paradoxe");
+    const zoneOk = !zone || zones.some(z => normalizeName(z) === normalizeName(zone));
+    const typeOk = !type || getType1(p) === type || getType2(p) === type;
+    const pairOk = !pairTypes.length || pokemonHasAnyType(p, pairTypes);
+    return zoneOk && (type ? typeOk : pairOk);
+  });
+
+  [
+    ["radarCommun","commun","Radar — Commun"],
+    ["radarPeuCommun","peucommun","Radar — Peu Commun"],
+    ["radarRare","rare","Radar — Rare"]
+  ].forEach(([id, rarity, label]) => {
+    const select = document.getElementById(id);
+    if(!select) return;
+    const old = select.value;
+    const list = pool.filter(p => getRarityKey(p) === rarity)
+      .sort((a,b) => getPokemonName(a).localeCompare(getPokemonName(b), "fr"));
+    select.innerHTML = `<option value="">${label}</option>` +
+      list.map(p => `<option value="${p.id}">${getPokemonName(p)}</option>`).join("");
+    if([...select.options].some(o => o.value === old)) select.value = old;
+  });
+}
+
+function pickEncounterPokemon(pool, paradoxes, talents){
+  if(talents.radar){
+    const picks = {
+      commun: getRadarPokemon("radarCommun"),
+      peucommun: getRadarPokemon("radarPeuCommun"),
+      rare: getRadarPokemon("radarRare")
+    };
+    if(!picks.commun || !picks.peucommun || !picks.rare) return null;
+    return picks[rollRarity({commun:50, peucommun:35, rare:15})];
+  }
+
+  if(talents.aimantRaretes){
+    const rarity = rollRarity({peucommun:70, rare:30});
+    if(rarity === "peucommun" && talents.traqueur && paradoxes.length && Math.random() < 0.50){
+      return randomItem(paradoxes);
+    }
+    const candidates = pool.filter(p => !isParadoxPokemon(p) && getRarityKey(p) === rarity);
+    return candidates.length ? weightedRandom(candidates) : weightedRandom(pool);
+  }
+
+  const normalPool = pool.filter(p => !isParadoxPokemon(p));
+  const pokemon = weightedRandom(normalPool.length ? normalPool : pool);
+
+  if(
+    talents.traqueur &&
+    pokemon &&
+    getRarityKey(pokemon) === "peucommun" &&
+    paradoxes.length &&
+    Math.random() < 0.50
+  ){
+    return randomItem(paradoxes);
+  }
+  return pokemon;
+}
+
 function generateEncounter(){
   const zone = document.getElementById("zoneSelect").value;
   const type = document.getElementById("typeSelect").value;
@@ -1224,7 +1338,8 @@ function generateEncounter(){
   const injectedParadoxes = selectedParadoxIds
     .map(id => allPokemon.find(p => String(p.id) === String(id)))
     .filter(Boolean)
-    .filter((p, index, arr) => arr.findIndex(other => String(other.id) === String(p.id)) === index);
+    .filter((p, index, arr) => arr.findIndex(other => String(other.id) === String(p.id)) === index)
+    .map(p => ({ ...p, __encounterParadox: true }));
 
   // Les deux Paradoxes choisis sont ajoutés artificiellement au pool de la zone,
   // sans modifier la BDD ni leur colonne Zone.
@@ -1240,11 +1355,18 @@ function generateEncounter(){
     return;
   }
 
+  if(talents.radar && (!getRadarPokemon("radarCommun") || !getRadarPokemon("radarPeuCommun") || !getRadarPokemon("radarRare"))){
+    document.getElementById("encounterResult").innerHTML =
+      "Avec Radar, choisis un Pokémon Commun, un Peu Commun et un Rare.";
+    return;
+  }
+
   const encounterCount = getEncounterCount(talents);
   lastEncounterResults = [];
 
   for(let i = 0; i < encounterCount; i++){
-    const pokemon = weightedRandom(pool);
+    const pokemon = pickEncounterPokemon(pool, injectedParadoxes, talents);
+    if(!pokemon) continue;
     const rank = rollRank(talents);
     const captureChance = getCaptureChance(pokemon, rank, talents);
 
@@ -1269,8 +1391,13 @@ function generateEncounter(){
     talents.forceShiny
       ? "Shiny garanti : 100%"
       : (talents.shasseur ? "Shasseur actif : shiny 15%" : "Shiny : 10%"),
-    talents.battleRoyale ? "Battle Royale actif" : "Battle Royale inactif"
-  ].join(" • ");
+    talents.battleRoyale ? "Battle Royale actif" : "Battle Royale inactif",
+    talents.amiPokemon ? "Ami des Pokémon : +10 capture" : null,
+    talents.recyclage ? "Recyclage : 30%" : null,
+    talents.radar ? "Radar : 50/35/15" : null,
+    talents.traqueur ? "Traqueur : 50% Paradoxe sur un Peu Commun" : null,
+    talents.aimantRaretes ? "Aimant à raretés : 70% Peu Commun / 30% Rare" : null
+  ].filter(Boolean).join(" • ");
 
   document.getElementById("encounterResult").innerHTML = `
     <div class="summary-line">${filterSummary}</div>
@@ -1983,6 +2110,7 @@ loadData().catch(error => {
 // Rang D est un rang de première classe dans tout le système : rencontre + capture.
 document.addEventListener("DOMContentLoaded", () => {
   updateAuraFarmerAvailability();
+  updateRadarControls();
 });
 
 </script>
