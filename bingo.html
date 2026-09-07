@@ -355,35 +355,9 @@ button {
   color: var(--txt-neutre);
 }
 
-.themis-bingo-progress-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 310px;
-}
 
-.themis-bingo-progress {
-  flex: 1;
-  height: 8px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--bg-neutre);
-  border: 1px solid var(--bord-surface);
-}
 
-.themis-bingo-progress-bar {
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, var(--bg-orange-second), var(--bg-bleu-second));
-  transition: width .3s ease;
-}
 
-.themis-bingo-progress-text {
-  min-width: 58px;
-  text-align: right;
-  font: 800 12px Inter, Arial, sans-serif;
-  color: var(--txt-noir-neutre);
-}
 
 /* GRID */
 .themis-bingo-grid {
@@ -448,88 +422,10 @@ button {
   font: 600 14px/1.5 Inter, Arial, sans-serif;
 }
 
-.themis-bingo-cell-check {
-  margin-top: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--txt-neutre);
-  font: 700 10px Inter, Arial, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
 
-.themis-bingo-cell-check::before {
-  content: "";
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 1px solid var(--bord-neutre-second);
-  background: rgba(255,255,255,.42);
-}
 
-.themis-bingo-cell.is-done {
-  background: rgba(128,174,119,.19);
-  border-color: rgba(128,174,119,.58);
-}
 
-.themis-bingo-cell.is-done .themis-bingo-cell-check {
-  color: #62875b;
-}
 
-.themis-bingo-cell.is-done .themis-bingo-cell-check::before {
-  content: "✓";
-  display: grid;
-  place-items: center;
-  background: #80AE77;
-  border-color: #80AE77;
-  color: #fff;
-  font-size: 12px;
-}
-
-/* LINE BONUS */
-.themis-bingo-footer {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.themis-bingo-stat {
-  min-height: 92px;
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.themis-bingo-stat:nth-child(1) {
-  background: var(--bg-orange-second);
-  border-color: var(--bord-orange-second);
-  color: var(--txt-brand-neutre);
-}
-
-.themis-bingo-stat:nth-child(2) {
-  background: var(--bg-bleu-second);
-  border-color: var(--bord-bleu-second);
-  color: var(--txt-brand-neutre);
-}
-
-.themis-bingo-stat:nth-child(3) {
-  background: var(--bg-neutre);
-}
-
-.themis-bingo-stat-label {
-  font: 700 11px Inter, Arial, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  opacity: .82;
-}
-
-.themis-bingo-stat-value {
-  font: 400 36px Coolvetica, Arial, sans-serif;
-}
 
 /* responsive */
 @media (max-width: 1180px) {
@@ -570,18 +466,11 @@ button {
     flex-direction: column;
   }
 
-  .themis-bingo-progress-wrap {
-    width: 100%;
-    min-width: 0;
-  }
 
   .themis-bingo-grid {
     grid-template-columns: repeat(2, minmax(0,1fr));
   }
 
-  .themis-bingo-footer {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 480px) {
@@ -679,7 +568,6 @@ Centre de Recyclage</textarea>
 
     <section class="themis-bingo-panel themis-bingo-actions">
       <button class="themis-bingo-btn" id="generateBingo">Générer une nouvelle grille</button>
-      <button class="themis-bingo-btn is-blue" id="resetChecks">Réinitialiser les validations</button>
     </section>
 
   </div>
@@ -691,11 +579,7 @@ Centre de Recyclage</textarea>
         <h2>Grille de saison</h2>
         <span>25 objectifs</span>
       </div>
-
-      <div class="themis-bingo-progress-wrap">
-        <div class="themis-bingo-progress">
-          <div class="themis-bingo-progress-bar" id="progressBar"></div>
-        </div>
+    </div>
         <div class="themis-bingo-progress-text" id="progressText">0 / 25</div>
       </div>
     </div>
@@ -703,24 +587,6 @@ Centre de Recyclage</textarea>
     <div class="themis-bingo-grid" id="bingoGrid"></div>
 
   </section>
-
-  <div class="themis-bingo-footer">
-    <div class="themis-bingo-panel themis-bingo-stat">
-      <div class="themis-bingo-stat-label">Cases validées</div>
-      <div class="themis-bingo-stat-value" id="doneCount">0</div>
-    </div>
-
-    <div class="themis-bingo-panel themis-bingo-stat">
-      <div class="themis-bingo-stat-label">Cases restantes</div>
-      <div class="themis-bingo-stat-value" id="remainingCount">25</div>
-    </div>
-
-    <div class="themis-bingo-panel themis-bingo-stat">
-      <div class="themis-bingo-stat-label">Missions disponibles</div>
-      <div class="themis-bingo-stat-value">35+</div>
-    </div>
-  </div>
-
 </main>
 
 <script>
@@ -832,10 +698,6 @@ Centre de Recyclage</textarea>
 
   const grid = document.getElementById("bingoGrid");
   const zonesField = document.getElementById("zonesList");
-  const progressBar = document.getElementById("progressBar");
-  const progressText = document.getElementById("progressText");
-  const doneCount = document.getElementById("doneCount");
-  const remainingCount = document.getElementById("remainingCount");
 
   function pick(array) {
     return array[Math.floor(Math.random() * array.length)];
@@ -864,16 +726,6 @@ Centre de Recyclage</textarea>
     return zones.length ? pick(zones) : "une zone aléatoire";
   }
 
-  function updateProgress() {
-    const total = grid.querySelectorAll(".themis-bingo-cell").length || 25;
-    const done = grid.querySelectorAll(".themis-bingo-cell.is-done").length;
-    const percent = total ? (done / total) * 100 : 0;
-
-    progressBar.style.width = percent + "%";
-    progressText.textContent = `${done} / ${total}`;
-    doneCount.textContent = done;
-    remainingCount.textContent = Math.max(total - done, 0);
-  }
 
   function generateBingo() {
     grid.innerHTML = "";
@@ -883,10 +735,8 @@ Centre de Recyclage</textarea>
 
     selected.forEach((mission, index) => {
 
-      const cell = document.createElement("button");
-      cell.type = "button";
+      const cell = document.createElement("div");
       cell.className = "themis-bingo-cell";
-      cell.setAttribute("aria-pressed", "false");
 
       const number = document.createElement("span");
       number.className = "themis-bingo-cell-number";
@@ -900,38 +750,14 @@ Centre de Recyclage</textarea>
       text.className = "themis-bingo-cell-text";
       text.textContent = mission.text;
 
-      const check = document.createElement("span");
-      check.className = "themis-bingo-cell-check";
-      check.textContent = "À accomplir";
-
-      cell.append(number, tag, text, check);
-
-      cell.addEventListener("click", function () {
-        const isDone = cell.classList.toggle("is-done");
-        cell.setAttribute("aria-pressed", String(isDone));
-        check.textContent = isDone ? "Validée" : "À accomplir";
-        updateProgress();
-      });
-
+      cell.append(number, tag, text);
       grid.appendChild(cell);
     });
 
-    updateProgress();
   }
 
   document.getElementById("generateBingo").addEventListener("click", generateBingo);
 
-  document.getElementById("resetChecks").addEventListener("click", function () {
-    grid.querySelectorAll(".themis-bingo-cell").forEach(cell => {
-      cell.classList.remove("is-done");
-      cell.setAttribute("aria-pressed", "false");
-
-      const check = cell.querySelector(".themis-bingo-cell-check");
-      if (check) check.textContent = "À accomplir";
-    });
-
-    updateProgress();
-  });
 
   generateBingo();
 
