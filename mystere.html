@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Tools — Échange Mystère</title>
+  <style>
+    :root {
+      --page-bg: #eef4f6;
+      --grid-line: rgba(98, 135, 148, 0.12);
+      --panel: #dfeaf0;
+      --panel-light: #eef6f8;
+      --blue: #6aa9c4;
+      --blue-dark: #3f6473;
+      --coral: #e8755f;
+      --green: #77b475;
+      --text: #405965;
+      --muted: #7d99a5;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background-color: var(--page-bg);
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    header {
+      max-width: 1180px;
+      margin: 28px auto 12px;
+      padding: 30px 24px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #DC7156 0%, #f0f3f4 30%, #f0f3f4 70%, #72a9c0 100%);
+      border: 1px solid rgba(106, 169, 196, 0.28);
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: clamp(36px, 6vw, 68px);
+      text-transform: uppercase;
+      color: #15202a;
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto 12px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .nav .blue { background: var(--blue); }
+    .nav .coral { background: var(--coral); }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 54px;
+    }
+
+    .panel {
+      padding: 14px;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid rgba(91, 125, 138, 0.2);
+    }
+
+    .tool-card {
+      padding: 18px;
+      border-radius: var(--radius);
+      background: var(--panel-light);
+      border: 1px solid rgba(91, 125, 138, 0.16);
+    }
+
+    .tool-card h2 {
+      margin: 0 0 8px;
+      color: var(--blue-dark);
+      font-size: 24px;
+    }
+
+    .intro {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .rule {
+      padding: 12px;
+      border-radius: 10px;
+      background: white;
+      border: 1px solid rgba(91, 125, 138, 0.14);
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(180px, 280px) 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    select, button, textarea {
+      width: 100%;
+      border: 1px solid rgba(91, 125, 138, 0.2);
+      border-radius: 8px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+    }
+
+    select, button {
+      padding: 11px 12px;
+      background: white;
+      font-weight: 800;
+    }
+
+    button {
+      cursor: pointer;
+      color: white;
+      background: var(--blue);
+      border-color: transparent;
+      transition: transform .12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .result {
+      min-height: 220px;
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 18px;
+      align-items: center;
+      padding: 18px;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid rgba(91, 125, 138, 0.16);
+    }
+
+    .sprite-box {
+      min-height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: var(--page-bg);
+      border: 1px solid rgba(91, 125, 138, 0.12);
+    }
+
+    .sprite-box img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .placeholder {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .pokemon-name {
+      margin: 0 0 12px;
+      font-family: Georgia, serif;
+      font-size: 34px;
+      color: #15202a;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--panel);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .tag.shiny {
+      background: #fff2bf;
+      color: #866a00;
+    }
+
+    .nickname {
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .nickname strong { color: var(--coral); }
+
+    .forum-box {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--panel-light);
+      border: 1px solid rgba(91, 125, 138, 0.16);
+    }
+
+    .forum-box h3 {
+      margin: 0 0 10px;
+      color: var(--blue-dark);
+    }
+
+    textarea {
+      min-height: 230px;
+      resize: vertical;
+      padding: 14px;
+      background: white;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .copy {
+      margin-top: 8px;
+      background: var(--coral);
+    }
+
+    .status {
+      margin-top: 8px;
+      min-height: 20px;
+      color: var(--green);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .error {
+      color: #9d4434;
+      font-weight: 900;
+    }
+
+    @media (max-width: 720px) {
+      header { margin: 12px; }
+      .container, .nav { padding-left: 12px; padding-right: 12px; }
+      .rules { grid-template-columns: 1fr 1fr; }
+      .controls, .result { grid-template-columns: 1fr; }
+      .sprite-box { min-height: 150px; }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Échange Mystère</h1>
+</header>
+
+<nav class="nav">
+  <a class="blue" href="staff.html">Staff Tools</a>
+  <a class="blue" href="eleftheria.html">Pokémon d'Eleftheria</a>
+  <a class="coral" href="rarete.html">Gérer les raretés</a>
+</nav>
+
+<main class="container">
+  <section class="panel">
+    <article class="tool-card">
+      <h2>🎁 Générateur — Talent Parieur</h2>
+      <p class="intro">
+        Tire un Pokémon aléatoire autorisé, un rang compris entre D et le rang du membre,
+        son statut chromatique et l'un des 150 surnoms disponibles.
+      </p>
+
+      <div class="rules">
+        <div class="rule">🚫 Aucun légendaire</div>
+        <div class="rule">🚫 Aucun Paradoxe</div>
+        <div class="rule">⭐ Rang D → rang membre</div>
+        <div class="rule">✨ 10 % chromatique</div>
+      </div>
+
+      <div class="controls">
+        <select id="memberRank">
+          <option value="D">Membre rang D</option>
+          <option value="C">Membre rang C</option>
+          <option value="B">Membre rang B</option>
+          <option value="A">Membre rang A</option>
+          <option value="S">Membre rang S</option>
+          <option value="X">Membre rang X</option>
+        </select>
+        <button id="generateButton" onclick="generateTrade()" disabled>Chargement du Pokédex…</button>
+      </div>
+
+      <div id="result" class="result">
+        <div class="sprite-box">
+          <div class="placeholder">Le Pokémon apparaîtra ici.</div>
+        </div>
+        <div>
+          <h3 class="pokemon-name">Échange en attente</h3>
+          <div class="meta">
+            <span class="tag">Pokémon : —</span>
+            <span class="tag">Rang : —</span>
+            <span class="tag">Chromatique : —</span>
+          </div>
+          <div class="nickname">Surnom : <strong>—</strong></div>
+        </div>
+      </div>
+
+      <div class="forum-box">
+        <h3>📋 Texte à copier-coller sur le forum</h3>
+        <textarea id="forumText" readonly placeholder="Le texte sera généré en même temps que l'échange."></textarea>
+        <button class="copy" onclick="copyForumText()">Copier le texte</button>
+        <div id="copyStatus" class="status"></div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script>
+const SHEET_URL = "https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1";
+const RANKS = ["D", "C", "B", "A", "S", "X"];
+const SHINY_CHANCE = 0.10;
+
+const NICKNAMES = [
+  "Abricot",
+  "Amande",
+  "Améthyste",
+  "Anis",
+  "Aster",
+  "Azuki",
+  "Bambou",
+  "Banane",
+  "Basilic",
+  "Biscotte",
+  "Biscuit",
+  "Boba",
+  "Bonbon",
+  "Bounty",
+  "Brindille",
+  "Brioche",
+  "Bulle",
+  "Cacao",
+  "Cactus",
+  "Cajou",
+  "Calisson",
+  "Cannelle",
+  "Caramel",
+  "Cerise",
+  "Châtaigne",
+  "Chaussette",
+  "Chiffon",
+  "Chips",
+  "Chouquette",
+  "Citron",
+  "Clémentine",
+  "Coco",
+  "Cookie",
+  "Coquelicot",
+  "Corail",
+  "Cosmo",
+  "Crêpe",
+  "Croquette",
+  "Cupcake",
+  "Dango",
+  "Datte",
+  "Éclair",
+  "Éclipse",
+  "Étoile",
+  "Figue",
+  "Flocon",
+  "Framboise",
+  "Gaufre",
+  "Gelée",
+  "Gingembre",
+  "Givre",
+  "Guimauve",
+  "Haricot",
+  "Jasmin",
+  "Kiwi",
+  "Litchi",
+  "Lune",
+  "Macaron",
+  "Mandarine",
+  "Mangue",
+  "Marron",
+  "Matcha",
+  "Menthe",
+  "Miel",
+  "Mochi",
+  "Moka",
+  "Muffin",
+  "Muscade",
+  "Myrtille",
+  "Nectar",
+  "Noisette",
+  "Nougat",
+  "Nuage",
+  "Olive",
+  "Onigiri",
+  "Opale",
+  "Orage",
+  "Oréo",
+  "Papaye",
+  "Paprika",
+  "Pêche",
+  "Pépito",
+  "Perle",
+  "Persil",
+  "Pistache",
+  "Pixel",
+  "Plume",
+  "Poire",
+  "Poivre",
+  "Pollen",
+  "Pomme",
+  "Praline",
+  "Prune",
+  "Réglisse",
+  "Riz",
+  "Romarin",
+  "Sablé",
+  "Safran",
+  "Sakura",
+  "Sésame",
+  "Sirop",
+  "Soleil",
+  "Sucre",
+  "Tapioca",
+  "Thym",
+  "Toffee",
+  "Trèfle",
+  "Truffe",
+  "Vanille",
+  "Velours",
+  "Wasabi",
+  "Yuzu",
+  "Zeste",
+  "Aube",
+  "Badiane",
+  "Baie",
+  "Brume",
+  "Céleste",
+  "Comète",
+  "Cristal",
+  "Dune",
+  "Écume",
+  "Émeraude",
+  "Flamme",
+  "Frisson",
+  "Galaxie",
+  "Halo",
+  "Iris",
+  "Lilas",
+  "Lotus",
+  "Luciolle",
+  "Mistral",
+  "Nébuleuse",
+  "Neige",
+  "Nova",
+  "Océan",
+  "Ombre",
+  "Paillette",
+  "Pivoine",
+  "Quartz",
+  "Rivage",
+  "Rosée",
+  "Rubis",
+  "Saphir",
+  "Tempête",
+  "Topaze",
+  "Violette",
+  "Zéphyr",
+  "Aquarelle",
+  "Astéroïde"
+];
+
+const LEGENDARY_IDS = new Set([
+  144,145,146,150,
+  243,244,245,249,250,
+  377,378,379,380,381,382,383,384,
+  480,481,482,483,484,485,486,487,488,
+  638,639,640,641,642,643,644,645,646,
+  716,717,718,
+  772,773,785,786,787,788,789,790,791,792,800,
+  888,889,890,891,892,894,895,896,897,898,
+  1001,1002,1003,1004,1007,1008,1014,1015,1016,1017,1024
+]);
+
+let allPokemon = [];
+
+function normalizeText(value) {
+  return (value ?? "").toString().trim();
+}
+
+function normalizeName(value) {
+  return normalizeText(value)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function getPokemonName(p) {
+  return p.french || p.nom || p.name || "Nom inconnu";
+}
+
+function getSprite(p, shiny = false) {
+  if (shiny && p.shiny) return p.shiny;
+  if (p.sprite) return p.sprite;
+
+  const id = parseInt(p.id, 10);
+  if (!Number.isNaN(id)) {
+    const suffix = shiny ? "shiny/" : "";
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${suffix}${id}.png`;
+  }
+  return "";
+}
+
+function getZones(p) {
+  return normalizeText(p.zone)
+    .split(/[;,]/)
+    .map(z => z.trim())
+    .filter(Boolean);
+}
+
+function isParadoxPokemon(p) {
+  const rarity = normalizeName(
+    p.rare || p.rarete || p["rareté"] || p.rarity || p.spawn
+  );
+
+  if (rarity === "paradoxe" || rarity === "paradox") return true;
+  if (getZones(p).some(z => normalizeName(z) === "paradoxe")) return true;
+
+  const specialFields = [
+    p.paradoxe, p.paradox, p.categorie, p.category, p.statut, p.status
+  ].map(normalizeName);
+
+  return specialFields.some(v => v === "paradoxe" || v === "paradox");
+}
+
+function looksTruthy(value) {
+  const v = normalizeName(value);
+  return ["oui","yes","true","1","x","vrai"].includes(v);
+}
+
+function isLegendaryPokemon(p) {
+  const directFlags = [
+    p.legendaire,
+    p["légendaire"],
+    p.legendary,
+    p.is_legendary,
+    p["is legendary"]
+  ];
+
+  if (directFlags.some(looksTruthy)) return true;
+
+  const descriptiveFields = [
+    p.categorie, p.category, p.statut, p.status, p.classe, p.classification
+  ].map(normalizeName);
+
+  if (descriptiveFields.some(v => v.includes("legend"))) return true;
+
+  const id = parseInt(p.id, 10);
+  return !Number.isNaN(id) && LEGENDARY_IDS.has(id);
+}
+
+function randomItem(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function randomRank(maxRank) {
+  const maxIndex = Math.max(0, RANKS.indexOf(maxRank));
+  return RANKS[Math.floor(Math.random() * (maxIndex + 1))];
+}
+
+function escapeHtml(value) {
+  return normalizeText(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+async function loadData() {
+  const button = document.getElementById("generateButton");
+
+  try {
+    const response = await fetch(SHEET_URL);
+    if (!response.ok) throw new Error("Impossible de charger le Google Sheet.");
+
+    const raw = await response.json();
+    if (!Array.isArray(raw)) throw new Error("Le Google Sheet n'a pas renvoyé une liste exploitable.");
+
+    allPokemon = raw.map(row => {
+      const clean = {};
+      Object.keys(row).forEach(key => {
+        clean[key.trim().toLowerCase()] = row[key];
+      });
+      return clean;
+    }).filter(p => p.id || p.french || p.nom || p.name);
+
+    const eligible = getEligiblePokemon();
+
+    if (!eligible.length) {
+      throw new Error("Aucun Pokémon éligible n'a été trouvé.");
+    }
+
+    button.disabled = false;
+    button.textContent = `Générer l'échange mystère (${eligible.length} Pokémon possibles)`;
+  } catch (error) {
+    button.disabled = true;
+    button.textContent = "Erreur de chargement";
+    document.getElementById("result").innerHTML = `
+      <div class="sprite-box"><div class="placeholder error">Erreur</div></div>
+      <div>
+        <h3 class="pokemon-name">Pokédex indisponible</h3>
+        <div class="error">${escapeHtml(error.message)}</div>
+      </div>
+    `;
+  }
+}
+
+function getEligiblePokemon() {
+  return allPokemon.filter(p => {
+    if (isParadoxPokemon(p)) return false;
+    if (isLegendaryPokemon(p)) return false;
+    return true;
+  });
+}
+
+function generateTrade() {
+  const eligible = getEligiblePokemon();
+
+  if (!eligible.length) {
+    alert("Aucun Pokémon éligible.");
+    return;
+  }
+
+  const memberRank = document.getElementById("memberRank").value;
+  const pokemon = randomItem(eligible);
+  const rank = randomRank(memberRank);
+  const shiny = Math.random() < SHINY_CHANCE;
+  const nickname = randomItem(NICKNAMES);
+  const name = getPokemonName(pokemon);
+  const sprite = getSprite(pokemon, shiny);
+
+  document.getElementById("result").innerHTML = `
+    <div class="sprite-box">
+      ${sprite
+        ? `<img src="${escapeHtml(sprite)}" alt="${escapeHtml(name)}" />`
+        : `<div class="placeholder">Pas de sprite disponible.</div>`
+      }
+    </div>
+    <div>
+      <h3 class="pokemon-name">${escapeHtml(name)}</h3>
+      <div class="meta">
+        <span class="tag">Pokémon : ${escapeHtml(name)}</span>
+        <span class="tag">Rang : ${rank}</span>
+        <span class="tag ${shiny ? "shiny" : ""}">Chromatique : ${shiny ? "Oui ✨" : "Non"}</span>
+      </div>
+      <div class="nickname">Surnom : <strong>${escapeHtml(nickname)}</strong></div>
+    </div>
+  `;
+
+  const forumText =
+`[center][b]— ÉCHANGE MYSTÈRE —[/b]
+
+[b]Pokémon :[/b] ${name}
+[b]Rang :[/b] ${rank}
+[b]Chromatique :[/b] ${shiny ? "Oui ✨" : "Non"}
+[b]Surnom :[/b] ${nickname}
+
+${sprite ? `[img]${sprite}[/img]` : ""}[/center]`;
+
+  document.getElementById("forumText").value = forumText;
+  document.getElementById("copyStatus").textContent = "";
+}
+
+async function copyForumText() {
+  const textarea = document.getElementById("forumText");
+  const status = document.getElementById("copyStatus");
+
+  if (!textarea.value) {
+    status.textContent = "Génère d'abord un échange.";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(textarea.value);
+    status.textContent = "Texte copié !";
+  } catch (error) {
+    textarea.select();
+    document.execCommand("copy");
+    status.textContent = "Texte copié !";
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
