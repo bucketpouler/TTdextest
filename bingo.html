@@ -9,482 +9,430 @@
 :root {
   --txt-noir: #151B1E;
   --txt-noir-neutre: #3F515A;
-  --txt-blanc-neutre: #F0F3F4;
-  --txt-neutre: #889FAA;
-  --txt-neutre-second: #2A363C;
-  --txt-neutre-dis: #A5B7C0;
-  --txt-orange: #D44D2B;
-  --txt-orange-def: #DC7156;
   --txt-brand-neutre: #F0F3F4;
-  --txt-blue-def: #72A9C0;
-
-  --bouton-clr: #E1E7EA;
-
-  --bord-neutre: rgba(9, 9, 11, 0.1);
-  --bord-neutre-second: #A5B7C0;
-  --bord-neutre-terti: #889FAA;
+  --txt-neutre: #889FAA;
+  --bord-neutre: rgba(9,9,11,.1);
   --bord-surface: #C9D6DD;
-  --bord-neutre-opa: rgb(9 9 11 / 10%);
-  --bord-bleu: #72A9C0;
-  --bord-bleu-second: #4F93B0;
-  --bord-bleu-terti: #3F768D;
-  --bord-orange: #DC7156;
   --bord-orange-second: #D44D2B;
   --bord-orange-terti: #A93E23;
-
-  --bg-second: #C9D6DD;
+  --bord-bleu-second: #4F93B0;
   --bg-fond: #F0F3F4;
-  --bg-transparent: rgba(255, 255, 255, 0.70);
+  --bg-transparent: rgba(255,255,255,.72);
   --bg-neutre: #E1E7EA;
-  --bg-neutre-prim: #2A363C;
-  --bg-neutre-terti: #A5B7C0;
-  --bg-bleu-light: #B9D4DF;
-  --bg-bleu: #95BED0;
-  --bg-bleu-second: #72A9C0;
-  --bg-bleu-terti: #4F93B0;
-  --bg-orange-light: #EEB8AA;
   --bg-orange-second: #DC7156;
   --bg-orange-terti: #D44D2B;
-
+  --bg-bleu-second: #72A9C0;
+  --bg-bleu-terti: #4F93B0;
   --fond-droit: radial-gradient(circle, rgba(126,170,198,2) 0%, rgba(126,170,198,1) 28%, rgba(126,170,198,.18) 48%, rgba(126,170,198,.08) 68%, rgba(126,170,198,.025) 84%, rgba(126,170,198,0) 100%);
   --fond-gauche: radial-gradient(circle, rgba(217,122,93,2) 0%, rgba(217,122,93,1) 28%, rgba(217,122,93,.18) 48%, rgba(217,122,93,.08) 68%, rgba(217,122,93,.025) 84%, rgba(217,122,93,0) 100%);
 }
 
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+html{
+  min-height:100%;
+  background-image:url('https://2img.net/i.imgur.com/XO5FwwW.png');
+  background-color:var(--bg-fond);
+  background-repeat:repeat;
+  background-position:top center;
 }
 
-html {
-  min-height: 100%;
-  background-image: url('https://2img.net/i.imgur.com/XO5FwwW.png');
-  background-color: var(--bg-fond);
-  background-repeat: repeat;
-  background-position: top center;
+body{
+  min-height:100%;
+  margin:0;
+  background:transparent;
+  color:var(--txt-noir-neutre);
+  font-family:Inter,Arial,sans-serif;
 }
 
-body {
-  min-height: 100%;
-  margin: 0;
-  background: transparent;
-  color: var(--txt-noir-neutre);
-  font-family: Inter, Arial, sans-serif;
+body::after,
+body::before{
+  content:"";
+  position:fixed;
+  width:900px;
+  height:900px;
+  border-radius:50%;
+  filter:blur(100px);
+  pointer-events:none;
+  z-index:-1;
 }
 
-body::after {
-  content: "";
-  position: fixed;
-  width: 1100px;
-  height: 1100px;
-  left: -550px;
-  bottom: -550px;
-  border-radius: 50%;
-  background: var(--fond-gauche);
-  filter: blur(100px);
-  pointer-events: none;
-  z-index: -1;
+body::after{
+  left:-500px;
+  bottom:-500px;
+  background:var(--fond-gauche);
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  width: 1100px;
-  height: 1100px;
-  right: -550px;
-  top: -550px;
-  border-radius: 50%;
-  background: var(--fond-droit);
-  filter: blur(100px);
-  pointer-events: none;
-  z-index: -1;
+body::before{
+  right:-500px;
+  top:-500px;
+  background:var(--fond-droit);
 }
 
-@font-face {
-  font-family: Coolvetica;
-  font-style: normal;
-  font-weight: 400;
-  src: url('https://cdn.jsdelivr.net/gh/Pandariesw/TOY/CoolveticaRg-Regular%20400.ttf');
+@font-face{
+  font-family:Coolvetica;
+  font-style:normal;
+  font-weight:400;
+  src:url('https://cdn.jsdelivr.net/gh/Pandariesw/TOY/CoolveticaRg-Regular%20400.ttf');
 }
 
-@font-face {
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 100 900;
-  src: local("Inter");
+@font-face{
+  font-family:Inter;
+  font-style:normal;
+  font-weight:100 900;
+  src:local("Inter");
 }
 
-button,
-textarea {
-  font: inherit;
-}
+button,textarea{font:inherit}
+button{cursor:pointer}
 
-button {
-  cursor: pointer;
-}
-
-.themis-bingo-shell {
-  width: min(1560px, calc(100% - 48px));
-  margin: 0 auto;
-  padding: 48px 0 64px;
+.themis-bingo-shell{
+  width:min(1450px,calc(100% - 28px));
+  margin:0 auto;
+  padding:18px 0 24px;
 }
 
 /* HERO */
-.themis-bingo-hero {
-  position: relative;
-  min-height: 255px;
-  padding: 36px 40px;
-  border: 1px solid var(--bord-neutre);
-  border-radius: 12px;
-  overflow: hidden;
+.themis-bingo-hero{
+  position:relative;
+  min-height:125px;
+  padding:20px 26px;
+  border:1px solid var(--bord-neutre);
+  border-radius:12px;
+  overflow:hidden;
   background:
-    linear-gradient(110deg, rgba(220,113,86,.95), rgba(114,169,192,.83)),
+    linear-gradient(110deg,rgba(220,113,86,.95),rgba(114,169,192,.83)),
     url('https://2img.net/i.imgur.com/JoUhDEV.png') center / cover;
-  color: var(--txt-brand-neutre);
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 16px;
+  color:var(--txt-brand-neutre);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  margin-bottom:10px;
 }
 
-.themis-bingo-hero::after {
-  content: "";
-  position: absolute;
-  width: 380px;
-  height: 380px;
-  border-radius: 50%;
-  right: -110px;
-  top: -180px;
-  border: 58px solid rgba(255,255,255,.09);
+.themis-bingo-hero::after{
+  content:"";
+  position:absolute;
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  right:-90px;
+  top:-155px;
+  border:46px solid rgba(255,255,255,.09);
 }
 
-.themis-bingo-hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 850px;
+.themis-bingo-hero-content{position:relative;z-index:2;max-width:800px}
+
+.themis-bingo-kicker{
+  margin-bottom:4px;
+  font:700 10px Inter,Arial,sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  opacity:.9;
 }
 
-.themis-bingo-kicker {
-  margin-bottom: 8px;
-  font: 700 12px Inter, Arial, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: .18em;
-  opacity: .9;
+.themis-bingo-title{
+  margin:0;
+  font:400 42px/.95 Coolvetica,Arial,sans-serif;
 }
 
-.themis-bingo-title {
-  margin: 0;
-  font: 400 64px/0.95 Coolvetica, Arial, sans-serif;
-  letter-spacing: .01em;
+.themis-bingo-intro{
+  margin:8px 0 0;
+  max-width:760px;
+  font:500 11px/1.45 Inter,Arial,sans-serif;
 }
 
-.themis-bingo-intro {
-  margin: 18px 0 0;
-  max-width: 760px;
-  font: 500 14px/1.6 Inter, Arial, sans-serif;
+.themis-bingo-season{
+  position:relative;
+  z-index:2;
+  flex:0 0 auto;
+  min-width:125px;
+  padding:12px 14px;
+  border-radius:8px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.24);
+  backdrop-filter:blur(8px);
 }
 
-.themis-bingo-season {
-  position: relative;
-  z-index: 2;
-  flex: 0 0 auto;
-  min-width: 180px;
-  padding: 18px 20px;
-  border-radius: 8px;
-  background: rgba(255,255,255,.16);
-  border: 1px solid rgba(255,255,255,.24);
-  backdrop-filter: blur(8px);
+.themis-bingo-season span{
+  display:block;
+  font-size:9px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  opacity:.78;
 }
 
-.themis-bingo-season span {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  opacity: .78;
-}
-
-.themis-bingo-season strong {
-  display: block;
-  margin-top: 4px;
-  font: 400 32px Coolvetica, Arial, sans-serif;
+.themis-bingo-season strong{
+  display:block;
+  margin-top:2px;
+  font:400 25px Coolvetica,Arial,sans-serif;
 }
 
 /* TOOLBAR */
-.themis-bingo-toolbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 16px;
-  margin-bottom: 16px;
+.themis-bingo-toolbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 240px;
+  gap:10px;
+  margin-bottom:10px;
 }
 
-.themis-bingo-panel {
-  background: var(--bg-transparent);
-  border: 1px solid var(--bord-neutre);
-  border-radius: 12px;
-  background-clip: padding-box;
+.themis-bingo-panel{
+  background:var(--bg-transparent);
+  border:1px solid var(--bord-neutre);
+  border-radius:12px;
+  background-clip:padding-box;
 }
 
-.themis-bingo-settings {
-  padding: 22px 24px;
-  display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(260px,.55fr);
-  gap: 24px;
-  align-items: center;
+.themis-bingo-settings{
+  padding:12px 14px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(230px,.42fr);
+  gap:16px;
+  align-items:center;
 }
 
-.themis-bingo-settings-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 9px;
+.themis-bingo-settings-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:5px;
 }
 
-.themis-bingo-settings-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 6px;
-  display: grid;
-  place-items: center;
-  background: var(--bg-orange-second);
-  border: 1px solid var(--bord-orange-second);
-  color: var(--txt-brand-neutre);
-  font-weight: 900;
+.themis-bingo-settings-icon{
+  width:28px;
+  height:28px;
+  border-radius:6px;
+  display:grid;
+  place-items:center;
+  background:var(--bg-orange-second);
+  color:white;
+  font-weight:900;
 }
 
-.themis-bingo-settings-title h2 {
-  margin: 0;
-  font: 400 27px Coolvetica, Arial, sans-serif;
-  color: var(--txt-noir-neutre);
+.themis-bingo-settings-title h2{
+  margin:0;
+  font:400 22px Coolvetica,Arial,sans-serif;
 }
 
-.themis-bingo-settings p {
-  margin: 0;
-  color: var(--txt-neutre);
-  font-size: 12px;
-  line-height: 1.5;
+.themis-bingo-settings p{
+  margin:0;
+  color:var(--txt-neutre);
+  font-size:10px;
+  line-height:1.4;
 }
 
-.themis-bingo-zone-wrap label {
-  display: block;
-  margin-bottom: 7px;
-  color: var(--txt-noir-neutre);
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: .1em;
+.themis-bingo-zone-wrap label{
+  display:block;
+  margin-bottom:5px;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.1em;
 }
 
-.themis-bingo-zone-wrap textarea {
-  width: 100%;
-  height: 76px;
-  resize: vertical;
-  padding: 11px 12px;
-  border: 1px solid var(--bord-surface);
-  border-radius: 8px;
-  outline: 0;
-  background: var(--bg-neutre);
-  color: var(--txt-noir-neutre);
-  font: 500 12px/1.45 Inter, Arial, sans-serif;
+.themis-bingo-zone-wrap textarea{
+  width:100%;
+  height:50px;
+  resize:vertical;
+  padding:8px 9px;
+  border:1px solid var(--bord-surface);
+  border-radius:8px;
+  outline:0;
+  background:var(--bg-neutre);
+  color:var(--txt-noir-neutre);
+  font:500 10px/1.35 Inter,Arial,sans-serif;
 }
 
-.themis-bingo-zone-wrap textarea:focus {
-  border-color: var(--bord-bleu-second);
+.themis-bingo-actions{
+  padding:10px;
+  display:grid;
+  gap:8px;
 }
 
-.themis-bingo-actions {
-  min-width: 250px;
-  padding: 16px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
+.themis-bingo-btn{
+  min-height:40px;
+  border-radius:8px;
+  border:1px solid var(--bord-orange-second);
+  background:var(--bg-orange-second);
+  color:white;
+  font:700 11px Inter,Arial,sans-serif;
+  transition:.2s ease;
 }
 
-.themis-bingo-btn {
-  min-height: 48px;
-  border-radius: 8px;
-  border: 1px solid var(--bord-orange-second);
-  background: var(--bg-orange-second);
-  color: var(--txt-brand-neutre);
-  font: 700 13px Inter, Arial, sans-serif;
-  transition: .25s ease;
+.themis-bingo-btn:hover{
+  background:var(--bg-orange-terti);
+  border-color:var(--bord-orange-terti);
 }
 
-.themis-bingo-btn:hover {
-  background: var(--bg-orange-terti);
-  border-color: var(--bord-orange-terti);
+.themis-bingo-btn.is-blue{
+  background:var(--bg-bleu-second);
+  border-color:var(--bord-bleu-second);
 }
 
-.themis-bingo-btn.is-blue {
-  background: var(--bg-bleu-second);
-  border-color: var(--bord-bleu-second);
+.themis-bingo-btn.is-blue:hover{
+  background:var(--bg-bleu-terti);
 }
 
-.themis-bingo-btn.is-blue:hover {
-  background: var(--bg-bleu-terti);
-  border-color: var(--bord-bleu-terti);
+/* BOARD */
+.themis-bingo-board{
+  width:min(100%,calc(100vh - 300px));
+  min-width:610px;
+  margin:0 auto;
+  padding:12px;
 }
 
-/* BOARD HEADER */
-.themis-bingo-board {
-  padding: 24px;
+.themis-bingo-board-top{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
 }
 
-.themis-bingo-board-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 18px;
+.themis-bingo-board-title{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
 }
 
-.themis-bingo-board-title {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
+.themis-bingo-board-title h2{
+  margin:0;
+  font:400 27px Coolvetica,Arial,sans-serif;
 }
 
-.themis-bingo-board-title h2 {
-  margin: 0;
-  font: 400 40px Coolvetica, Arial, sans-serif;
-  color: var(--txt-noir-neutre);
+.themis-bingo-board-title span{
+  font:600 10px Inter,Arial,sans-serif;
+  color:var(--txt-neutre);
 }
 
-.themis-bingo-board-title span {
-  font: 600 12px Inter, Arial, sans-serif;
-  color: var(--txt-neutre);
+/* 5 x 5 SQUARE GRID */
+.themis-bingo-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:7px;
 }
 
-
-
-
-
-/* GRID */
-.themis-bingo-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
+.themis-bingo-cell{
+  position:relative;
+  min-width:0;
+  aspect-ratio:1 / 1;
+  padding:31px 10px 10px;
+  border-radius:9px;
+  border:1px solid var(--bord-surface);
+  background:var(--bg-neutre);
+  color:var(--txt-noir-neutre);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-.themis-bingo-cell {
-  position: relative;
-  min-width: 0;
-  min-height: 205px;
-  padding: 46px 20px 20px;
-  border-radius: 12px;
-  border: 1px solid var(--bord-surface);
-  background: var(--bg-neutre);
-  color: var(--txt-noir-neutre);
-  text-align: left;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform .25s ease, border-color .25s ease, background .25s ease;
+.themis-bingo-cell:nth-child(even){
+  background:rgba(185,212,223,.42);
+  border-color:rgba(79,147,176,.28);
 }
 
-.themis-bingo-cell:nth-child(even) {
-  background: rgba(185,212,223,.42);
-  border-color: rgba(79,147,176,.28);
+.themis-bingo-cell-number{
+  position:absolute;
+  left:9px;
+  top:8px;
+  color:var(--txt-neutre);
+  font:800 9px Inter,Arial,sans-serif;
+  letter-spacing:.08em;
 }
 
-.themis-bingo-cell:hover {
-  transform: translateY(-3px);
-  border-color: var(--bord-orange);
+.themis-bingo-cell-tag{
+  position:absolute;
+  right:7px;
+  top:6px;
+  padding:4px 5px;
+  border-radius:5px;
+  background:var(--bg-transparent);
+  border:1px solid var(--bord-neutre);
+  color:var(--txt-neutre);
+  font:800 7px Inter,Arial,sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.06em;
 }
 
-.themis-bingo-cell-number {
-  position: absolute;
-  left: 16px;
-  top: 15px;
-  color: var(--txt-neutre);
-  font: 800 11px Inter, Arial, sans-serif;
-  letter-spacing: .08em;
+.themis-bingo-cell-text{
+  display:block;
+  max-width:100%;
+  font:700 clamp(8px,1.05vw,11px)/1.28 Inter,Arial,sans-serif;
+  text-align:center;
+  overflow-wrap:anywhere;
 }
 
-.themis-bingo-cell-tag {
-  position: absolute;
-  right: 12px;
-  top: 11px;
-  padding: 6px 8px;
-  border-radius: 5px;
-  background: var(--bg-transparent);
-  border: 1px solid var(--bord-neutre);
-  color: var(--txt-neutre);
-  font: 800 9px Inter, Arial, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: .08em;
+/* SCREENSHOT MODE */
+body.screenshot-mode .themis-bingo-hero,
+body.screenshot-mode .themis-bingo-toolbar{
+  display:none;
 }
 
-.themis-bingo-cell-text {
-  display: block;
-  max-width: 100%;
-  font: 600 14px/1.5 Inter, Arial, sans-serif;
+body.screenshot-mode .themis-bingo-shell{
+  width:100%;
+  padding:8px;
 }
 
+body.screenshot-mode .themis-bingo-board{
+  width:min(calc(100vh - 16px),calc(100vw - 16px));
+  min-width:0;
+  padding:12px;
+}
 
+body.screenshot-mode .themis-bingo-board-top{
+  margin-bottom:7px;
+}
 
+body.screenshot-mode .themis-bingo-board-title h2{
+  font-size:25px;
+}
 
+body.screenshot-mode .themis-bingo-grid{
+  gap:6px;
+}
 
+/* screenshot button stays visible */
+.themis-shot-exit{
+  display:none;
+  position:fixed;
+  right:12px;
+  bottom:12px;
+  z-index:20;
+  width:auto;
+  padding:8px 12px;
+  border:0;
+  border-radius:7px;
+  background:#151B1E;
+  color:white;
+  font:700 10px Inter,Arial,sans-serif;
+  opacity:.75;
+}
+
+body.screenshot-mode .themis-shot-exit{display:block}
 
 /* responsive */
-@media (max-width: 1180px) {
-  .themis-bingo-grid {
-    grid-template-columns: repeat(3, minmax(0,1fr));
-  }
-  .themis-bingo-toolbar {
-    grid-template-columns: 1fr;
-  }
-  .themis-bingo-actions {
-    grid-template-columns: 1fr 1fr;
+@media(max-width:900px){
+  .themis-bingo-toolbar{grid-template-columns:1fr}
+  .themis-bingo-board{
+    width:100%;
+    min-width:0;
   }
 }
 
-@media (max-width: 760px) {
-  .themis-bingo-shell {
-    width: min(100% - 24px, 1560px);
-    padding-top: 20px;
-  }
-
-  .themis-bingo-hero {
-    padding: 28px 24px;
-    min-height: 270px;
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .themis-bingo-title {
-    font-size: 48px;
-  }
-
-  .themis-bingo-settings {
-    grid-template-columns: 1fr;
-  }
-
-  .themis-bingo-board-top {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-
-  .themis-bingo-grid {
-    grid-template-columns: repeat(2, minmax(0,1fr));
-  }
-
-}
-
-@media (max-width: 480px) {
-  .themis-bingo-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .themis-bingo-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .themis-bingo-cell {
-    min-height: 165px;
-  }
+@media(max-width:700px){
+  .themis-bingo-shell{width:min(100% - 16px,1450px)}
+  .themis-bingo-hero{align-items:flex-start}
+  .themis-bingo-intro{display:none}
+  .themis-bingo-settings{grid-template-columns:1fr}
+  .themis-bingo-board{padding:8px}
+  .themis-bingo-grid{gap:4px}
+  .themis-bingo-cell{padding:24px 5px 5px}
+  .themis-bingo-cell-text{font-size:7px}
+  .themis-bingo-cell-tag{font-size:5px;padding:3px}
+  .themis-bingo-cell-number{font-size:7px}
 }
 </style>
 </head>
@@ -519,13 +467,13 @@ button {
           <h2>Génération de la grille</h2>
         </div>
         <p>
-          À chaque génération, 25 missions sont tirées au hasard. Les missions variables peuvent apparaître plusieurs fois avec des paramètres différents : types, raretés, Balls ou zones.
+          À chaque génération, 25 missions sont tirées au hasard. Les missions variables peuvent apparaître plusieurs fois avec des paramètres différents.
         </p>
       </div>
 
       <div class="themis-bingo-zone-wrap">
         <label for="zonesList">Zones de capture</label>
-        <textarea id="zonesList" placeholder="Une zone par ligne&#10;Forêt pétrifiée&#10;Mont Tellus&#10;Archipel Kharadra">Palestre Ancienne
+        <textarea id="zonesList">Palestre Ancienne
 Ruines envahies
 Collines Viticoles
 Forêt Méditerranéenne
@@ -568,66 +516,44 @@ Centre de Recyclage</textarea>
 
     <section class="themis-bingo-panel themis-bingo-actions">
       <button class="themis-bingo-btn" id="generateBingo">Générer une nouvelle grille</button>
+      <button class="themis-bingo-btn is-blue" id="screenshotMode">Mode screenshot</button>
     </section>
 
   </div>
 
   <section class="themis-bingo-panel themis-bingo-board">
-
     <div class="themis-bingo-board-top">
       <div class="themis-bingo-board-title">
         <h2>Grille de saison</h2>
         <span>25 objectifs</span>
       </div>
     </div>
-        <div class="themis-bingo-progress-text" id="progressText">0 / 25</div>
-      </div>
-    </div>
 
     <div class="themis-bingo-grid" id="bingoGrid"></div>
-
   </section>
+
 </main>
+
+<button class="themis-shot-exit" id="exitScreenshot">Quitter le mode screenshot</button>
 
 <script>
 (function () {
 
   const types = [
-    "Normal", "Feu", "Eau", "Électrik", "Plante", "Glace", "Combat",
-    "Poison", "Sol", "Vol", "Psy", "Insecte", "Roche", "Spectre",
-    "Dragon", "Ténèbres", "Acier", "Fée"
+    "Normal","Feu","Eau","Électrik","Plante","Glace","Combat",
+    "Poison","Sol","Vol","Psy","Insecte","Roche","Spectre",
+    "Dragon","Ténèbres","Acier","Fée"
   ];
 
-  const raretes = ["Commun", "Peu Commun", "Rare"];
+  const raretes = ["Commun","Peu Commun","Rare"];
 
-  const balls = ["Poké Ball", "Super Ball", "Hyper Ball", "Ball spé-type"];
+  const balls = ["Poké Ball","Super Ball","Hyper Ball","Ball spé-type"];
 
-  /*
-   * Les missions variables peuvent apparaître plusieurs fois dans une même grille.
-   * Elles sont générées en plusieurs exemplaires AVANT le tirage final.
-   * Les doublons exacts sont ensuite retirés automatiquement.
-   */
   const variableMissions = [
-    {
-      tag:"Capture",
-      copies:4,
-      text:() => `Capturer un Pokémon de type ${pick(types)}.`
-    },
-    {
-      tag:"Capture",
-      copies:3,
-      text:() => `Capturer un Pokémon ${pick(raretes)}.`
-    },
-    {
-      tag:"Capture",
-      copies:3,
-      text:() => `Capturer un Pokémon avec une ${pick(balls)}.`
-    },
-    {
-      tag:"Exploration",
-      copies:3,
-      text:() => `Commencer un RP dans ${randomZone()}.`
-    }
+    { tag:"Capture", copies:4, text:() => `Capturer un Pokémon de type ${pick(types)}.` },
+    { tag:"Capture", copies:3, text:() => `Capturer un Pokémon ${pick(raretes)}.` },
+    { tag:"Capture", copies:3, text:() => `Capturer un Pokémon avec une ${pick(balls)}.` },
+    { tag:"Exploration", copies:3, text:() => `Commencer un RP dans ${randomZone()}.` }
   ];
 
   const fixedMissions = [
@@ -636,31 +562,52 @@ Centre de Recyclage</textarea>
     { tag:"Capture", text:() => `Capturer deux Pokémon partageant un même type.` },
     { tag:"Capture", text:() => `Capturer un Pokémon dont aucun membre de l'écurie ne possède encore l'espèce.` },
     { tag:"Capture", text:() => `Capturer un Pokémon déjà possédé par un membre de l'écurie.` },
-
     { tag:"Écurie", text:() => `Faire une capture avec un autre membre de l'écurie.` },
     { tag:"Écurie", text:() => `Deux membres capturent chacun un Pokémon du même type.` },
-
     { tag:"Exploration", text:() => `RP dans une zone de capture où aucun membre de l'écurie n'a RP durant la saison dernière.` },
     { tag:"Exploration", text:() => `Visiter 5 zones de capture différentes avec l'écurie.` },
-
     { tag:"Pokémon", text:() => `Faire évoluer un Pokémon.` },
     { tag:"Pokémon", text:() => `Augmenter le rang d'un Pokémon.` },
     { tag:"Pokémon", text:() => `Faire éclore un Œuf.` },
     { tag:"Pokémon", text:() => `Apprendre une nouvelle capacité hors-niveau à un Pokémon.` },
     { tag:"Écurie", text:() => `Posséder collectivement 10 types différents parmi les équipes de l'écurie.` },
-
     { tag:"Hasard", text:() => `Obtenir deux fois la même espèce lors de rencontres différentes.` },
     { tag:"Hasard", text:() => `Rencontrer un Pokémon shiny.` },
-
     { tag:"Combat", text:() => `Remporter un combat.` },
     { tag:"Combat", text:() => `Perdre un combat.` },
     { tag:"Combat", text:() => `Affronter un Champion.` },
-
     { tag:"Écurie", text:() => `Capturer le même Pokémon qu'un membre d'une écurie adverse pendant la saison.` },
     { tag:"Défi", text:() => `Capturer un Pokémon dont le nom commence par la même lettre que le prénom du personnage.` },
-    { tag:"Défi", text:() => `Capturer un Pokémon d'Eleftheria`}
-    
+    { tag:"Défi", text:() => `Capturer un Pokémon d'Eleftheria` }
   ];
+
+  const grid = document.getElementById("bingoGrid");
+  const zonesField = document.getElementById("zonesList");
+
+  function pick(array) {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  function shuffle(array) {
+    const copy = [...array];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i],copy[j]] = [copy[j],copy[i]];
+    }
+    return copy;
+  }
+
+  function getZones() {
+    return zonesField.value
+      .split(/\n|,/)
+      .map(zone => zone.trim())
+      .filter(Boolean);
+  }
+
+  function randomZone() {
+    const zones = getZones();
+    return zones.length ? pick(zones) : "une zone aléatoire";
+  }
 
   function buildMissionPool() {
     const generated = [];
@@ -677,9 +624,7 @@ Centre de Recyclage</textarea>
           text: mission.text()
         };
 
-        const alreadyExists = generated.some(item => item.text === candidate.text);
-
-        if (!alreadyExists) {
+        if (!generated.some(item => item.text === candidate.text)) {
           generated.push(candidate);
           added++;
         }
@@ -696,51 +641,18 @@ Centre de Recyclage</textarea>
     return generated;
   }
 
-  const grid = document.getElementById("bingoGrid");
-  const zonesField = document.getElementById("zonesList");
-
-  function pick(array) {
-    return array[Math.floor(Math.random() * array.length)];
-  }
-
-  function shuffle(array) {
-    const copy = [...array];
-
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
-    }
-
-    return copy;
-  }
-
-  function getZones() {
-    return zonesField.value
-      .split(/\n|,/)
-      .map(zone => zone.trim())
-      .filter(Boolean);
-  }
-
-  function randomZone() {
-    const zones = getZones();
-    return zones.length ? pick(zones) : "une zone aléatoire";
-  }
-
-
   function generateBingo() {
     grid.innerHTML = "";
 
-    const missionPool = buildMissionPool();
-    const selected = shuffle(missionPool).slice(0, 25);
+    const selected = shuffle(buildMissionPool()).slice(0,25);
 
-    selected.forEach((mission, index) => {
-
+    selected.forEach((mission,index) => {
       const cell = document.createElement("div");
       cell.className = "themis-bingo-cell";
 
       const number = document.createElement("span");
       number.className = "themis-bingo-cell-number";
-      number.textContent = String(index + 1).padStart(2, "0");
+      number.textContent = String(index + 1).padStart(2,"0");
 
       const tag = document.createElement("span");
       tag.className = "themis-bingo-cell-tag";
@@ -750,14 +662,20 @@ Centre de Recyclage</textarea>
       text.className = "themis-bingo-cell-text";
       text.textContent = mission.text;
 
-      cell.append(number, tag, text);
+      cell.append(number,tag,text);
       grid.appendChild(cell);
     });
-
   }
 
-  document.getElementById("generateBingo").addEventListener("click", generateBingo);
+  document.getElementById("generateBingo").addEventListener("click",generateBingo);
 
+  document.getElementById("screenshotMode").addEventListener("click",function(){
+    document.body.classList.add("screenshot-mode");
+  });
+
+  document.getElementById("exitScreenshot").addEventListener("click",function(){
+    document.body.classList.remove("screenshot-mode");
+  });
 
   generateBingo();
 
