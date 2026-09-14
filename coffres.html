@@ -37,6 +37,7 @@
   --bronze: #A66F4A;
   --argent: #8999A3;
   --or: #D3A63C;
+  --bienvenue: #72A9C0;
 
   --fond-droit: radial-gradient(circle, rgba(126,170,198,2) 0%, rgba(126,170,198,1) 28%, rgba(126,170,198,.18) 48%, rgba(126,170,198,.08) 68%, rgba(126,170,198,.025) 84%, rgba(126,170,198,0) 100%);
   --fond-gauche: radial-gradient(circle, rgba(217,122,93,2) 0%, rgba(217,122,93,1) 28%, rgba(217,122,93,.18) 48%, rgba(217,122,93,.08) 68%, rgba(217,122,93,.025) 84%, rgba(217,122,93,0) 100%);
@@ -269,6 +270,7 @@ button, input { font: inherit; }
 .themis-chest-choice[data-chest="or"] { color: var(--or); }
 .themis-chest-choice[data-chest="argent"] { color: var(--argent); }
 .themis-chest-choice[data-chest="bronze"] { color: var(--bronze); }
+.themis-chest-choice[data-chest="bienvenue"] { color: var(--bienvenue); }
 
 .themis-chest-choice-icon {
   width: 42px;
@@ -458,6 +460,8 @@ button, input { font: inherit; }
   to { opacity:1; transform: translateY(0); }
 }
 
+.themis-result-grid.is-welcome { grid-template-columns: minmax(0,1fr); }
+.themis-result-card.is-hidden { display:none; }
 /* HISTORY */
 .themis-history {
   padding: 24px;
@@ -623,8 +627,8 @@ button, input { font: inherit; }
       <div class="themis-kicker">Odyssey • Défi des Écuries</div>
       <h1 class="themis-title">Ouverture des Coffres</h1>
       <p class="themis-intro">
-        Sélectionnez le coffre remporté par le membre de l'écurie puis lancez l'ouverture.
-        Chaque coffre contient trois tirages garantis : Ressources, Récompense spéciale et Chance.
+        Sélectionnez le coffre à ouvrir puis lancez le tirage.
+        Les Coffres d'Écurie contiennent trois tirages garantis, tandis que le Coffre de bienvenue offre une récompense unique.
       </p>
     </div>
     <div class="themis-chest-hero-mark">🎁</div>
@@ -673,6 +677,15 @@ button, input { font: inherit; }
           </span>
           <span class="themis-chest-choice-rank">03</span>
         </button>
+
+        <button class="themis-chest-choice" data-chest="bienvenue" type="button">
+          <span class="themis-chest-choice-icon">🎁</span>
+          <span>
+            <strong>Coffre de bienvenue</strong>
+            <small>Récompense des nouveaux arrivants</small>
+          </span>
+          <span class="themis-chest-choice-rank">NEW</span>
+        </button>
       </div>
 
       <button id="openChest" class="themis-open-btn" type="button">Ouvrir le coffre</button>
@@ -695,7 +708,7 @@ button, input { font: inherit; }
         </div>
 
         <div class="themis-result-grid">
-          <article class="themis-result-card" data-result="resources">
+          <article class="themis-result-card" id="resourcesCard" data-result="resources">
             <div class="themis-result-index">Tirage 01</div>
             <div class="themis-result-category">Ressources</div>
             <div class="themis-result-icon">🎒</div>
@@ -703,7 +716,7 @@ button, input { font: inherit; }
             <div class="themis-result-proba">Le résultat apparaîtra ici.</div>
           </article>
 
-          <article class="themis-result-card" data-result="special">
+          <article class="themis-result-card" id="specialCard" data-result="special">
             <div class="themis-result-index">Tirage 02</div>
             <div class="themis-result-category">Récompense spéciale</div>
             <div class="themis-result-icon">💎</div>
@@ -711,7 +724,7 @@ button, input { font: inherit; }
             <div class="themis-result-proba">Le résultat apparaîtra ici.</div>
           </article>
 
-          <article class="themis-result-card" data-result="chance">
+          <article class="themis-result-card" id="chanceCard" data-result="chance">
             <div class="themis-result-index">Tirage 03</div>
             <div class="themis-result-category">Chance</div>
             <div class="themis-result-icon">✨</div>
@@ -885,6 +898,21 @@ button, input { font: inherit; }
         { reward: "1 Œuf aléatoire", chance: 1 },
         { reward: "1 Pokémon aléatoire", chance: 0.5 }
       ]
+    },
+
+    bienvenue: {
+      name: "Coffre de bienvenue",
+      icon: "🎁",
+      color: "#72A9C0",
+      welcome: [
+        { reward: "50 PO", chance: 25 },
+        { reward: "1 PT", chance: 20 },
+        { reward: "1 CT aléatoire", chance: 20 },
+        { reward: "1 objet évolutif aléatoire", chance: 15 },
+        { reward: "1 Fossile aléatoire", chance: 10 },
+        { reward: "1 Œuf aléatoire", chance: 7 },
+        { reward: "1 Pokémon aléatoire", chance: 3 }
+      ]
     }
   };
 
@@ -926,17 +954,32 @@ button, input { font: inherit; }
     currentMedal.style.background = chest.color;
     openState.textContent = "Prêt à ouvrir";
 
+    const isWelcome = type === "bienvenue";
+    const resultGrid = document.querySelector(".themis-result-grid");
+    const resourcesCard = document.getElementById("resourcesCard");
+    const specialCard = document.getElementById("specialCard");
+    const chanceCard = document.getElementById("chanceCard");
+    resultGrid.classList.toggle("is-welcome", isWelcome);
+    specialCard.classList.toggle("is-hidden", isWelcome);
+    chanceCard.classList.toggle("is-hidden", isWelcome);
+    resourcesCard.querySelector(".themis-result-index").textContent = isWelcome ? "Tirage unique" : "Tirage 01";
+    resourcesCard.querySelector(".themis-result-category").textContent = isWelcome ? "Récompense de bienvenue" : "Ressources";
+    resourcesCard.querySelector(".themis-result-icon").textContent = isWelcome ? "🎁" : "🎒";
+    document.querySelector(".themis-current-sub").textContent = isWelcome ? "1 tirage unique" : "3 tirages garantis";
+
     renderProbabilityTables();
   }
 
   function renderProbabilityTables() {
     const chest = CHESTS[selectedChest];
 
-    const configs = [
-      ["🎒 Ressources", chest.resources],
-      ["💎 Récompense spéciale", chest.special],
-      ["✨ Chance", chest.chance]
-    ];
+    const configs = selectedChest === "bienvenue"
+      ? [["🎁 Récompense de bienvenue", chest.welcome]]
+      : [
+          ["🎒 Ressources", chest.resources],
+          ["💎 Récompense spéciale", chest.special],
+          ["✨ Chance", chest.chance]
+        ];
 
     probabilityTables.innerHTML = "";
 
@@ -1007,34 +1050,27 @@ button, input { font: inherit; }
     setRollingState(true);
 
     const chest = CHESTS[selectedChest];
-
     const resourcesCard = document.querySelector('[data-result="resources"]');
     const specialCard = document.querySelector('[data-result="special"]');
     const chanceCard = document.querySelector('[data-result="chance"]');
-
-    const resources = await animateCategory(resourcesCard, chest.resources, 650);
-    const special = await animateCategory(specialCard, chest.special, 780);
-    const chance = await animateCategory(chanceCard, chest.chance, 950);
-
-    setRollingState(false);
-
     const player = document.getElementById("playerName").value.trim();
     const stable = document.getElementById("stableName").value.trim();
 
-    lastResult = {
-      chestKey: selectedChest,
-      chestName: chest.name,
-      icon: chest.icon,
-      player,
-      stable,
-      resources: resources.reward,
-      special: special.reward,
-      chance: chance.reward
-    };
+    if (selectedChest === "bienvenue") {
+      const welcome = await animateCategory(resourcesCard, chest.welcome, 850);
+      setRollingState(false);
+      lastResult = { chestKey:selectedChest, chestName:chest.name, icon:chest.icon, player, stable:"", welcome:welcome.reward };
+    } else {
+      const resources = await animateCategory(resourcesCard, chest.resources, 650);
+      const special = await animateCategory(specialCard, chest.special, 780);
+      const chance = await animateCategory(chanceCard, chest.chance, 950);
+      setRollingState(false);
+      lastResult = { chestKey:selectedChest, chestName:chest.name, icon:chest.icon, player, stable,
+        resources:resources.reward, special:special.reward, chance:chance.reward };
+    }
 
     history.unshift(lastResult);
     renderHistory();
-
     openState.textContent = "Coffre ouvert";
     openChestBtn.disabled = false;
     copyResultBtn.disabled = false;
@@ -1066,7 +1102,7 @@ button, input { font: inherit; }
       const results = document.createElement("div");
       results.className = "themis-history-results";
       const stableText = item.stable ? ` • ${item.stable}` : "";
-      results.textContent = `${item.resources} • ${item.special} • ${item.chance}${stableText}`;
+      results.textContent = item.chestKey === "bienvenue" ? item.welcome : `${item.resources} • ${item.special} • ${item.chance}${stableText}`;
 
       row.append(chest, player, results);
       historyList.appendChild(row);
@@ -1076,14 +1112,11 @@ button, input { font: inherit; }
   async function copyResult() {
     if (!lastResult) return;
 
-    const parts = [
-      `${lastResult.icon} ${lastResult.chestName}`,
-      lastResult.player ? `Membre : ${lastResult.player}` : null,
-      lastResult.stable ? `Écurie : ${lastResult.stable}` : null,
-      `🎒 Ressources : ${lastResult.resources}`,
-      `💎 Récompense spéciale : ${lastResult.special}`,
-      `✨ Chance : ${lastResult.chance}`
-    ].filter(Boolean);
+    const parts = lastResult.chestKey === "bienvenue"
+      ? [`${lastResult.icon} ${lastResult.chestName}`, lastResult.player ? `Membre : ${lastResult.player}` : null, `🎁 Récompense : ${lastResult.welcome}`].filter(Boolean)
+      : [`${lastResult.icon} ${lastResult.chestName}`, lastResult.player ? `Membre : ${lastResult.player}` : null,
+         lastResult.stable ? `Écurie : ${lastResult.stable}` : null, `🎒 Ressources : ${lastResult.resources}`,
+         `💎 Récompense spéciale : ${lastResult.special}`, `✨ Chance : ${lastResult.chance}`].filter(Boolean);
 
     const text = parts.join("\n");
 
