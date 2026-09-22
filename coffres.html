@@ -38,6 +38,7 @@
   --argent: #8999A3;
   --or: #D3A63C;
   --bienvenue: #72A9C0;
+  --equipe: #D44D2B;
 
   --fond-droit: radial-gradient(circle, rgba(126,170,198,2) 0%, rgba(126,170,198,1) 28%, rgba(126,170,198,.18) 48%, rgba(126,170,198,.08) 68%, rgba(126,170,198,.025) 84%, rgba(126,170,198,0) 100%);
   --fond-gauche: radial-gradient(circle, rgba(217,122,93,2) 0%, rgba(217,122,93,1) 28%, rgba(217,122,93,.18) 48%, rgba(217,122,93,.08) 68%, rgba(217,122,93,.025) 84%, rgba(217,122,93,0) 100%);
@@ -271,6 +272,7 @@ button, input { font: inherit; }
 .themis-chest-choice[data-chest="argent"] { color: var(--argent); }
 .themis-chest-choice[data-chest="bronze"] { color: var(--bronze); }
 .themis-chest-choice[data-chest="bienvenue"] { color: var(--bienvenue); }
+.themis-chest-choice[data-chest="equipe"] { color: var(--equipe); }
 
 .themis-chest-choice-icon {
   width: 42px;
@@ -629,7 +631,7 @@ button, input { font: inherit; }
       <h1 class="themis-title">Ouverture des Coffres</h1>
       <p class="themis-intro">
         Sélectionnez le coffre à ouvrir puis lancez le tirage.
-        Les Coffres d'Écurie contiennent trois tirages garantis, tandis que le Coffre de bienvenue offre une récompense unique.
+        Les Coffres d'Écurie contiennent trois tirages garantis. Les Coffres de bienvenue et d'Équipe offrent un tirage unique ; le contenu du Coffre d'Équipe est à répartir entre ses membres.
       </p>
     </div>
     <div class="themis-chest-hero-mark">🎁</div>
@@ -686,6 +688,15 @@ button, input { font: inherit; }
             <small>Récompense des nouveaux arrivants</small>
           </span>
           <span class="themis-chest-choice-rank">NEW</span>
+        </button>
+
+        <button class="themis-chest-choice" data-chest="equipe" type="button">
+          <span class="themis-chest-choice-icon">🤝</span>
+          <span>
+            <strong>Coffre d'Équipe</strong>
+            <small>Butin commun à répartir entre les membres</small>
+          </span>
+          <span class="themis-chest-choice-rank">TEAM</span>
         </button>
       </div>
 
@@ -892,6 +903,28 @@ button, input { font: inherit; }
         { reward: "1 Œuf aléatoire", chance: 7 },
         { reward: "1 Pokémon aléatoire", chance: 3 }
       ]
+    },
+
+    equipe: {
+      name: "Coffre d'Équipe",
+      icon: "🤝",
+      color: "#D44D2B",
+      team: [
+        { reward: "15 PO", chance: 15 },
+        { reward: "20 PO", chance: 12 },
+        { reward: "25 PO", chance: 8 },
+        { reward: "4 Poké Balls", chance: 12 },
+        { reward: "2 Super Balls", chance: 10 },
+        { reward: "2 Balls spé-type", chance: 8 },
+        { reward: "2 Poké Balls + 1 Super Ball", chance: 8 },
+        { reward: "1 Super Ball + 1 Ball spé-type", chance: 6 },
+        { reward: "10 PO + 2 Poké Balls", chance: 6 },
+        { reward: "10 PO + 1 Super Ball", chance: 5 },
+        { reward: "1 PT", chance: 4 },
+        { reward: "2 PT", chance: 3 },
+        { reward: "10 PO + 1 PT + 1 Super Ball", chance: 2 },
+        { reward: "20 PO + 1 PT + 2 Super Balls", chance: 1 }
+      ]
     }
   };
 
@@ -934,17 +967,19 @@ button, input { font: inherit; }
     openState.textContent = "Prêt à ouvrir";
 
     const isWelcome = type === "bienvenue";
+    const isTeam = type === "equipe";
+    const isSingle = isWelcome || isTeam;
     const resultGrid = document.querySelector(".themis-result-grid");
     const resourcesCard = document.getElementById("resourcesCard");
     const specialCard = document.getElementById("specialCard");
     const chanceCard = document.getElementById("chanceCard");
-    resultGrid.classList.toggle("is-welcome", isWelcome);
-    specialCard.classList.toggle("is-hidden", isWelcome);
-    chanceCard.classList.toggle("is-hidden", isWelcome);
-    resourcesCard.querySelector(".themis-result-index").textContent = isWelcome ? "Tirage unique" : "Tirage 01";
-    resourcesCard.querySelector(".themis-result-category").textContent = isWelcome ? "Récompense de bienvenue" : "Ressources";
-    resourcesCard.querySelector(".themis-result-icon").textContent = isWelcome ? "🎁" : "🎒";
-    document.querySelector(".themis-current-sub").textContent = isWelcome ? "1 tirage unique" : "3 tirages garantis";
+    resultGrid.classList.toggle("is-welcome", isSingle);
+    specialCard.classList.toggle("is-hidden", isSingle);
+    chanceCard.classList.toggle("is-hidden", isSingle);
+    resourcesCard.querySelector(".themis-result-index").textContent = isSingle ? "Tirage unique" : "Tirage 01";
+    resourcesCard.querySelector(".themis-result-category").textContent = isWelcome ? "Récompense de bienvenue" : (isTeam ? "Butin à partager" : "Ressources");
+    resourcesCard.querySelector(".themis-result-icon").textContent = isWelcome ? "🎁" : (isTeam ? "🤝" : "🎒");
+    document.querySelector(".themis-current-sub").textContent = isTeam ? "1 tirage commun à répartir" : (isWelcome ? "1 tirage unique" : "3 tirages garantis");
 
     renderProbabilityTables();
   }
@@ -954,6 +989,8 @@ button, input { font: inherit; }
 
     const configs = selectedChest === "bienvenue"
       ? [["🎁 Récompense de bienvenue", chest.welcome]]
+      : selectedChest === "equipe"
+      ? [["🤝 Butin à partager", chest.team]]
       : [
           ["🎒 Ressources", chest.resources],
           ["💎 Récompense spéciale", chest.special],
@@ -1039,6 +1076,10 @@ button, input { font: inherit; }
       const welcome = await animateCategory(resourcesCard, chest.welcome, 850);
       setRollingState(false);
       lastResult = { chestKey:selectedChest, chestName:chest.name, icon:chest.icon, player, stable:"", welcome:welcome.reward };
+    } else if (selectedChest === "equipe") {
+      const team = await animateCategory(resourcesCard, chest.team, 850);
+      setRollingState(false);
+      lastResult = { chestKey:selectedChest, chestName:chest.name, icon:chest.icon, player:"", stable, team:team.reward };
     } else {
       const resources = await animateCategory(resourcesCard, chest.resources, 650);
       const special = await animateCategory(specialCard, chest.special, 780);
@@ -1076,12 +1117,12 @@ button, input { font: inherit; }
 
       const player = document.createElement("div");
       player.className = "themis-history-player";
-      player.textContent = item.player || "Membre non renseigné";
+      player.textContent = item.chestKey === "equipe" ? (item.stable || "Écurie non renseignée") : (item.player || "Membre non renseigné");
 
       const results = document.createElement("div");
       results.className = "themis-history-results";
       const stableText = item.stable ? ` • ${item.stable}` : "";
-      results.textContent = item.chestKey === "bienvenue" ? item.welcome : `${item.resources} • ${item.special} • ${item.chance}${stableText}`;
+      results.textContent = item.chestKey === "bienvenue" ? item.welcome : (item.chestKey === "equipe" ? `${item.team} • À répartir entre les membres` : `${item.resources} • ${item.special} • ${item.chance}${stableText}`);
 
       row.append(chest, player, results);
       historyList.appendChild(row);
@@ -1091,11 +1132,16 @@ button, input { font: inherit; }
   async function copyResult() {
     if (!lastResult) return;
 
-    const parts = lastResult.chestKey === "bienvenue"
-      ? [`${lastResult.icon} ${lastResult.chestName}`, lastResult.player ? `Membre : ${lastResult.player}` : null, `🎁 Récompense : ${lastResult.welcome}`].filter(Boolean)
-      : [`${lastResult.icon} ${lastResult.chestName}`, lastResult.player ? `Membre : ${lastResult.player}` : null,
-         lastResult.stable ? `Écurie : ${lastResult.stable}` : null, `🎒 Ressources : ${lastResult.resources}`,
-         `💎 Récompense spéciale : ${lastResult.special}`, `✨ Chance : ${lastResult.chance}`].filter(Boolean);
+    let parts;
+    if (lastResult.chestKey === "bienvenue") {
+      parts = [`${lastResult.icon} ${lastResult.chestName}`, lastResult.player ? `Membre : ${lastResult.player}` : null, `🎁 Récompense : ${lastResult.welcome}`].filter(Boolean);
+    } else if (lastResult.chestKey === "equipe") {
+      parts = [`${lastResult.icon} ${lastResult.chestName}`, lastResult.stable ? `Écurie : ${lastResult.stable}` : null, `🤝 Butin à partager : ${lastResult.team}`, `À répartir librement entre les membres de l'écurie.`].filter(Boolean);
+    } else {
+      parts = [`${lastResult.icon} ${lastResult.chestName}`, lastResult.player ? `Membre : ${lastResult.player}` : null,
+        lastResult.stable ? `Écurie : ${lastResult.stable}` : null, `🎒 Ressources : ${lastResult.resources}`,
+        `💎 Récompense spéciale : ${lastResult.special}`, `✨ Chance : ${lastResult.chance}`].filter(Boolean);
+    }
 
     const text = parts.join("\n");
 
