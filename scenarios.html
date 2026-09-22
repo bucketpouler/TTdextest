@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Themis Trials — Scénarios</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  padding:14px;
+  background:linear-gradient(135deg,#edf3f5 0%,#dceaf0 100%);
+  color:#3f515a;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+.themis-guidebook{
+  width:min(1220px,100%);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:158px minmax(0,1fr);
+  gap:12px;
+}
+
+.themis-guide-nav{
+  position:relative;
+  overflow:hidden;
+  min-height:calc(100vh - 28px);
+  padding:68px 12px 30px;
+  border-radius:13px 0 0 13px;
+  background:linear-gradient(180deg,rgba(101,169,199,.94),rgba(99,167,197,.91));
+  color:#fff;
+}
+
+.themis-guide-nav::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(160deg,transparent 0 39%,rgba(255,255,255,.055) 39.5% 40%,transparent 40.5%),
+    radial-gradient(ellipse at 20% 90%,rgba(255,255,255,.09),transparent 42%);
+  pointer-events:none;
+}
+
+.themis-guide-nav-inner{
+  position:relative;
+  z-index:2;
+}
+
+.themis-guide-nav-link{
+  display:block;
+  padding:6px 8px;
+  color:rgba(255,255,255,.94);
+  font-size:15px;
+  font-weight:700;
+  line-height:1.4;
+  text-decoration:none;
+  border-radius:5px;
+}
+
+.themis-guide-nav-link::before{
+  content:"•";
+  display:inline-block;
+  margin-right:4px;
+}
+
+.themis-guide-nav-link.active{
+  padding:7px 9px;
+  background:rgba(255,255,255,.9);
+  color:#205a79;
+  box-shadow:0 2px 6px rgba(40,90,116,.09);
+}
+
+.themis-guide-nav-link.active::before{
+  color:#e07868;
+}
+
+.themis-guide-nav-separator{
+  width:74%;
+  height:1px;
+  margin:20px auto;
+  background:rgba(205,111,91,.78);
+}
+
+.themis-guide-main{
+  min-width:0;
+  padding:0 10px 18px 0;
+  background:linear-gradient(180deg,#dce9ef,#e4edf1);
+  border-radius:0 14px 14px 0;
+}
+
+.themis-guide-header{
+  min-height:125px;
+  display:flex;
+  align-items:center;
+  padding:24px 40px;
+  border-radius:10px;
+  color:#fff;
+  background:linear-gradient(110deg,#e78e7d,#e59080 55%,#ed9d8d);
+}
+
+.themis-guide-header h1{
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:44px;
+  line-height:1;
+  font-weight:700;
+}
+
+.themis-guide-header-subtitle{
+  display:block;
+  margin-top:13px;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+
+.themis-guide-card{
+  margin-top:14px;
+  padding:23px 25px;
+  border-radius:11px;
+  background:rgba(247,250,251,.9);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+.themis-guide-card p,
+.themis-guide-card li{
+  font-size:16px;
+  line-height:1.6;
+}
+
+.themis-guide-card p{
+  margin:0 0 11px;
+}
+
+.themis-guide-card p:last-child{
+  margin-bottom:0;
+}
+
+.themis-guide-card strong{
+  color:#344b57;
+}
+
+.themis-section-header{
+  display:grid;
+  grid-template-columns:75px auto minmax(30px,1fr);
+  align-items:center;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.themis-number{
+  font-family:Georgia,serif;
+  font-size:58px;
+  line-height:.9;
+  font-weight:700;
+  color:#e9a193;
+}
+
+.themis-title{
+  margin:0;
+  color:#155073;
+  font-family:Georgia,serif;
+  font-size:28px;
+  line-height:1;
+  white-space:nowrap;
+}
+
+.themis-line{
+  height:1px;
+  background:#e48776;
+}
+
+/* INTRODUCTION */
+
+.themis-scenario-intro{
+  padding:3px 0 3px 16px;
+  border-left:2px solid #d6a094;
+}
+
+.themis-scenario-intro strong{
+  color:#155073;
+}
+
+/* SCENARIOS */
+
+.themis-scenario-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.themis-scenario-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  min-height:230px;
+  overflow:hidden;
+  border:1px solid #d7e2e6;
+  border-radius:10px;
+  background:#f8fafb;
+}
+
+.themis-scenario-card::before{
+  content:"";
+  display:block;
+  height:5px;
+  flex:none;
+  background:#6caec8;
+}
+
+.themis-scenario-card.odyssey::before{
+  background:#e78e7d;
+}
+
+.themis-scenario-card.civil::before{
+  background:#91b88b;
+}
+
+.themis-scenario-content{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  padding:18px 19px 0;
+}
+
+.themis-scenario-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:11px;
+}
+
+.themis-scenario-name{
+  margin:0;
+  color:#155073;
+  font-family:"Bogimber",Georgia,"Times New Roman",serif;
+  font-size:21px;
+  line-height:1.1;
+}
+
+.themis-scenario-meta{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:5px;
+  flex:none;
+}
+
+.themis-scenario-group{
+  flex:none;
+  padding:4px 7px;
+  border-radius:4px;
+  background:#dcebf1;
+  color:#34708d;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.odyssey .themis-scenario-group{
+  background:#f5dfda;
+  color:#b85f50;
+}
+
+.civil .themis-scenario-group{
+  background:#e2eddf;
+  color:#64825f;
+}
+
+.themis-scenario-status{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:4px 7px;
+  border-radius:4px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+
+.themis-scenario-status::before{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  color:#fff;
+  font-size:9px;
+  line-height:1;
+}
+
+.themis-scenario-status.available{
+  background:#e2eddf;
+  color:#64825f;
+}
+
+.themis-scenario-status.available::before{
+  content:"✓";
+  background:#7fa078;
+}
+
+.themis-scenario-status.taken{
+  background:#f5dfda;
+  color:#b85f50;
+}
+
+.themis-scenario-status.taken::before{
+  content:"×";
+  background:#d97c6c;
+}
+
+.themis-scenario-description{
+  flex:1;
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+.themis-scenario-bonus{
+  margin-top:15px;
+  padding:12px 19px;
+  border-top:1px solid #d7e2e6;
+  background:#f0f5f7;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.themis-scenario-bonus strong{
+  display:block;
+  margin-bottom:3px;
+  color:#dc7969;
+  font-size:11px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.themis-scenario-card:last-child:nth-child(odd){
+  grid-column:1 / -1;
+}
+
+/* POLICES */
+
+body,
+.themis-guide-nav-link,
+.themis-guide-header-subtitle,
+.themis-guide-card,
+.themis-guide-card p,
+.themis-guide-card li,
+.themis-scenario-card{
+  font-family:"Inter",Arial,Helvetica,sans-serif;
+}
+
+.themis-guide-header h1,
+.themis-number,
+.themis-title,
+.themis-scenario-name{
+  font-family:"Bogimber",Georgia,"Times New Roman",serif;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:850px){
+
+  .themis-guidebook{
+    grid-template-columns:140px minmax(0,1fr);
+  }
+
+  .themis-scenario-grid{
+    grid-template-columns:1fr;
+  }
+
+  .themis-scenario-card:last-child:nth-child(odd){
+    grid-column:auto;
+  }
+
+  .themis-section-header{
+    grid-template-columns:60px auto 1fr;
+  }
+}
+
+@media(max-width:650px){
+
+  body{
+    padding:0;
+  }
+
+  .themis-guidebook{
+    display:block;
+  }
+
+  .themis-guide-nav{
+    min-height:0;
+    padding:16px;
+    border-radius:0;
+  }
+
+  .themis-guide-nav-inner{
+    display:flex;
+    flex-wrap:wrap;
+    gap:3px;
+  }
+
+  .themis-guide-nav-separator{
+    display:none;
+  }
+
+  .themis-guide-main{
+    padding:8px;
+    border-radius:0;
+  }
+
+  .themis-guide-header{
+    padding:24px;
+  }
+
+  .themis-guide-header h1{
+    font-size:37px;
+  }
+
+  .themis-section-header{
+    grid-template-columns:52px auto 1fr;
+  }
+
+  .themis-number{
+    font-size:42px;
+  }
+
+  .themis-title{
+    font-size:22px;
+  }
+
+  .themis-scenario-top{
+    flex-direction:column;
+  }
+
+  .themis-scenario-meta{
+    justify-content:flex-start;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="themis-guidebook">
+
+<aside class="themis-guide-nav">
+<div class="themis-guide-nav-inner">
+
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h2-guide">Guide</a>
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h3-reglement">Règlement</a>
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h4-contexte">Contexte</a>
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h5-credits">Crédits</a>
+
+<div class="themis-guide-nav-separator"></div>
+
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h1-carte-d-eleftheria">Eleftheria</a>
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h6-groupes-ecuries">Groupes & Ecuries</a>
+<a class="themis-guide-nav-link active" href="#">Scénarios</a>
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h7-pnj">PNJ</a>
+
+<div class="themis-guide-nav-separator"></div>
+
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h8-pokemons">Pokémons</a>
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h9-progression">Progression</a>
+<a class="themis-guide-nav-link" href="https://themistrials.forumactif.com/h10-faq">FAQ</a>
+
+</div>
+</aside>
+
+
+<main class="themis-guide-main">
+
+<header class="themis-guide-header">
+<div>
+<h1>Scénarios</h1>
+<span class="themis-guide-header-subtitle">Des personnages prêts à rejoindre l'aventure</span>
+</div>
+</header>
+
+
+<section class="themis-guide-card">
+
+<div class="themis-scenario-intro">
+<p>Les scénarios sont des concepts de personnages imaginés par le staff pour ceux qui souhaitent commencer leur aventure avec quelques bases déjà établies.</p>
+<p>Ils restent entièrement personnalisables et ne sont jamais obligatoires. Chacun possède cependant une <strong>particularité propre</strong>, directement liée à son histoire.</p>
+</div>
+
+</section>
+
+
+<!-- DRESSEURS -->
+
+<section class="themis-guide-card">
+
+<div class="themis-section-header">
+<span class="themis-number">01</span>
+<h2 class="themis-title">Dresseurs</h2>
+<span class="themis-line"></span>
+</div>
+
+<div class="themis-scenario-grid">
+
+
+<article class="themis-scenario-card">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">L'ancien champion</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Dresseur</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+La saison dernière, vous aviez réussi à rejoindre le club très fermé des champions d'arènes après avoir participé en tant que dresseur. Lorsqu'on vous a proposé de reprendre votre rôle pour la saison 4, vous avez refusé. Pour vous, il n'y a que l'aventure qui compte.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Le deuxième Pokémon proposé par le staff est nécessairement du même type que votre ancienne arène.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Les inséparables</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Dresseurs</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Vous avez passé la dernière saison ensemble, du début à la fin. Lorsqu'Odyssey a annoncé que la prochaine saison de Themis Trials se déroulerait en équipe, les réseaux sociaux ont explosé de joie en vous imaginant dans une équipe commune. Mais, pour une raison qui vous est propre, vous avez décidé de rejoindre deux équipes différentes. Dommage pour le ship.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+L'une des trois propositions de second starter sera nécessairement le starter de votre partenaire. Le scénario implique deux personnages créés en même temps. Idéal pour les duos qui veulent rejoindre le forum !
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le remplaçant de dernière minute</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Dresseur</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Vous ne deviez même pas participer à cette saison. Vous étiez sur liste d'attente, prêt à regarder l'émission depuis votre canapé lorsqu'un candidat s'est désisté à la dernière minute. Quelques heures plus tard, vous étiez dans un avion pour Eleftheria. Vous n'avez peut-être pas eu le temps de vous préparer, mais vous comptez bien prouver qu'Odyssey aurait dû vous sélectionner dès le début.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Vous commencez avec 3 Poké Balls supplémentaires, offertes par la production pour compenser votre arrivée précipitée.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le globe-trotter</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Dresseur</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Kanto, Johto, Hoenn… vous avez passé plus de temps sur les routes que chez vous. Eleftheria n'est qu'une nouvelle étape, mais ses espèces locales ont largement suffi à piquer votre curiosité.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Pour votre second Pokémon, une des trois propositions proviendra d'une région du monde que vous avez choisie.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le parieur</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Dresseur</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Vous aimez prendre des risques, surtout lorsqu'on vous explique précisément pourquoi ce serait une très mauvaise idée. Participer à Themis Trials était donc une évidence.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+À la validation, vous renoncez aux trois propositions de second Pokémon sans les voir et recevez à la place un seul Pokémon tiré au hasard, que vous êtes obligé de conserver.
+</div>
+
+</article>
+
+</div>
+</section>
+
+
+<!-- ODYSSEY -->
+
+<section class="themis-guide-card">
+
+<div class="themis-section-header">
+<span class="themis-number">02</span>
+<h2 class="themis-title">Odyssey</h2>
+<span class="themis-line"></span>
+</div>
+
+<div class="themis-scenario-grid">
+
+
+<article class="themis-scenario-card odyssey">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">La dernière chance</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Odyssey</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Voilà quelques années que vous travaillez à Odyssey et que vos différents projets se sont révélés être des échecs notoires. Cette fois, c'est la dernière : l'écurie que vous gérez doit être une réussite, sinon… vous pouvez dire au revoir à votre job.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Vous commencez à la tête d'une écurie, que vous créez à votre image. Lorsque votre écurie remporte une récompense d'équipe, elle est légèrement augmentée.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card odyssey">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">L'expert en interview</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Odyssey</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+À l'origine, vous êtes plus un fan de combats Pokémon qu'un journaliste. Mais vos remarques pertinentes, vos avis tranchés et vos vidéos sur les réseaux sociaux vous ont créé une petite réputation qu'Odyssey a remarquée. Cette saison, vous débarquez dans la région comme interviewer officiel des dresseurs de l'émission.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Vous pouvez, une fois par quinzaine, interviewer un autre personnage contre une récompense.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card odyssey">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le favori du patron</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Odyssey</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Vous ignorez pourquoi, mais l'un des hauts placés d'Odyssey vous adore. Votre carrière en profite depuis quelques années : meilleurs projets, meilleurs horaires et surtout une certaine tolérance envers vos petites erreurs. Vos collègues commencent sérieusement à se demander ce que vous avez fait pour mériter ça.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Lors de la sélection de votre deuxième Pokémon, le staff vous fait 4 propositions au lieu de 3.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card odyssey">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le cameraman de terrain</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Odyssey</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Vous avez filmé des combats sous la pluie, couru derrière des Dresseurs dans des grottes et appris qu'un Pokémon sauvage ne fait aucune différence entre un candidat et celui qui tient la caméra. À force, vous êtes devenu étonnamment compétent sur le terrain.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Lorsque vous accompagnez un Dresseur dans un RP de capture, une apparition supplémentaire lui est proposée.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card odyssey">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le correspondant étranger</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Odyssey</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Vous travaillez pour Odyssey depuis l'autre bout du monde et Eleftheria n'était jusqu'ici qu'un nom sur vos fiches. Cette saison, on vous envoie enfin sur place couvrir Themis Trials.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Votre deuxième Pokémon proviendra nécessairement de votre région d'origine. Vous ne pouvez pas venir d'Eleftheria.
+</div>
+
+</article>
+
+</div>
+</section>
+
+
+<!-- CIVILS -->
+
+<section class="themis-guide-card">
+
+<div class="themis-section-header">
+<span class="themis-number">03</span>
+<h2 class="themis-title">Civils</h2>
+<span class="themis-line"></span>
+</div>
+
+<div class="themis-scenario-grid">
+
+
+<article class="themis-scenario-card civil">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le mécène</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Civil</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Vous auriez pu devenir dresseur, vous auriez pu travailler chez Odyssey, mais vous n'avez pas besoin d'argent et vous adorez vivre par procuration. Vous êtes un ultra-riche d'une autre région et vous financez une écurie complète, juste pour le plaisir.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Au début de chaque mois, vous recevez une enveloppe de 50 PO que vous ne pouvez dépenser que pour les membres de l'écurie que vous financez.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card civil">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">L'enfant du pays</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Civil</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Eleftheria, vous connaissez. Vous y êtes né, vous y avez grandi et vous avez probablement exploré certains de ses chemins avant même de savoir correctement lancer une Poké Ball. Voir débarquer chaque saison des centaines de candidats persuadés de découvrir votre région vous amuse autant que ça vous agace.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Vous commencez avec une forme régionale d'Eleftheria de rang C.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card civil">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">L'éleveur</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Civil</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Chez vous, les Pokémon sont une affaire de famille. Vous avez grandi entre les œufs, les biberons et les pensionnaires confiés par des Dresseurs parfois beaucoup trop anxieux. L'arrivée de centaines de candidats dans la région ressemble surtout à une formidable clientèle.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Vous possédez automatiquement le talent Pensionnaire sans avoir à l'acheter.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card civil">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le collectionneur d'œufs</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Civil</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Les Pokémon adultes vous intéressent, mais les œufs vous fascinent. Formes, couleurs, conditions d'éclosion : vous pourriez probablement reconnaître certaines espèces avant même que leur coquille ne se fissure.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Vous commencez avec un Œuf mystère.
+</div>
+
+</article>
+
+
+<article class="themis-scenario-card civil">
+
+<div class="themis-scenario-content">
+
+<div class="themis-scenario-top">
+<h3 class="themis-scenario-name">Le propriétaire de source thermale</h3>
+<div class="themis-scenario-meta">
+<span class="themis-scenario-group">Civil</span>
+<span class="themis-scenario-status available">Disponible</span>
+</div>
+</div>
+
+<p class="themis-scenario-description">
+Vous aviez un établissement paisible où habitants et Pokémon venaient se détendre. Puis quelqu'un chez Odyssey a découvert que les sources thermales rendaient très bien à l'écran. Adieu la tranquillité.
+</p>
+
+</div>
+
+<div class="themis-scenario-bonus">
+<strong>Particularité</strong>
+Une fois par mois, vous pouvez permettre à un autre joueur de monter le rang d'un de ses Pokémon à moitié prix.
+</div>
+
+</article>
+
+</div>
+</section>
+
+
+</main>
+</div>
+
+</body>
+</html>
