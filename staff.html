@@ -2293,7 +2293,7 @@ function buildCaptureRpHtml(result){
       ${escapeHtmlForRp(introText)}
     </div>
 
-    <div style="margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;">
+    <div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;text-align:center;">
       <div style="padding:10px;border-radius:10px;background:#dfeaf0;border:1px solid rgba(91,125,138,0.14);">
         <strong style="display:block;color:#3f6473;font-size:22px;line-height:1;">${escapeHtmlForRp(result.roll)}</strong>
         <span style="display:block;margin-top:4px;color:#7d99a5;font-size:10px;font-weight:900;text-transform:uppercase;">Jet</span>
@@ -2301,10 +2301,6 @@ function buildCaptureRpHtml(result){
       <div style="padding:10px;border-radius:10px;background:#dfeaf0;border:1px solid rgba(91,125,138,0.14);">
         <strong style="display:block;color:#3f6473;font-size:22px;line-height:1;">${escapeHtmlForRp(result.captureChance)}%</strong>
         <span style="display:block;margin-top:4px;color:#7d99a5;font-size:10px;font-weight:900;text-transform:uppercase;">Taux</span>
-      </div>
-      <div style="padding:10px;border-radius:10px;background:${statusBg};border:1px solid rgba(91,125,138,0.14);">
-        <strong style="display:block;color:${statusColor};font-size:22px;line-height:1;">${result.success ? "OK" : "NO"}</strong>
-        <span style="display:block;margin-top:4px;color:#7d99a5;font-size:10px;font-weight:900;text-transform:uppercase;">Résultat</span>
       </div>
     </div>
   </div>
