@@ -1196,11 +1196,11 @@ button, input { font: inherit; }
     }).join("");
 
     const identityHtml = personValue
-      ? `<div style="margin-top:12px;color:var(--txt-neutre, #889FAA);font-size:11px;font-weight:700;"><span style="color:var(--txt-noir-neutre, #3F515A);font-weight:800;">${escapeForumHtml(personLabel)} :</span> ${escapeForumHtml(personValue)}</div>`
+      ? `<div style="margin-top:12px;color:#fff;font-size:11px;font-weight:700;"><span style="color:#fff;font-weight:800;">${escapeForumHtml(personLabel)} :</span> ${escapeForumHtml(personValue)}</div>`
       : "";
 
     const stableHtml = result.chestKey !== "equipe" && result.stable
-      ? `<div style="margin-top:4px;color:var(--txt-neutre, #889FAA);font-size:11px;font-weight:700;"><span style="color:var(--txt-noir-neutre, #3F515A);font-weight:800;">Écurie :</span> ${escapeForumHtml(result.stable)}</div>`
+      ? `<div style="margin-top:4px;color:#fff;font-size:11px;font-weight:700;"><span style="color:#fff;font-weight:800;">Écurie :</span> ${escapeForumHtml(result.stable)}</div>`
       : "";
 
     const teamNote = result.chestKey === "equipe"
