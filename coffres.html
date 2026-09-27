@@ -523,6 +523,70 @@ button, input { font: inherit; }
   font-weight: 800;
 }
 
+
+/* FORUM COPY */
+.themis-forum-copy {
+  margin-top: 16px;
+  padding: 24px;
+}
+
+.themis-forum-copy-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.themis-forum-copy-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.themis-forum-copy-actions button {
+  width: auto;
+  min-height: 42px;
+  padding: 0 16px;
+}
+
+.themis-forum-copy textarea {
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+  border: 1px solid var(--bord-surface);
+  border-radius: 8px;
+  background: var(--bg-neutre);
+  color: var(--txt-noir-neutre);
+  padding: 13px;
+  font: 600 11px/1.5 Consolas, Monaco, monospace;
+  outline: none;
+}
+
+.themis-forum-copy-preview {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--bg-neutre);
+  border: 1px solid var(--bord-surface);
+  overflow: hidden;
+}
+
+@media (max-width: 700px) {
+  .themis-forum-copy-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .themis-forum-copy-actions {
+    width: 100%;
+  }
+
+  .themis-forum-copy-actions button {
+    flex: 1;
+  }
+}
+
 /* Probability modal-ish tables */
 .themis-probabilities {
   margin-top: 16px;
@@ -746,6 +810,20 @@ button, input { font: inherit; }
         </div>
       </div>
 
+      <div class="themis-panel themis-forum-copy" id="forumCopyPanel" hidden>
+        <div class="themis-forum-copy-head">
+          <div>
+            <h2 class="themis-section-title">Résultat à poster</h2>
+            <p class="themis-section-desc" style="margin-bottom:0;">Code HTML prêt à copier-coller sur le forum. Le rendu suit automatiquement le thème clair ou sombre de Themis.</p>
+          </div>
+          <div class="themis-forum-copy-actions">
+            <button id="copyForumCode" class="themis-copy-btn" type="button" style="margin-top:0;">Copier le code</button>
+          </div>
+        </div>
+        <textarea id="forumCode" readonly></textarea>
+        <div class="themis-forum-copy-preview" id="forumPreview"></div>
+      </div>
+
       <div class="themis-panel themis-history">
         <h2 class="themis-section-title">Historique des ouvertures</h2>
         <p class="themis-section-desc">Conservé uniquement tant que cette page reste ouverte.</p>
@@ -940,6 +1018,10 @@ button, input { font: inherit; }
   const copyResultBtn = document.getElementById("copyResult");
   const historyList = document.getElementById("historyList");
   const probabilityTables = document.getElementById("probabilityTables");
+  const forumCopyPanel = document.getElementById("forumCopyPanel");
+  const forumCode = document.getElementById("forumCode");
+  const forumPreview = document.getElementById("forumPreview");
+  const copyForumCodeBtn = document.getElementById("copyForumCode");
 
   function weightedPick(items) {
     const roll = Math.random() * 100;
@@ -1059,6 +1141,108 @@ button, input { font: inherit; }
     });
   }
 
+  function escapeForumHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function minifyForumHtml(html) {
+    return String(html)
+      .replace(/\r?\n|\r/g, "")
+      .replace(/\t/g, "")
+      .replace(/>\s+</g, "><")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+  }
+
+  function buildForumResultHtml(result) {
+    const chest = CHESTS[result.chestKey];
+    const accent = chest.color;
+    const personLabel = result.chestKey === "equipe" ? "Écurie" : "Membre";
+    const personValue = result.chestKey === "equipe" ? result.stable : result.player;
+
+    let rewardRows = [];
+
+    if (result.chestKey === "bienvenue") {
+      rewardRows = [
+        ["Récompense", result.welcome]
+      ];
+    } else if (result.chestKey === "equipe") {
+      rewardRows = [
+        ["Butin à partager", result.team]
+      ];
+    } else {
+      rewardRows = [
+        ["Ressources", result.resources],
+        ["Récompense spéciale", result.special],
+        ["Chance", result.chance]
+      ];
+    }
+
+    const rewardsHtml = rewardRows.map(([label, value], index) => {
+      const bg = index === 1
+        ? "color-mix(in srgb, var(--bg-bleu-light, #B9D4DF) 42%, var(--bg-neutre, #E1E7EA))"
+        : index === 2
+          ? "color-mix(in srgb, var(--bg-orange-light, #EEB8AA) 34%, var(--bg-neutre, #E1E7EA))"
+          : "var(--bg-neutre, #E1E7EA)";
+
+      return `<div style="padding:14px 15px;border-radius:8px;background:${bg};border:1px solid var(--bord-surface, #C9D6DD);">
+        <div style="margin-bottom:5px;color:var(--txt-neutre, #889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;">${escapeForumHtml(label)}</div>
+        <div style="color:var(--txt-noir-neutre, #3F515A);font-size:14px;line-height:1.45;font-weight:800;">${escapeForumHtml(value)}</div>
+      </div>`;
+    }).join("");
+
+    const identityHtml = personValue
+      ? `<div style="margin-top:12px;color:var(--txt-neutre, #889FAA);font-size:11px;font-weight:700;"><span style="color:var(--txt-noir-neutre, #3F515A);font-weight:800;">${escapeForumHtml(personLabel)} :</span> ${escapeForumHtml(personValue)}</div>`
+      : "";
+
+    const stableHtml = result.chestKey !== "equipe" && result.stable
+      ? `<div style="margin-top:4px;color:var(--txt-neutre, #889FAA);font-size:11px;font-weight:700;"><span style="color:var(--txt-noir-neutre, #3F515A);font-weight:800;">Écurie :</span> ${escapeForumHtml(result.stable)}</div>`
+      : "";
+
+    const teamNote = result.chestKey === "equipe"
+      ? `<div style="margin-top:12px;padding:11px 13px;border-radius:7px;background:color-mix(in srgb, var(--bg-orange-light, #EEB8AA) 30%, var(--bg-neutre, #E1E7EA));color:var(--txt-noir-neutre, #3F515A);font-size:11px;line-height:1.5;font-weight:700;">Ce butin est à répartir librement entre les membres de l'écurie.</div>`
+      : "";
+
+    return `<div style="max-width:620px;margin:18px auto;padding:18px;border-radius:10px;background:var(--bg-transparent, rgba(255,255,255,.72));border:1px solid var(--bord-neutre, rgba(9,9,11,.1));font-family:Inter,Arial,sans-serif;color:var(--txt-noir-neutre, #3F515A);">
+      <div style="padding:18px;border-radius:8px;background:${accent};color:#fff;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.18em;opacity:.86;">Défi des Écuries</div>
+        <div style="margin-top:4px;font-family:Coolvetica,Arial,sans-serif;font-size:32px;line-height:1;font-weight:400;">${escapeForumHtml(result.chestName)}</div>
+        ${identityHtml}
+        ${stableHtml}
+      </div>
+      <div style="display:grid;gap:8px;margin-top:10px;">
+        ${rewardsHtml}
+      </div>
+      ${teamNote}
+    </div>`;
+  }
+
+  function renderForumResult(result) {
+    const html = minifyForumHtml(buildForumResultHtml(result));
+    forumCopyPanel.hidden = false;
+    forumCode.value = html;
+    forumPreview.innerHTML = html;
+  }
+
+  async function copyForumCode() {
+    if (!forumCode.value) return;
+
+    try {
+      await navigator.clipboard.writeText(forumCode.value);
+    } catch (e) {
+      forumCode.select();
+      forumCode.setSelectionRange(0, forumCode.value.length);
+      document.execCommand("copy");
+    }
+
+    copyForumCodeBtn.textContent = "Code copié !";
+    setTimeout(() => copyForumCodeBtn.textContent = "Copier le code", 1400);
+  }
+
   async function openChest() {
     openChestBtn.disabled = true;
     copyResultBtn.disabled = true;
@@ -1091,6 +1275,7 @@ button, input { font: inherit; }
 
     history.unshift(lastResult);
     renderHistory();
+    renderForumResult(lastResult);
     openState.textContent = "Coffre ouvert";
     openChestBtn.disabled = false;
     copyResultBtn.disabled = false;
@@ -1132,30 +1317,16 @@ button, input { font: inherit; }
   async function copyResult() {
     if (!lastResult) return;
 
-    let parts;
-    if (lastResult.chestKey === "bienvenue") {
-      parts = [`${lastResult.icon} ${lastResult.chestName}`, lastResult.player ? `Membre : ${lastResult.player}` : null, `🎁 Récompense : ${lastResult.welcome}`].filter(Boolean);
-    } else if (lastResult.chestKey === "equipe") {
-      parts = [`${lastResult.icon} ${lastResult.chestName}`, lastResult.stable ? `Écurie : ${lastResult.stable}` : null, `🤝 Butin à partager : ${lastResult.team}`, `À répartir librement entre les membres de l'écurie.`].filter(Boolean);
-    } else {
-      parts = [`${lastResult.icon} ${lastResult.chestName}`, lastResult.player ? `Membre : ${lastResult.player}` : null,
-        lastResult.stable ? `Écurie : ${lastResult.stable}` : null, `🎒 Ressources : ${lastResult.resources}`,
-        `💎 Récompense spéciale : ${lastResult.special}`, `✨ Chance : ${lastResult.chance}`].filter(Boolean);
-    }
-
-    const text = parts.join("\n");
+    renderForumResult(lastResult);
 
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(forumCode.value);
       copyResultBtn.textContent = "Résultat copié !";
       setTimeout(() => copyResultBtn.textContent = "Copier le résultat", 1400);
     } catch (e) {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
+      forumCode.select();
+      forumCode.setSelectionRange(0, forumCode.value.length);
       document.execCommand("copy");
-      textarea.remove();
 
       copyResultBtn.textContent = "Résultat copié !";
       setTimeout(() => copyResultBtn.textContent = "Copier le résultat", 1400);
@@ -1168,6 +1339,7 @@ button, input { font: inherit; }
 
   openChestBtn.addEventListener("click", openChest);
   copyResultBtn.addEventListener("click", copyResult);
+  copyForumCodeBtn.addEventListener("click", copyForumCode);
 
   document.getElementById("clearHistory").addEventListener("click", () => {
     history.length = 0;
