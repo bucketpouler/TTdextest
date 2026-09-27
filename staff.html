@@ -2255,12 +2255,13 @@ function buildCaptureRpHtml(result){
   const type1 = getType1(p);
   const type2 = getType2(p);
   const introText = getCaptureFlavorText(result.success);
+  const resultText = result.success ? "Capture réussie" : "Capture ratée";
   const statusColor = result.success ? "var(--odyssey,#80AE77)" : "var(--txt-orange,#D44D2B)";
   const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
   return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
-  <div style="padding:18px 20px;border-radius:8px;background:var(--bg-orange,#e59480);color:var(--txt-neutre-second,#2A363C);">
-    <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;">Capture</div>
+  <div style="padding:18px 20px;border-radius:8px;background:var(--bg-orange,#e59480);color:#fff;">
+    <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;color:#fff;">Capture</div>
   </div>
 
   <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10));">
@@ -2282,6 +2283,7 @@ function buildCaptureRpHtml(result){
     </div>
 
     <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:13px;line-height:1.6;">
+      <strong style="display:block;margin-bottom:4px;color:${statusColor};font-size:12px;font-weight:900;text-transform:uppercase;">${escapeHtmlForRp(resultText)}</strong>
       ${escapeHtmlForRp(introText)}
     </div>
 
