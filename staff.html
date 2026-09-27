@@ -2255,6 +2255,7 @@ function buildCaptureRpHtml(result){
   const type1 = getType1(p);
   const type2 = getType2(p);
   const introText = getCaptureFlavorText(result.success);
+  const statusColor = result.success ? "var(--odyssey,#80AE77)" : "var(--txt-orange,#D44D2B)";
   const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
   return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
