@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages de modération — Themis Trials</title>
+
+<script>
+(function(){
+  try{
+    if(localStorage.getItem("themisTheme")==="dark"){
+      document.documentElement.classList.add("night-mode");
+    }
+  }catch(e){}
+})();
+</script>
+
+<style>
+:root{
+  --txt-noir:#151B1E;
+  --txt-noir-neutre:#3F515A;
+  --txt-blanc-neutre:#F0F3F4;
+  --txt-neutre:#889FAA;
+  --txt-neutre-second:#2A363C;
+  --txt-neutre-dis:#A5B7C0;
+  --txt-orange:#D44D2B;
+  --txt-orange-def:#DC7156;
+  --txt-brand-neutre:#F0F3F4;
+  --txt-blue-def:#72A9C0;
+  --bord-neutre:rgba(9,9,11,.1);
+  --bord-neutre-second:#A5B7C0;
+  --bord-surface:#C9D6DD;
+  --bord-bleu:#72A9C0;
+  --bord-bleu-second:#4F93B0;
+  --bord-orange:#DC7156;
+  --bord-orange-second:#D44D2B;
+  --bg-fond:#F0F3F4;
+  --bg-transparent:rgba(255,255,255,.72);
+  --bg-neutre:#E1E7EA;
+  --bg-bleu-light:#B9D4DF;
+  --bg-bleu-second:#72A9C0;
+  --bg-orange-light:#EEB8AA;
+  --bg-orange-second:#DC7156;
+  --fond-droit:radial-gradient(circle,rgba(126,170,198,2) 0%,rgba(126,170,198,1) 28%,rgba(126,170,198,.18) 48%,rgba(126,170,198,.08) 68%,rgba(126,170,198,.025) 84%,rgba(126,170,198,0) 100%);
+  --fond-gauche:radial-gradient(circle,rgba(217,122,93,2) 0%,rgba(217,122,93,1) 28%,rgba(217,122,93,.18) 48%,rgba(217,122,93,.08) 68%,rgba(217,122,93,.025) 84%,rgba(217,122,93,0) 100%);
+}
+html.night-mode{
+  --txt-noir:#F1F1F3;
+  --txt-noir-neutre:#F1F1F3;
+  --txt-blanc-neutre:#2E2E38;
+  --txt-neutre:#74748B;
+  --txt-neutre-second:#F1F1F3;
+  --txt-neutre-dis:#F1F1F3;
+  --txt-orange:#B04F57;
+  --txt-orange-def:#C07279;
+  --txt-brand-neutre:#F1F1F3;
+  --txt-blue-def:#8574BE;
+  --bord-neutre:rgba(9,9,11,.1);
+  --bord-neutre-second:#2E2E38;
+  --bord-surface:#22222A;
+  --bord-bleu:#8574BE;
+  --bord-bleu-second:#6759AD;
+  --bord-orange:#C07279;
+  --bord-orange-second:#B04F57;
+  --bg-fond:#22222A;
+  --bg-transparent:rgba(9,9,11,.70);
+  --bg-neutre:#2E2E38;
+  --bg-bleu-light:#C2BADE;
+  --bg-bleu-second:#8574BE;
+  --bg-orange-light:#D0959A;
+  --bg-orange-second:#C07279;
+  --fond-droit:radial-gradient(circle,rgba(133,116,190,2) 0%,rgba(133,116,190,1) 28%,rgba(133,116,190,.18) 48%,rgba(133,116,190,.08) 68%,rgba(133,116,190,.025) 84%,rgba(133,116,190,0) 100%);
+  --fond-gauche:radial-gradient(circle,rgba(192,114,121,1) 0%,rgba(192,114,121,1) 28%,rgba(192,114,121,.18) 48%,rgba(192,114,121,.08) 68%,rgba(192,114,121,.025) 84%,rgba(192,114,121,0) 100%);
+}
+*{box-sizing:border-box}
+@font-face{
+  font-family:Coolvetica;
+  font-style:normal;
+  font-weight:400;
+  src:url('https://cdn.jsdelivr.net/gh/Pandariesw/TOY/CoolveticaRg-Regular%20400.ttf');
+}
+html{
+  min-height:100%;
+  background-image:url('https://2img.net/i.imgur.com/XO5FwwW.png');
+  background-color:var(--bg-fond);
+  background-repeat:repeat;
+  background-position:top center;
+}
+body{
+  min-height:100%;
+  margin:0;
+  color:var(--txt-noir-neutre);
+  font-family:Inter,Arial,sans-serif;
+  background:transparent;
+}
+body::before,body::after{
+  content:"";
+  position:fixed;
+  width:950px;
+  height:950px;
+  border-radius:50%;
+  filter:blur(95px);
+  pointer-events:none;
+  z-index:-1;
+}
+body::before{right:-480px;top:-500px;background:var(--fond-droit)}
+body::after{left:-500px;bottom:-500px;background:var(--fond-gauche)}
+button,input,textarea{font:inherit}
+.themis-shell{
+  width:min(1500px,calc(100% - 48px));
+  margin:0 auto;
+  padding:48px 0 70px;
+}
+.themis-panel{
+  background:var(--bg-transparent);
+  border:1px solid var(--bord-neutre);
+  border-radius:12px;
+  backdrop-filter:blur(8px);
+}
+.themis-hero{
+  position:relative;
+  min-height:250px;
+  padding:38px 42px;
+  overflow:hidden;
+  border-radius:12px;
+  background:linear-gradient(110deg,rgba(220,113,86,.95),rgba(114,169,192,.84)),url('https://2img.net/i.imgur.com/JoUhDEV.png') center/cover;
+  color:#fff;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:28px;
+  margin-bottom:16px;
+}
+.themis-hero::after{
+  content:"";
+  position:absolute;
+  right:-80px;
+  top:-150px;
+  width:340px;
+  height:340px;
+  border-radius:50%;
+  border:55px solid rgba(255,255,255,.08);
+}
+.themis-hero-content{position:relative;z-index:2;max-width:850px}
+.themis-kicker{
+  margin-bottom:8px;
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  opacity:.88;
+}
+.themis-title{margin:0;font:400 62px/.95 Coolvetica,Arial,sans-serif}
+.themis-intro{
+  margin:18px 0 0;
+  max-width:760px;
+  font-size:14px;
+  line-height:1.65;
+  font-weight:500;
+}
+.themis-hero-mark{
+  position:relative;
+  z-index:2;
+  width:150px;
+  height:150px;
+  flex:0 0 150px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+  display:grid;
+  place-items:center;
+  font-size:66px;
+  backdrop-filter:blur(10px);
+}
+.themis-layout{
+  display:grid;
+  grid-template-columns:390px minmax(0,1fr);
+  gap:16px;
+}
+.themis-sidebar{
+  padding:24px;
+  align-self:start;
+  position:sticky;
+  top:18px;
+}
+.themis-section-title{
+  margin:0 0 5px;
+  font:400 28px Coolvetica,Arial,sans-serif;
+  color:var(--txt-noir-neutre);
+}
+.themis-section-desc{
+  margin:0 0 18px;
+  color:var(--txt-neutre);
+  font-size:12px;
+  line-height:1.5;
+}
+.themis-field{margin-bottom:14px}
+.themis-field label,.themis-small-label{
+  display:block;
+  margin-bottom:7px;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--txt-neutre);
+}
+.themis-field input,.themis-field textarea{
+  width:100%;
+  border:1px solid var(--bord-surface);
+  border-radius:8px;
+  background:var(--bg-neutre);
+  color:var(--txt-noir-neutre);
+  padding:12px 13px;
+  outline:none;
+}
+.themis-field textarea{
+  min-height:190px;
+  resize:vertical;
+  line-height:1.55;
+}
+.themis-field input:focus,.themis-field textarea:focus{border-color:var(--bord-bleu-second)}
+.themis-selector{
+  display:grid;
+  gap:10px;
+  margin:20px 0 0;
+}
+.themis-choice{
+  --choice:#72A9C0;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  padding:13px 14px;
+  border:1px solid var(--bord-surface);
+  border-radius:9px;
+  background:var(--bg-neutre);
+  color:var(--txt-noir-neutre);
+  cursor:pointer;
+  transition:.22s ease;
+  text-align:left;
+}
+.themis-choice:hover{transform:translateX(3px)}
+.themis-choice.is-active{
+  border-color:var(--choice);
+  box-shadow:inset 0 0 0 1px var(--choice);
+}
+.themis-choice[data-type="validation"]{--choice:#80AE77}
+.themis-choice[data-type="information"]{--choice:#72A9C0}
+.themis-choice[data-type="modification"]{--choice:#D3A63C}
+.themis-choice[data-type="attention"]{--choice:#D44D2B}
+.themis-choice[data-type="recompense"]{--choice:#A98FF3}
+.themis-choice-icon{
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.58);
+  color:var(--choice);
+  font-size:21px;
+  font-weight:900;
+}
+html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
+.themis-choice strong{
+  display:block;
+  color:var(--txt-noir-neutre);
+  font-size:13px;
+}
+.themis-choice small{
+  display:block;
+  margin-top:3px;
+  color:var(--txt-neutre);
+  font-size:10px;
+}
+.themis-choice-tag{
+  font:400 18px Coolvetica,Arial,sans-serif;
+  color:var(--choice);
+}
+.themis-main{min-width:0}
+.themis-preview-panel,.themis-code-panel{padding:24px}
+.themis-preview-panel{margin-bottom:16px}
+.themis-preview-head,.themis-code-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:18px;
+}
+.themis-state{
+  padding:8px 11px;
+  border-radius:999px;
+  background:var(--bg-neutre);
+  border:1px solid var(--bord-surface);
+  color:var(--txt-neutre);
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.themis-preview-area{
+  min-height:330px;
+  padding:30px;
+  border-radius:10px;
+  background:var(--bg-neutre);
+  border:1px solid var(--bord-surface);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.themis-copy-btn{
+  width:auto;
+  min-height:42px;
+  padding:0 16px;
+  border:1px solid var(--bord-bleu-second);
+  border-radius:8px;
+  background:var(--bg-bleu-second);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.themis-copy-btn:hover{filter:brightness(.96);transform:translateY(-1px)}
+.themis-code-panel textarea{
+  width:100%;
+  min-height:210px;
+  resize:vertical;
+  border:1px solid var(--bord-surface);
+  border-radius:8px;
+  background:var(--bg-neutre);
+  color:var(--txt-noir-neutre);
+  padding:13px;
+  font:600 11px/1.5 Consolas,Monaco,monospace;
+  outline:none;
+}
+@media(max-width:1050px){
+  .themis-layout{grid-template-columns:1fr}
+  .themis-sidebar{position:static}
+}
+@media(max-width:700px){
+  .themis-shell{width:calc(100% - 24px);padding-top:20px}
+  .themis-hero{
+    min-height:300px;
+    padding:28px 24px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .themis-title{font-size:47px}
+  .themis-hero-mark{
+    width:95px;
+    height:95px;
+    flex-basis:95px;
+    font-size:42px;
+  }
+  .themis-preview-head,.themis-code-head{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .themis-copy-btn{width:100%}
+  .themis-preview-area{padding:15px}
+}
+</style>
+</head>
+
+<body>
+<main class="themis-shell">
+
+<section class="themis-hero">
+  <div class="themis-hero-content">
+    <div class="themis-kicker">Themis Trials • Outil du staff</div>
+    <h1 class="themis-title">Messages de modération</h1>
+    <p class="themis-intro">Rédigez votre message, choisissez sa catégorie et récupérez immédiatement un code prêt à copier-coller sur le forum.</p>
+  </div>
+  <div class="themis-hero-mark">✦</div>
+</section>
+
+<div class="themis-layout">
+
+<aside class="themis-panel themis-sidebar">
+  <h2 class="themis-section-title">Préparer le message</h2>
+  <p class="themis-section-desc">Le rendu et le code se mettent à jour automatiquement pendant la rédaction.</p>
+
+  <div class="themis-field">
+    <label for="messageTitle">Titre</label>
+    <input id="messageTitle" type="text" value="Message du staff" placeholder="Titre du message">
+  </div>
+
+  <div class="themis-field">
+    <label for="messageText">Message</label>
+    <textarea id="messageText" placeholder="Écrivez votre message ici…">Votre message apparaîtra ici.</textarea>
+  </div>
+
+  <span class="themis-small-label">Catégorie</span>
+
+  <div class="themis-selector">
+    <button class="themis-choice is-active" data-type="validation" type="button">
+      <span class="themis-choice-icon">✓</span>
+      <span><strong>Validation</strong><small>Fiche ou demande validée</small></span>
+      <span class="themis-choice-tag">01</span>
+    </button>
+
+    <button class="themis-choice" data-type="information" type="button">
+      <span class="themis-choice-icon">i</span>
+      <span><strong>Information</strong><small>Annonce ou précision</small></span>
+      <span class="themis-choice-tag">02</span>
+    </button>
+
+    <button class="themis-choice" data-type="modification" type="button">
+      <span class="themis-choice-icon">✎</span>
+      <span><strong>Modification</strong><small>Changements demandés</small></span>
+      <span class="themis-choice-tag">03</span>
+    </button>
+
+    <button class="themis-choice" data-type="attention" type="button">
+      <span class="themis-choice-icon">!</span>
+      <span><strong>Attention</strong><small>Avertissement ou point important</small></span>
+      <span class="themis-choice-tag">04</span>
+    </button>
+
+    <button class="themis-choice" data-type="recompense" type="button">
+      <span class="themis-choice-icon">★</span>
+      <span><strong>Récompense</strong><small>Gain attribué à un membre</small></span>
+      <span class="themis-choice-tag">05</span>
+    </button>
+  </div>
+</aside>
+
+<section class="themis-main">
+
+  <div class="themis-panel themis-preview-panel">
+    <div class="themis-preview-head">
+      <div>
+        <h2 class="themis-section-title">Aperçu du message</h2>
+        <p class="themis-section-desc" style="margin-bottom:0;">Le rendu se met à jour en direct.</p>
+      </div>
+      <div class="themis-state" id="currentType">Validation</div>
+    </div>
+
+    <div class="themis-preview-area" id="preview"></div>
+  </div>
+
+  <div class="themis-panel themis-code-panel">
+    <div class="themis-code-head">
+      <div>
+        <h2 class="themis-section-title">Code à poster</h2>
+        <p class="themis-section-desc" style="margin-bottom:0;">HTML complet et compacté pour éviter les retours à la ligne parasites de Forumactif.</p>
+      </div>
+      <button class="themis-copy-btn" id="copyCode" type="button">Copier le code</button>
+    </div>
+
+    <textarea id="generatedCode" readonly></textarea>
+  </div>
+
+</section>
+</div>
+</main>
+
+<script>
+(function(){
+  const TYPES={
+    validation:{label:"Validation",icon:"✓",color:"#80AE77",soft:"#E4EFE1"},
+    information:{label:"Information",icon:"i",color:"#72A9C0",soft:"#DDEBF0"},
+    modification:{label:"Modification",icon:"✎",color:"#D3A63C",soft:"#F2E8CB"},
+    attention:{label:"Attention",icon:"!",color:"#D44D2B",soft:"#F4DDD7"},
+    recompense:{label:"Récompense",icon:"★",color:"#A98FF3",soft:"#E8E1F6"}
+  };
+
+  let selectedType="validation";
+
+  const titleInput=document.getElementById("messageTitle");
+  const textInput=document.getElementById("messageText");
+  const preview=document.getElementById("preview");
+  const codeOutput=document.getElementById("generatedCode");
+  const currentType=document.getElementById("currentType");
+  const copyButton=document.getElementById("copyCode");
+  const choices=[...document.querySelectorAll(".themis-choice")];
+
+  function escapeHtml(value){
+    return String(value??"")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
+
+  function formatText(value){
+    return escapeHtml(value).replace(/\r?\n/g,"<br>");
+  }
+
+  function minifyForumHtml(value){
+    return String(value)
+      .replace(/\r?\n|\r/g,"")
+      .replace(/\t/g,"")
+      .replace(/>\s+</g,"><")
+      .replace(/\s{2,}/g," ")
+      .trim();
+  }
+
+  function buildForumCode(){
+    const type=TYPES[selectedType];
+    const safeTitle=escapeHtml(titleInput.value.trim()||type.label);
+    const safeText=formatText(textInput.value.trim()||"Votre message apparaîtra ici.");
+
+    const css=`<style>.themis-mod-message{--mod-color:${type.color};--mod-soft:${type.soft};max-width:650px;margin:18px auto;border-radius:10px;overflow:hidden;background:var(--bg-transparent,rgba(255,255,255,.72));border:1px solid var(--bord-neutre,rgba(9,9,11,.1));font-family:Inter,Arial,sans-serif;color:var(--txt-noir-neutre,#3F515A)}.themis-mod-head{display:flex;align-items:center;gap:13px;padding:16px 18px;background:var(--mod-color);color:#fff}.themis-mod-icon{width:38px;height:38px;flex:0 0 38px;border-radius:7px;display:grid;place-items:center;background:rgba(255,255,255,.18);font-size:20px;font-weight:900}.themis-mod-kicker{font-size:8px;line-height:1.2;font-weight:800;text-transform:uppercase;letter-spacing:.16em;opacity:.82}.themis-mod-title{margin-top:2px;font-family:Coolvetica,Arial,sans-serif;font-size:25px;line-height:1.05;font-weight:400}.themis-mod-body{padding:17px 19px;background:color-mix(in srgb,var(--mod-soft) 44%,var(--bg-neutre,#E1E7EA));font-size:13px;line-height:1.65}</style>`;
+
+    const block=`<div class="themis-mod-message ${selectedType}"><div class="themis-mod-head"><div class="themis-mod-icon">${type.icon}</div><div><div class="themis-mod-kicker">${type.label}</div><div class="themis-mod-title">${safeTitle}</div></div></div><div class="themis-mod-body">${safeText}</div></div>`;
+
+    return minifyForumHtml(css+block);
+  }
+
+  function update(){
+    const generated=buildForumCode();
+    codeOutput.value=generated;
+    preview.innerHTML=generated;
+    currentType.textContent=TYPES[selectedType].label;
+  }
+
+  choices.forEach(button=>{
+    button.addEventListener("click",function(){
+      selectedType=button.dataset.type;
+      choices.forEach(item=>item.classList.toggle("is-active",item===button));
+      update();
+    });
+  });
+
+  titleInput.addEventListener("input",update);
+  textInput.addEventListener("input",update);
+
+  copyButton.addEventListener("click",async function(){
+    try{
+      await navigator.clipboard.writeText(codeOutput.value);
+    }catch(e){
+      codeOutput.select();
+      codeOutput.setSelectionRange(0,codeOutput.value.length);
+      document.execCommand("copy");
+    }
+
+    copyButton.textContent="Code copié !";
+    setTimeout(function(){
+      copyButton.textContent="Copier le code";
+    },1400);
+  });
+
+  window.addEventListener("storage",function(event){
+    if(event.key==="themisTheme"){
+      document.documentElement.classList.toggle("night-mode",event.newValue==="dark");
+    }
+  });
+
+  update();
+})();
+</script>
+
+</body>
+</html>
