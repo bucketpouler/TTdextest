@@ -2108,44 +2108,44 @@ function buildAppearanceRpHtml(result){
   const type1 = getType1(p);
   const type2 = getType2(p);
   const rarity = getRarityInfo(p);
-  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
+  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
-  return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
-  <div style="padding:18px 20px;border-radius:8px;background:var(--bg-bleu-second,#72A9C0);color:var(--txt-brand-neutre,#F0F3F4);">
+  return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond);background-image:linear-gradient(var(--bord-neutre) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre);font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre);">
+  <div style="padding:18px 20px;border-radius:8px;background:var(--bg-bleu-second);color:var(--txt-brand-neutre);">
     <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;">Apparition</div>
     <div style="margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82;">Un Pokémon apparaît</div>
   </div>
 
-  <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10));">
+  <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent);border:1px solid var(--bord-neutre);">
     <div style="display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center;">
-      <div style="width:112px;height:112px;border-radius:8px;background:var(--bg-neutre,#E1E7EA);display:flex;align-items:center;justify-content:center;padding:8px;">
-        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:98px;max-height:98px;object-fit:contain;" />` : `<span style="font-size:11px;color:var(--txt-neutre,#889FAA);font-weight:700;">Pas de sprite</span>`}
+      <div style="width:112px;height:112px;border-radius:8px;background:var(--bg-neutre);display:flex;align-items:center;justify-content:center;padding:8px;">
+        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:98px;max-height:98px;object-fit:contain;" />` : `<span style="font-size:11px;color:var(--txt-neutre);font-weight:700;">Pas de sprite</span>`}
       </div>
 
       <div style="min-width:0;">
-        <div style="font-size:10px;font-weight:800;color:var(--txt-orange,#D44D2B);text-transform:uppercase;letter-spacing:.8px;">Rencontre sauvage</div>
-        <div style="margin-top:4px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:27px;line-height:1.05;font-weight:400;color:var(--txt-noir,#151B1E);">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
+        <div style="font-size:10px;font-weight:800;color:var(--txt-orange);text-transform:uppercase;letter-spacing:.8px;">Rencontre sauvage</div>
+        <div style="margin-top:4px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:27px;line-height:1.05;font-weight:400;color:var(--txt-noir);">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
         <div style="margin-top:9px;">
           ${typesHtml}
-          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-neutre-terti,#A5B7C0);color:var(--txt-brand-neutre,#F0F3F4);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
-          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-second,#DC7156);color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(rarity.label)}</span>
-          ${result.isShiny ? `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-light,#EEB8AA);color:var(--txt-noir-neutre,#3F515A);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
+          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-neutre-terti);color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
+          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-second);color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(rarity.label)}</span>
+          ${result.isShiny ? `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-light);color:var(--txt-noir-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
         </div>
       </div>
     </div>
 
-    <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:13px;line-height:1.6;">
+    <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre);color:var(--txt-noir-neutre);font-size:13px;line-height:1.6;">
       ${escapeHtmlForRp(getAppearanceText(result))}
     </div>
 
     <div style="margin-top:9px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;text-align:center;">
-      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
-        <strong style="display:block;color:var(--txt-blue-def,#72A9C0);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.rank)}</strong>
-        <span style="display:block;margin-top:4px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Rang</span>
+      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre);">
+        <strong style="display:block;color:var(--txt-blue-def);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.rank)}</strong>
+        <span style="display:block;margin-top:4px;color:var(--txt-neutre);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Rang</span>
       </div>
-      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
-        <strong style="display:block;color:var(--txt-orange,#D44D2B);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:20px;line-height:1;font-weight:400;">${escapeHtmlForRp(rarity.label)}</strong>
-        <span style="display:block;margin-top:4px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Rareté</span>
+      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre);">
+        <strong style="display:block;color:var(--txt-orange);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:20px;line-height:1;font-weight:400;">${escapeHtmlForRp(rarity.label)}</strong>
+        <span style="display:block;margin-top:4px;color:var(--txt-neutre);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Rareté</span>
       </div>
     </div>
   </div>
@@ -2256,45 +2256,45 @@ function buildCaptureRpHtml(result){
   const type2 = getType2(p);
   const introText = getCaptureFlavorText(result.success);
   const resultText = result.success ? "Capture réussie" : "Capture ratée";
-  const statusColor = result.success ? "var(--odyssey,#80AE77)" : "var(--txt-orange,#D44D2B)";
-  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
+  const statusColor = result.success ? "var(--odyssey)" : "var(--txt-orange)";
+  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
-  return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
-  <div style="padding:18px 20px;border-radius:8px;background:var(--bg-orange,#e59480);color:#fff;">
-    <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;color:#fff;">Capture</div>
+  return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond);background-image:linear-gradient(var(--bord-neutre) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre);font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre);">
+  <div style="padding:18px 20px;border-radius:8px;background:var(--bg-orange);color:var(--txt-brand-neutre);">
+    <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;color:var(--txt-brand-neutre);">Capture</div>
   </div>
 
-  <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10));">
+  <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent);border:1px solid var(--bord-neutre);">
     <div style="display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center;">
-      <div style="width:112px;height:112px;border-radius:8px;background:var(--bg-neutre,#E1E7EA);display:flex;align-items:center;justify-content:center;padding:8px;">
-        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:98px;max-height:98px;object-fit:contain;" />` : `<span style="font-size:11px;color:var(--txt-neutre,#889FAA);font-weight:700;">Pas de sprite</span>`}
+      <div style="width:112px;height:112px;border-radius:8px;background:var(--bg-neutre);display:flex;align-items:center;justify-content:center;padding:8px;">
+        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:98px;max-height:98px;object-fit:contain;" />` : `<span style="font-size:11px;color:var(--txt-neutre);font-weight:700;">Pas de sprite</span>`}
       </div>
 
       <div style="min-width:0;">
-        <div style="font-size:10px;font-weight:800;color:var(--txt-orange,#D44D2B);text-transform:uppercase;letter-spacing:.8px;">Pokémon ciblé</div>
-        <div style="margin-top:4px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:27px;line-height:1.05;font-weight:400;color:var(--txt-noir,#151B1E);">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
+        <div style="font-size:10px;font-weight:800;color:var(--txt-orange);text-transform:uppercase;letter-spacing:.8px;">Pokémon ciblé</div>
+        <div style="margin-top:4px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:27px;line-height:1.05;font-weight:400;color:var(--txt-noir);">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
         <div style="margin-top:9px;">
           ${typesHtml}
-          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-neutre-terti,#A5B7C0);color:var(--txt-brand-neutre,#F0F3F4);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
-          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-second,#DC7156);color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(result.rarityLabel)}</span>
-          ${result.isShiny ? `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-light,#EEB8AA);color:var(--txt-noir-neutre,#3F515A);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
+          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-neutre-terti);color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
+          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-second);color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(result.rarityLabel)}</span>
+          ${result.isShiny ? `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-light);color:var(--txt-noir-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
         </div>
       </div>
     </div>
 
-    <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:13px;line-height:1.6;">
+    <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre);color:var(--txt-noir-neutre);font-size:13px;line-height:1.6;">
       <strong style="display:block;margin-bottom:4px;color:${statusColor};font-size:12px;font-weight:900;text-transform:uppercase;">${escapeHtmlForRp(resultText)}</strong>
       ${escapeHtmlForRp(introText)}
     </div>
 
     <div style="margin-top:9px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;text-align:center;">
-      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
-        <strong style="display:block;color:var(--txt-blue-def,#72A9C0);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.roll)}</strong>
-        <span style="display:block;margin-top:4px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Jet</span>
+      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre);">
+        <strong style="display:block;color:var(--txt-blue-def);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.roll)}</strong>
+        <span style="display:block;margin-top:4px;color:var(--txt-neutre);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Jet</span>
       </div>
-      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
+      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre);">
         <strong style="display:block;color:${statusColor};font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.captureChance)}%</strong>
-        <span style="display:block;margin-top:4px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Taux</span>
+        <span style="display:block;margin-top:4px;color:var(--txt-neutre);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Taux</span>
       </div>
     </div>
   </div>
