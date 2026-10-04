@@ -1,23 +1,136 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<script>
+(function(){
+  try {
+    if (localStorage.getItem("themisTheme") === "dark") {
+      document.documentElement.classList.add("night-mode");
+    }
+  } catch(e) {}
+})();
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Staff Tools — Pokédex</title>
   <style>
     :root {
-      --page-bg: #eef4f6;
-      --grid-line: rgba(98, 135, 148, 0.12);
-      --panel: #dfeaf0;
-      --panel-light: #eef6f8;
-      --blue: #6aa9c4;
-      --blue-dark: #3f6473;
-      --coral: #e8755f;
-      --green: #77b475;
-      --text: #405965;
-      --muted: #7d99a5;
-      --radius: 12px;
+      --txt-noir: #151B1E;
+      --txt-noir-neutre: #3F515A;
+      --txt-blanc-neutre: #F0F3F4;
+      --txt-neutre: #889FAA;
+      --txt-neutre-second: #2A363C;
+      --txt-neutre-dis: #A5B7C0;
+      --txt-orange: #D44D2B;
+      --txt-orange-def: #DC7156;
+      --txt-brand-neutre: #F0F3F4;
+      --txt-blue-def: #72A9C0;
+      --bouton-clr: #E1E7EA;
+      --bord-neutre: rgba(9, 9, 11, 0.1);
+      --bord-neutre-second: #A5B7C0;
+      --bord-neutre-terti: #889FAA;
+      --bord-surface: #C9D6DD;
+      --bord-neutre-opa: rgb(9 9 11 / 10%);
+      --bord-bleu: #72A9C0;
+      --bord-bleu-second: #4F93B0;
+      --bord-bleu-terti: #3F768D;
+      --bord-orange: #DC7156;
+      --bord-orange-second: #D44D2B;
+      --bord-orange-terti: #A93E23;
+      --bg-second: #C9D6DD;
+      --bg-fond: #F0F3F4;
+      --bg-transparent: rgba(255, 255, 255, 0.70);
+      --bg-neutre: #E1E7EA;
+      --bg-neutre-prim: #2A363C;
+      --bg-neutre-terti: #A5B7C0;
+      --bg-bleu-light: #B9D4DF;
+      --bg-bleu: #95BED0;
+      --bg-bleu-second: #72A9C0;
+      --bg-bleu-terti: #4F93B0;
+      --bg-orange-light: #EEB8AA;
+      --bg-orange: #e59480;
+      --bg-orange-second: #DC7156;
+      --bg-orange-terti: #D44D2B;
+      --fond-droit: radial-gradient(circle, rgba(126,170,198,2) 0%, rgba(126,170,198,1) 28%, rgba(126,170,198,.18) 48%, rgba(126,170,198,.08) 68%, rgba(126,170,198,.025) 84%, rgba(126,170,198,0) 100%);
+      --fond-gauche: radial-gradient(circle, rgba(217,122,93,2) 0%, rgba(217,122,93,1) 28%, rgba(217,122,93,.18) 48%, rgba(217,122,93,.08) 68%, rgba(217,122,93,.025) 84%, rgba(217,122,93,0) 100%);
+      --error: #D62D30;
+      --odyssey: #80AE77;
+      --dresseurs: #758CD8;
+      --civils: #D47B7B;
+      --plante: #7AC74C;
+      --poison: #A33EA1;
+      --feu: #EE8130;
+      --vol: #A98FF3;
+      --eau: #6390F0;
+      --insecte: #A6B91A;
+      --tenebres: #705746;
+      --normal: #A8A77A;
+      --electrik: #F7D02C;
+      --psy: #F95587;
+      --sol: #E2BF65;
+      --glace: #96D9D6;
+      --acier: #B7B7CE;
+      --combat: #C22E28;
+      --roche: #B6A136;
+      --dragon: #6F35FC;
+      --fee: #D685AD;
+      --spectre: #735797;
     }
+
+    html.night-mode {
+      --txt-noir: #F1F1F3;
+      --txt-noir-neutre: #F1F1F3;
+      --txt-blanc-neutre: #2E2E38;
+      --txt-neutre: #74748B;
+      --txt-neutre-second: #F1F1F3;
+      --txt-neutre-dis: #F1F1F3;
+      --txt-orange: #B04F57;
+      --txt-orange-def: #C07279;
+      --txt-brand-neutre: #F1F1F3;
+      --txt-blue-def: #8574BE;
+      --bord-neutre: rgba(9, 9, 11, 0.1);
+      --bord-neutre-second: #2E2E38;
+      --bord-neutre-terti: #464653;
+      --bord-surface: #22222A;
+      --bg-bleu-light: #C2BADE;
+      --bord-bleu: #8574BE;
+      --bord-bleu-second: #6759AD;
+      --bord-bleu-terti: #51428B;
+      --bord-orange: #C07279;
+      --bord-orange-second: #B04F57;
+      --bord-orange-terti: #8D3F46;
+      --bg-second: #464653;
+      --bg-fond: #22222A;
+      --bg-transparent: rgba(9, 9, 11, 0.70);
+      --bg-neutre: #2E2E38;
+      --bg-neutre-prim: #E3E3E8;
+      --bg-neutre-terti: #5D5D6F;
+      --bg-bleu: #A497CE;
+      --bg-bleu-second: #8574BE;
+      --bg-bleu-terti: #6752AD;
+      --bg-orange-light: #D0959A;
+      --bg-orange: #D0959A;
+      --bg-orange-second: #C07279;
+      --bg-orange-terti: #B04F57;
+      --fond-droit: radial-gradient(circle, rgba(133,116,190,2) 0%, rgba(133,116,190,1) 28%, rgba(133,116,190,.18) 48%, rgba(133,116,190,.08) 68%, rgba(133,116,190,.025) 84%, rgba(133,116,190,0) 100%);
+      --fond-gauche: radial-gradient(circle, rgba(192,114,121,1) 0%, rgba(192,114,121,1) 28%, rgba(192,114,121,.18) 48%, rgba(192,114,121,.08) 68%, rgba(192,114,121,.025) 84%, rgba(192,114,121,0) 100%);
+    }
+    /* Aliases fonctionnels de l'outil, tous reliés à la palette Themis. */
+    :root {
+      --page-bg: var(--bg-fond);
+      --grid-line: var(--bord-neutre);
+      --panel: var(--bg-neutre);
+      --panel-light: var(--bg-neutre);
+      --blue: var(--bg-bleu-second);
+      --blue-dark: var(--txt-blue-def);
+      --coral: var(--bg-orange-second);
+      --green: var(--odyssey);
+      --text: var(--txt-noir-neutre);
+      --muted: var(--txt-neutre);
+      --radius: 10px;
+    }
+
 
     * { box-sizing: border-box; }
 
@@ -411,14 +524,133 @@
       .badges, .capture-row { justify-content: center; }
       .capture-controls { grid-template-columns: 1fr; }
     }
+
+    body {
+      background: var(--bg-fond);
+      color: var(--txt-noir-neutre);
+      position: relative;
+      isolation: isolate;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 1400px;
+      height: 1400px;
+      left: -700px;
+      bottom: -700px;
+      border-radius: 50%;
+      background: var(--fond-gauche);
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      width: 1400px;
+      height: 1400px;
+      right: -700px;
+      top: -700px;
+      border-radius: 50%;
+      background: var(--fond-droit);
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      padding: 30px 24px 18px;
+    }
+
+    .themis-tools-heading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      width: min(760px, 100%);
+      margin: 0 auto;
+    }
+
+    .themis-viewforum-line {
+      display: block;
+      height: 2px;
+      flex: 1 1 120px;
+      max-width: 220px;
+    }
+
+    .themis-viewforum-line-left { background: var(--bg-bleu-second); }
+    .themis-viewforum-line-right { background: var(--bg-orange-second); }
+
+    header h1 {
+      font-family: Coolvetica, Arial, Helvetica, sans-serif;
+      font-weight: 400;
+      color: var(--txt-noir);
+    }
+
+    .panel,
+    .tool-card,
+    .stat-card,
+    .talent-check,
+    .result-box,
+    .mini-pokemon,
+    .capture-preview,
+    .capture-manual-result,
+    .list-item,
+    .summary-line,
+    .rp-preview {
+      background: var(--bg-neutre);
+      border-color: var(--bord-neutre);
+      color: var(--txt-noir-neutre);
+    }
+
+    input, select, button, textarea {
+      background: var(--bg-neutre);
+      border-color: var(--bord-neutre);
+      color: var(--txt-noir-neutre);
+    }
+
+    .mini-pokemon img,
+    .list-item img,
+    .capture-preview img {
+      background: var(--bg-second);
+    }
+
+    button.primary { background: var(--bg-bleu-second); color: var(--txt-brand-neutre); }
+    button.coral { background: var(--bg-orange-second); color: var(--txt-brand-neutre); }
+    button.green { background: var(--odyssey); color: var(--txt-brand-neutre); }
+
+    .stat-card strong,
+    .tool-card h2,
+    .mini-title,
+    .capture-result,
+    .list-title,
+    .capture-manual-result,
+    .summary-line {
+      color: var(--txt-noir-neutre);
+    }
+
+    .error { color: var(--error); }
+    .badge { background: var(--bg-bleu-second); color: var(--txt-brand-neutre); }
+    .badge.coral { background: var(--bg-orange-second); }
+    .badge.green { background: var(--odyssey); }
+    .badge.muted { background: var(--bg-neutre-terti); color: var(--txt-brand-neutre); }
+
+    .themis-tools-nav a {
+      border: 1px solid var(--bord-neutre);
+      color: var(--txt-brand-neutre) !important;
+    }
+
   </style>
 </head>
 <body>
-<header>
-  <h1>Staff Tools</h1>
-</header>
+<header><div class="themis-tools-heading"><span class="themis-viewforum-line themis-viewforum-line-left"></span><h1>Staff Tools</h1><span class="themis-viewforum-line themis-viewforum-line-right"></span></div></header>
 
-<div style="max-width:1180px;margin:0 auto 12px;padding:0 24px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;"><a href="eleftheria.html" style="padding:10px 14px;border-radius:8px;background:#6aa9c4;color:white;text-decoration:none;font-weight:800;">Pokémon d'Eleftheria</a><a href="rarete.html" style="padding:10px 14px;border-radius:8px;background:#e8755f;color:white;text-decoration:none;font-weight:800;">Gérer les raretés</a></div>
+<div class="themis-tools-nav" style="max-width:1180px;margin:0 auto 12px;padding:0 24px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;"><a href="eleftheria.html" style="padding:10px 14px;border-radius:8px;background:var(--bg-bleu-second);color:var(--txt-brand-neutre);text-decoration:none;font-weight:800;">Pokémon d'Eleftheria</a><a href="rarete.html" style="padding:10px 14px;border-radius:8px;background:var(--bg-orange-second);color:var(--txt-brand-neutre);text-decoration:none;font-weight:800;">Gérer les raretés</a></div>
 
 <main class="container">
 <section id="dashboard" class="panel">
@@ -592,26 +824,26 @@ let lastManualCaptureResult = null;
 let lastWeeklyParadoxDraw = null;
 
 const TYPE_COLORS = {
-  normal: "#A8A77A",
-  feu: "#EE8130",
-  eau: "#6390F0",
-  electrik: "#F7D02C",
-  plante: "#7AC74C",
-  glace: "#96D9D6",
-  combat: "#C22E28",
-  poison: "#A33EA1",
-  sol: "#E2BF65",
-  vol: "#A98FF3",
-  psy: "#F95587",
-  insecte: "#A6B91A",
-  roche: "#B6A136",
-  spectre: "#735797",
-  dragon: "#6F35FC",
-  tenebres: "#705746",
-  acier: "#B7B7CE",
-  fee: "#D685AD"
+  normal: "var(--normal)",
+  feu: "var(--feu)",
+  eau: "var(--eau)",
+  electrik: "var(--electrik)",
+  plante: "var(--plante)",
+  glace: "var(--glace)",
+  combat: "var(--combat)",
+  poison: "var(--poison)",
+  sol: "var(--sol)",
+  vol: "var(--vol)",
+  psy: "var(--psy)",
+  insecte: "var(--insecte)",
+  roche: "var(--roche)",
+  spectre: "var(--spectre)",
+  dragon: "var(--dragon)",
+  tenebres: "var(--tenebres)",
+  acier: "var(--acier)",
+  fee: "var(--fee)"
 };
-function typeBadgeColor(t){ return TYPE_COLORS[(t || "").toLowerCase()] || "#6aa9c4"; }
+function typeBadgeColor(t){ return TYPE_COLORS[(t || "").toLowerCase()] || "var(--bg-bleu-second)"; }
 
 function normalizeText(value){ return (value || "").toString().trim(); }
 function normalizeName(value){ return normalizeText(value).toLowerCase(); }
@@ -1118,8 +1350,8 @@ function renderWeeklyParadoxDraw(){
         <div>
           <div class="list-title">#${p.id || "?"} — ${getPokemonName(p)}</div>
           <div class="badges">
-            ${getType1(p) ? `<span class="badge" style="background:${typeBadgeColor(getType1(p))};color:#fff;">${getType1(p)}</span>` : ""}
-            ${getType2(p) ? `<span class="badge" style="background:${typeBadgeColor(getType2(p))};color:#fff;">${getType2(p)}</span>` : ""}
+            ${getType1(p) ? `<span class="badge" style="background:${typeBadgeColor(getType1(p))};color:var(--txt-brand-neutre);">${getType1(p)}</span>` : ""}
+            ${getType2(p) ? `<span class="badge" style="background:${typeBadgeColor(getType2(p))};color:var(--txt-brand-neutre);">${getType2(p)}</span>` : ""}
           </div>
         </div>
       </div>
@@ -2108,44 +2340,45 @@ function buildAppearanceRpHtml(result){
   const type1 = getType1(p);
   const type2 = getType2(p);
   const rarity = getRarityInfo(p);
-  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
+  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
-  return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
-  <div style="padding:18px 20px;border-radius:8px;background:var(--bg-bleu-second,#72A9C0);color:var(--txt-brand-neutre,#F0F3F4);">
-    <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;">Apparition</div>
-    <div style="margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82;">Un Pokémon apparaît</div>
+  return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond);border:1px solid var(--bord-neutre);font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre);">
+  <div style="display:flex;align-items:center;justify-content:center;gap:14px;padding:8px 4px 14px;">
+    <span style="display:block;height:2px;flex:1;background:var(--bg-bleu-second);"></span>
+    <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;color:var(--txt-noir);white-space:nowrap;">Apparition</div>
+    <span style="display:block;height:2px;flex:1;background:var(--bg-orange-second);"></span>
   </div>
 
-  <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10));">
+  <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-neutre);border:1px solid var(--bord-neutre);">
     <div style="display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center;">
-      <div style="width:112px;height:112px;border-radius:8px;background:var(--bg-neutre,#E1E7EA);display:flex;align-items:center;justify-content:center;padding:8px;">
-        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:98px;max-height:98px;object-fit:contain;" />` : `<span style="font-size:11px;color:var(--txt-neutre,#889FAA);font-weight:700;">Pas de sprite</span>`}
+      <div style="width:112px;height:112px;border-radius:8px;background:var(--bg-neutre);display:flex;align-items:center;justify-content:center;padding:8px;">
+        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:98px;max-height:98px;object-fit:contain;" />` : `<span style="font-size:11px;color:var(--txt-neutre);font-weight:700;">Pas de sprite</span>`}
       </div>
 
       <div style="min-width:0;">
-        <div style="font-size:10px;font-weight:800;color:var(--txt-orange,#D44D2B);text-transform:uppercase;letter-spacing:.8px;">Rencontre sauvage</div>
-        <div style="margin-top:4px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:27px;line-height:1.05;font-weight:400;color:var(--txt-noir,#151B1E);">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
+        <div style="font-size:10px;font-weight:800;color:var(--txt-orange);text-transform:uppercase;letter-spacing:.8px;">Rencontre sauvage</div>
+        <div style="margin-top:4px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:27px;line-height:1.05;font-weight:400;color:var(--txt-noir);">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
         <div style="margin-top:9px;">
           ${typesHtml}
-          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-neutre-terti,#A5B7C0);color:var(--txt-brand-neutre,#F0F3F4);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
-          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-second,#DC7156);color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(rarity.label)}</span>
-          ${result.isShiny ? `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-light,#EEB8AA);color:var(--txt-noir-neutre,#3F515A);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
+          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-neutre-terti);color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
+          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-second);color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(rarity.label)}</span>
+          ${result.isShiny ? `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-light);color:var(--txt-noir-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
         </div>
       </div>
     </div>
 
-    <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:13px;line-height:1.6;">
+    <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre);color:var(--txt-noir-neutre);font-size:13px;line-height:1.6;">
       ${escapeHtmlForRp(getAppearanceText(result))}
     </div>
 
     <div style="margin-top:9px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;text-align:center;">
-      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
-        <strong style="display:block;color:var(--txt-blue-def,#72A9C0);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.rank)}</strong>
-        <span style="display:block;margin-top:4px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Rang</span>
+      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre);">
+        <strong style="display:block;color:var(--txt-blue-def);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.rank)}</strong>
+        <span style="display:block;margin-top:4px;color:var(--txt-neutre);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Rang</span>
       </div>
-      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
-        <strong style="display:block;color:var(--txt-orange,#D44D2B);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:20px;line-height:1;font-weight:400;">${escapeHtmlForRp(rarity.label)}</strong>
-        <span style="display:block;margin-top:4px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Rareté</span>
+      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre);">
+        <strong style="display:block;color:var(--txt-orange);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:20px;line-height:1;font-weight:400;">${escapeHtmlForRp(rarity.label)}</strong>
+        <span style="display:block;margin-top:4px;color:var(--txt-neutre);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Rareté</span>
       </div>
     </div>
   </div>
@@ -2256,45 +2489,47 @@ function buildCaptureRpHtml(result){
   const type2 = getType2(p);
   const introText = getCaptureFlavorText(result.success);
   const resultText = result.success ? "Capture réussie" : "Capture ratée";
-  const statusColor = result.success ? "var(--odyssey,#80AE77)" : "var(--txt-orange,#D44D2B)";
-  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
+  const statusColor = result.success ? "var(--odyssey)" : "var(--txt-orange)";
+  const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
-  return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
-  <div style="padding:18px 20px;border-radius:8px;background:var(--bg-orange,#e59480);color:#fff;">
-    <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;color:#fff;">Capture</div>
+  return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond);border:1px solid var(--bord-neutre);font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre);">
+  <div style="display:flex;align-items:center;justify-content:center;gap:14px;padding:8px 4px 14px;">
+    <span style="display:block;height:2px;flex:1;background:var(--bg-bleu-second);"></span>
+    <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;color:var(--txt-noir);white-space:nowrap;">Capture</div>
+    <span style="display:block;height:2px;flex:1;background:var(--bg-orange-second);"></span>
   </div>
 
-  <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10));">
+  <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-neutre);border:1px solid var(--bord-neutre);">
     <div style="display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center;">
-      <div style="width:112px;height:112px;border-radius:8px;background:var(--bg-neutre,#E1E7EA);display:flex;align-items:center;justify-content:center;padding:8px;">
-        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:98px;max-height:98px;object-fit:contain;" />` : `<span style="font-size:11px;color:var(--txt-neutre,#889FAA);font-weight:700;">Pas de sprite</span>`}
+      <div style="width:112px;height:112px;border-radius:8px;background:var(--bg-neutre);display:flex;align-items:center;justify-content:center;padding:8px;">
+        ${sprite ? `<img src="${escapeHtmlForRp(sprite)}" alt="${escapeHtmlForRp(name)}" style="max-width:98px;max-height:98px;object-fit:contain;" />` : `<span style="font-size:11px;color:var(--txt-neutre);font-weight:700;">Pas de sprite</span>`}
       </div>
 
       <div style="min-width:0;">
-        <div style="font-size:10px;font-weight:800;color:var(--txt-orange,#D44D2B);text-transform:uppercase;letter-spacing:.8px;">Pokémon ciblé</div>
-        <div style="margin-top:4px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:27px;line-height:1.05;font-weight:400;color:var(--txt-noir,#151B1E);">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
+        <div style="font-size:10px;font-weight:800;color:var(--txt-orange);text-transform:uppercase;letter-spacing:.8px;">Pokémon ciblé</div>
+        <div style="margin-top:4px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:27px;line-height:1.05;font-weight:400;color:var(--txt-noir);">#${escapeHtmlForRp(p.id || "?")} — ${escapeHtmlForRp(name)}${result.isShiny ? " ✨" : ""}</div>
         <div style="margin-top:9px;">
           ${typesHtml}
-          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-neutre-terti,#A5B7C0);color:var(--txt-brand-neutre,#F0F3F4);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
-          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-second,#DC7156);color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(result.rarityLabel)}</span>
-          ${result.isShiny ? `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-light,#EEB8AA);color:var(--txt-noir-neutre,#3F515A);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
+          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-neutre-terti);color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Rang ${escapeHtmlForRp(result.rank)}</span>
+          <span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-second);color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(result.rarityLabel)}</span>
+          ${result.isShiny ? `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:var(--bg-orange-light);color:var(--txt-noir-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">Shiny</span>` : ""}
         </div>
       </div>
     </div>
 
-    <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:13px;line-height:1.6;">
+    <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre);color:var(--txt-noir-neutre);font-size:13px;line-height:1.6;">
       <strong style="display:block;margin-bottom:4px;color:${statusColor};font-size:12px;font-weight:900;text-transform:uppercase;">${escapeHtmlForRp(resultText)}</strong>
       ${escapeHtmlForRp(introText)}
     </div>
 
     <div style="margin-top:9px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;text-align:center;">
-      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
-        <strong style="display:block;color:var(--txt-blue-def,#72A9C0);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.roll)}</strong>
-        <span style="display:block;margin-top:4px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Jet</span>
+      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre);">
+        <strong style="display:block;color:var(--txt-blue-def);font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.roll)}</strong>
+        <span style="display:block;margin-top:4px;color:var(--txt-neutre);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Jet</span>
       </div>
-      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
+      <div style="padding:10px;border-radius:7px;background:var(--bg-neutre);">
         <strong style="display:block;color:${statusColor};font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:23px;line-height:1;font-weight:400;">${escapeHtmlForRp(result.captureChance)}%</strong>
-        <span style="display:block;margin-top:4px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Taux</span>
+        <span style="display:block;margin-top:4px;color:var(--txt-neutre);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">Taux</span>
       </div>
     </div>
   </div>
