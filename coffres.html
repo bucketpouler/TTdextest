@@ -1161,7 +1161,6 @@ button, input { font: inherit; }
   function buildForumResultHtml(result) {
     const chest = CHESTS[result.chestKey];
     const accent = chest.color;
-    const personLabel = result.chestKey === "equipe" ? "Écurie" : "Membre";
     const personValue = result.chestKey === "equipe" ? result.stable : result.player;
 
     let rewardRows = [];
@@ -1182,42 +1181,37 @@ button, input { font: inherit; }
       ];
     }
 
-    const rewardsHtml = rewardRows.map(([label, value], index) => {
-      const bg = index === 1
-        ? "color-mix(in srgb, var(--bg-bleu-light, #B9D4DF) 42%, var(--bg-neutre, #E1E7EA))"
-        : index === 2
-          ? "color-mix(in srgb, var(--bg-orange-light, #EEB8AA) 34%, var(--bg-neutre, #E1E7EA))"
-          : "var(--bg-neutre, #E1E7EA)";
-
-      return `<div style="padding:14px 15px;border-radius:8px;background:${bg};border:1px solid var(--bord-surface, #C9D6DD);">
-        <div style="margin-bottom:5px;color:var(--txt-neutre, #889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;">${escapeForumHtml(label)}</div>
-        <div style="color:var(--txt-noir-neutre, #3F515A);font-size:14px;line-height:1.45;font-weight:800;">${escapeForumHtml(value)}</div>
+    const rewardsHtml = rewardRows.map(([label, value]) => {
+      return `<div style="padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);">
+        <div style="margin-bottom:5px;color:var(--txt-neutre,#889FAA);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;">${escapeForumHtml(label)}</div>
+        <div style="color:var(--txt-noir-neutre,#3F515A);font-size:14px;line-height:1.45;font-weight:800;">${escapeForumHtml(value)}</div>
       </div>`;
     }).join("");
 
     const identityHtml = personValue
-      ? `<div style="margin-top:13px;font-family:Coolvetica,Arial,sans-serif;font-size:20px;line-height:1.05;font-weight:400;color:#fff;">${escapeForumHtml(personValue)}</div>`
-      : "";
+      ? `<div style="margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82;">${escapeForumHtml(personValue)}</div>`
+      : `<div style="margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82;">Défi des Écuries</div>`;
 
     const stableHtml = result.chestKey !== "equipe" && result.stable
-      ? `<div style="margin-top:4px;color:#fff;font-size:10px;line-height:1.3;font-weight:800;text-transform:uppercase;letter-spacing:.12em;opacity:.82;">${escapeForumHtml(result.stable)}</div>`
+      ? `<div style="margin-top:3px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.72;">${escapeForumHtml(result.stable)}</div>`
       : "";
 
     const teamNote = result.chestKey === "equipe"
-      ? `<div style="margin-top:12px;padding:11px 13px;border-radius:7px;background:color-mix(in srgb, var(--bg-orange-light, #EEB8AA) 30%, var(--bg-neutre, #E1E7EA));color:var(--txt-noir-neutre, #3F515A);font-size:11px;line-height:1.5;font-weight:700;">Ce butin est à répartir librement entre les membres de l'écurie.</div>`
+      ? `<div style="margin-top:9px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:11px;line-height:1.5;font-weight:700;">Ce butin est à répartir librement entre les membres de l'écurie.</div>`
       : "";
 
-    return `<div style="max-width:620px;margin:18px auto;padding:18px;border-radius:10px;background:var(--bg-transparent, rgba(255,255,255,.72));border:1px solid var(--bord-neutre, rgba(9,9,11,.1));font-family:Inter,Arial,sans-serif;color:var(--txt-noir-neutre, #3F515A);">
-      <div style="padding:18px;border-radius:8px;background:${accent};color:#fff;">
-        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.18em;opacity:.86;">Défi des Écuries</div>
-        <div style="margin-top:4px;font-family:Coolvetica,Arial,sans-serif;font-size:32px;line-height:1;font-weight:400;">${escapeForumHtml(result.chestName)}</div>
+    return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
+      <div style="padding:18px 20px;border-radius:8px;background:${accent};color:var(--txt-brand-neutre,#F0F3F4);">
+        <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;">${escapeForumHtml(result.chestName)}</div>
         ${identityHtml}
         ${stableHtml}
       </div>
-      <div style="display:grid;gap:8px;margin-top:10px;">
-        ${rewardsHtml}
+      <div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10));">
+        <div style="display:grid;gap:8px;">
+          ${rewardsHtml}
+        </div>
+        ${teamNote}
       </div>
-      ${teamNote}
     </div>`;
   }
 
