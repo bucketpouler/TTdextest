@@ -1,18 +1,72 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Talents de la quinzaine</title>
 <style>
-:root{--o:#D44D2B;--o2:#DC7156;--b:#72A9C0;--d:#151B1E;--t:#3F515A;--m:#889FAA;--bg:#F0F3F4;--c:#E1E7EA}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:14px Arial}.w{width:min(1400px,94%);margin:35px auto}.hero{padding:35px;border-radius:14px;background:linear-gradient(120deg,var(--o2),var(--b));color:#fff}.hero h1{font-size:44px;margin:7px 0}.hero p{max-width:800px;line-height:1.6}.grid{display:grid;grid-template-columns:320px 1fr;gap:16px;margin-top:16px}.card{background:#ffffffc9;border:1px solid #151b1e18;border-radius:12px;padding:22px}.side{align-self:start;position:sticky;top:15px}.src,.stat{background:var(--c);border-radius:9px;padding:12px;margin-top:10px}.src b{display:block;color:var(--d);margin-bottom:5px}button{width:100%;padding:14px;border:0;border-radius:8px;margin-top:10px;font-weight:800;cursor:pointer;color:#fff;background:var(--o2)}button.alt{background:var(--b)}button.ghost{background:var(--c);color:var(--t)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{margin:0}.stat b{display:block;font-size:25px;color:var(--d)}.stat small{font-weight:bold;color:var(--m)}.players{display:grid;gap:12px;margin-top:16px}.player{border:1px solid #c8d4da;border-radius:10px;overflow:hidden}.ph{padding:13px 16px;background:white;display:flex;justify-content:space-between}.ph b{font-size:20px;color:var(--d)}.talents{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#c8d4da}.tal{padding:14px;background:var(--bg)}.tn{font-size:10px;font-weight:900;color:var(--o);text-transform:uppercase}.rw{font-weight:800;color:var(--d);margin-top:6px;line-height:1.5}.nt{font-size:10px;color:var(--m);margin-top:4px;line-height:1.4}.empty{padding:40px;text-align:center;color:var(--m)}.eggbox{margin-top:16px;padding:16px;border-radius:10px;background:var(--c)}.eggbox h3{margin:0 0 6px;color:var(--d);font-size:18px}.eggbox p{margin:0;color:var(--m);font-size:11px;line-height:1.5}.egg-player{margin-top:12px;padding:12px;border-radius:8px;background:#ffffffc9}.egg-player b{display:block;color:var(--d);font-size:15px}.egg-result{margin-top:7px;color:var(--o);font-weight:800;line-height:1.45}.egg-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.egg-actions button{margin-top:8px;padding:10px}.egg-actions .ghost{margin-top:8px}#status{font-size:11px;color:var(--m);margin-top:14px;line-height:1.5}@media(max-width:800px){.grid{grid-template-columns:1fr}.side{position:static}.talents{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}</style></head>
+:root{--o:#D44D2B;--o2:#DC7156;--b:#72A9C0;--d:#151B1E;--t:#3F515A;--m:#889FAA;--bg:#F0F3F4;--c:#E1E7EA}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:14px Arial}.w{width:min(1400px,94%);margin:35px auto}.hero{padding:35px;border-radius:14px;background:linear-gradient(120deg,var(--o2),var(--b));color:#fff}.hero h1{font-size:44px;margin:7px 0}.hero p{max-width:800px;line-height:1.6}.grid{display:grid;grid-template-columns:320px 1fr;gap:16px;margin-top:16px}.card{background:#ffffffc9;border:1px solid #151b1e18;border-radius:12px;padding:22px}.side{align-self:start;position:sticky;top:15px}.src,.stat{background:var(--c);border-radius:9px;padding:12px;margin-top:10px}.src b{display:block;color:var(--d);margin-bottom:5px}button{width:100%;padding:14px;border:0;border-radius:8px;margin-top:10px;font-weight:800;cursor:pointer;color:#fff;background:var(--o2)}button.alt{background:var(--b)}button.ghost{background:var(--c);color:var(--t)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{margin:0}.stat b{display:block;font-size:25px;color:var(--d)}.stat small{font-weight:bold;color:var(--m)}.players{display:grid;gap:12px;margin-top:16px}.player{border:1px solid #c8d4da;border-radius:10px;overflow:hidden}.ph{padding:13px 16px;background:white;display:flex;justify-content:space-between}.ph b{font-size:20px;color:var(--d)}.talents{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#c8d4da}.tal{padding:14px;background:var(--bg)}.tn{font-size:10px;font-weight:900;color:var(--o);text-transform:uppercase}.rw{font-weight:800;color:var(--d);margin-top:6px;line-height:1.5}.nt{font-size:10px;color:var(--m);margin-top:4px;line-height:1.4}.empty{padding:40px;text-align:center;color:var(--m)}
+.egg-section{margin-top:16px}
+.egg-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}
+.egg-head h2{margin:0;color:var(--d)}
+.egg-head p{margin:4px 0 0;color:var(--m);font-size:11px;line-height:1.5}
+.egg-live{display:grid;grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr);gap:16px;align-items:stretch}
+.egg-queue{display:grid;gap:8px;align-content:start}
+.egg-player{padding:12px 13px;border-radius:9px;background:var(--c);border:1px solid #151b1e12;cursor:pointer;transition:.18s ease}
+.egg-player:hover{transform:translateX(2px)}
+.egg-player.is-active{background:#fff;border-color:var(--b);box-shadow:inset 0 0 0 1px var(--b)}
+.egg-player b{display:block;color:var(--d);font-size:14px}
+.egg-result{margin-top:5px;color:var(--o);font-size:11px;font-weight:800;line-height:1.4}
+.egg-stage{min-height:360px;padding:22px;border-radius:12px;background:linear-gradient(145deg,#ffffffd9,var(--c));border:1px solid #151b1e12;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.egg-stage-label{font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--m)}
+.egg-stage-player{margin-top:5px;font-size:27px;font-weight:900;color:var(--d)}
+.egg-wheel{position:relative;width:min(300px,80vw);height:112px;margin:24px auto 18px;border-radius:12px;background:var(--bg);border:1px solid #c8d4da;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.egg-wheel:before,.egg-wheel:after{content:"";position:absolute;left:0;right:0;height:28px;z-index:2;pointer-events:none}
+.egg-wheel:before{top:0;background:linear-gradient(var(--bg),transparent)}
+.egg-wheel:after{bottom:0;background:linear-gradient(transparent,var(--bg))}
+.egg-wheel-pointer{position:absolute;left:8px;right:8px;top:50%;height:42px;transform:translateY(-50%);border:2px solid var(--o2);border-radius:8px;z-index:3;pointer-events:none}
+.egg-wheel-text{padding:0 22px;font-size:20px;font-weight:900;color:var(--d);line-height:1.25;z-index:1}
+.egg-wheel.is-spinning .egg-wheel-text{animation:eggPulse .11s linear infinite alternate}
+@keyframes eggPulse{from{opacity:.35;transform:translateY(-4px)}to{opacity:1;transform:translateY(4px)}}
+.egg-stage-actions{width:min(300px,100%);display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.egg-stage-actions button{margin:0}
+.egg-stage-actions .ghost{margin:0}
+.egg-empty{padding:30px;text-align:center;color:var(--m);font-size:12px}
+@media(max-width:800px){.egg-live{grid-template-columns:1fr}.egg-stage{min-height:320px}.egg-head{align-items:flex-start;flex-direction:column}}
+#status{font-size:11px;color:var(--m);margin-top:14px;line-height:1.5}@media(max-width:800px){.grid{grid-template-columns:1fr}.side{position:static}.talents{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}</style></head>
 <body><div class="w"><div class="hero"><small>THEMIS TRIALS · OUTIL STAFF</small><h1>Talents de la quinzaine</h1><p>Lecture automatique du tableau joueurs/talents et du Pokédex. Les récompenses aléatoires sont retirées à chaque génération.</p></div>
-<div class="grid"><aside class="card side"><h2>Sources</h2><div class="src"><b>Joueurs & talents</b><span id="ts">Chargement…</span></div><div class="src"><b>Pokédex</b><span id="ds">Chargement…</span></div><button onclick="gen()">Générer la quinzaine</button><button class="alt" onclick="copyR()">Copier les résultats</button><button class="ghost" onclick="load()">Recharger les Sheets</button><div class="eggbox"><h3>🥚 Tirage des œufs</h3><p>Les Expert en Omelette sont retirés du tirage automatique. Tu peux révéler leurs œufs un par un, par exemple en live sur Discord.</p><div id="eggGenerator"><div style="margin-top:10px;font-size:11px;color:var(--m)">Génère d’abord la quinzaine.</div></div></div><div id="status">Connexion aux Google Sheets…</div></aside>
+<div class="grid"><aside class="card side"><h2>Sources</h2><div class="src"><b>Joueurs & talents</b><span id="ts">Chargement…</span></div><div class="src"><b>Pokédex</b><span id="ds">Chargement…</span></div><button onclick="gen()">Générer la quinzaine</button><button class="alt" onclick="copyR()">Copier les résultats</button><button class="ghost" onclick="load()">Recharger les Sheets</button><div id="status">Connexion aux Google Sheets…</div></aside>
 <main><section class="card"><h2>Résumé</h2><div class="stats"><div class="stat"><b id="sp">0</b><small>JOUEURS</small></div><div class="stat"><b id="st">0</b><small>TALENTS ACTIFS</small></div><div class="stat"><b id="sa">0</b><small>TIRAGES</small></div><div class="stat"><b id="sd">0</b><small>POKÉMON DU DEX</small></div></div></section><section class="card" style="margin-top:16px">
 <h2>Texte à copier-coller</h2>
 <p style="font-size:11px;color:var(--m);line-height:1.5">Le résultat est généré directement sous forme de message prêt à poster sur le forum.</p>
 <textarea id="output" readonly style="width:100%;min-height:480px;margin-top:12px;padding:18px;border:1px solid #c8d4da;border-radius:10px;background:#F0F3F4;color:#151B1E;font:13px/1.65 Arial;resize:vertical" placeholder="Clique sur « Générer la quinzaine »…"></textarea>
-</section></main></div></div>
+</section></main></div>
+<section class="card egg-section">
+  <div class="egg-head">
+    <div>
+      <h2>🥚 Roulette des œufs</h2>
+      <p>Les Expert en Omelette sont tirés séparément. Sélectionne un joueur puis lance la roulette en direct.</p>
+    </div>
+  </div>
+  <div class="egg-live">
+    <div class="egg-queue" id="eggGenerator">
+      <div class="egg-empty">Génère d’abord la quinzaine pour préparer les tirages.</div>
+    </div>
+    <div class="egg-stage">
+      <div class="egg-stage-label">Joueur sélectionné</div>
+      <div class="egg-stage-player" id="eggStagePlayer">—</div>
+      <div class="egg-wheel" id="eggWheel">
+        <div class="egg-wheel-pointer"></div>
+        <div class="egg-wheel-text" id="eggWheelText">🥚 Prêt pour le tirage</div>
+      </div>
+      <div class="egg-stage-actions">
+        <button type="button" id="eggSpinButton" onclick="spinEgg()" disabled>Lancer la roulette</button>
+        <button type="button" class="ghost" id="eggCopyButton" onclick="copySelectedEgg()" disabled>Copier le résultat</button>
+      </div>
+    </div>
+  </div>
+</section>
+</div></div>
 <script>
 const TU="https://docs.google.com/spreadsheets/d/1_1m07HZArHir6GwnXNo9fvCV2jWqWxJtEGwJ8si6PGk/export?format=csv&gid=0",DU="https://docs.google.com/spreadsheets/d/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/export?format=csv&gid=1750579867";
 const F=["Fossile Dôme","Fossile Nautile","Vieil Ambre","Fossile Racine","Fossile Griffe","Fossile Crâne","Fossile Armure","Fossile Plaque","Fossile Plume","Fossile Mâchoire","Fossile Nageoire","Fossile Oiseau","Fossile Poisson","Fossile Dragon","Fossile Aileron"];
 const E=["Pierre Soleil","Pierre Lune","Pierre Feu","Pierre Foudre","Pierre Eau","Pierre Plante","Pierre Éclat","Pierre Nuit","Pierre Aube","Pierre Glace","Roche Royale","Peau Métal","Écaille Draco","Améliorator","CD Douteux","Protecteur","Électriseur","Magmariseur","Tissu Fauche","Écaille Belle","Sachet Senteur","Chantibonbon","Pierre Ovale","Griffe Rasoir","Croc Rasoir","Dent Océan","Écaille Océan","Pomme Sucrée","Pomme Acidulée","Théière Fêlée","Théière Ébréchée","Bracelet Galanoa","Couronne Galanoa","Obsidienne","Bloc de Tourbe","Fil de Liaison","Armure de la Fortune","Armure de la Rancune","Pomme Nectar","Bol Médiocre","Bol Exceptionnel","Alliage Métallique"];
-let T=[],D=[],R=[],EGGS=[],BASE_OUTPUT="";
+let T=[],D=[],R=[],EGGS=[],BASE_OUTPUT="",SELECTED_EGG=-1,EGG_SPINNING=false;
 function csv(s){let a=[],r=[],c="",q=0;for(let i=0;i<s.length;i++){let x=s[i],n=s[i+1];if(x=='"'&&q&&n=='"'){c+='"';i++}else if(x=='"')q=!q;else if(x==','&&!q){r.push(c);c=""}else if((x=='\n'||x=='\r')&&!q){if(x=='\r'&&n=='\n')i++;r.push(c);a.push(r);r=[];c=""}else c+=x}if(c||r.length){r.push(c);a.push(r)}return a.filter(r=>r.some(x=>x.trim()))}
 function obj(a){let h=a[0];return a.slice(1).map(r=>Object.fromEntries(h.map((x,i)=>[x.trim(),(r[i]||"").trim()])))}
 function n(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim()}
@@ -43,16 +97,57 @@ async function load(){status.textContent="Lecture des Sheets…";try{let[a,b]=aw
 function esc(s){return String(s??"").replace(/[&<>"]/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[x]))}
 function renderEggGenerator(){
   const box=document.getElementById("eggGenerator");
-  if(!EGGS.length){box.innerHTML='<div style="margin-top:10px;font-size:11px;color:var(--m)">Aucun Expert en Omelette détecté pour cette quinzaine.</div>';return}
-  box.innerHTML=EGGS.map((e,i)=>`<div class="egg-player"><b>${esc(e.nm)}</b><div class="egg-result" id="egg-result-${i}">${e.result?esc(e.result):"Œuf non tiré"}</div><div class="egg-actions"><button type="button" onclick="drawEgg(${i})">${e.result?"Retirer":"Tirer l’œuf"}</button><button type="button" class="ghost" onclick="copyEgg(${i})" ${e.result?"":"disabled"}>Copier</button></div></div>`).join("");
+  if(!EGGS.length){
+    box.innerHTML='<div class="egg-empty">Aucun Expert en Omelette détecté pour cette quinzaine.</div>';
+    SELECTED_EGG=-1;
+    updateEggStage();
+    return;
+  }
+  if(SELECTED_EGG<0||SELECTED_EGG>=EGGS.length)SELECTED_EGG=0;
+  box.innerHTML=EGGS.map((e,i)=>`<div class="egg-player ${i===SELECTED_EGG?"is-active":""}" onclick="selectEgg(${i})"><b>${esc(e.nm)}</b><div class="egg-result">${e.result?esc(e.result):"En attente du tirage"}</div></div>`).join("");
+  updateEggStage();
 }
-function drawEgg(i){
-  if(!EGGS[i])return;
-  let p=pk(access());
-  EGGS[i].result=p?"Œuf de "+p:"Œuf aléatoire";
+function selectEgg(i){
+  if(EGG_SPINNING||!EGGS[i])return;
+  SELECTED_EGG=i;
   renderEggGenerator();
-  updateOutputWithEggs();
-  status.textContent="Œuf tiré pour "+EGGS[i].nm+" et ajouté au post de la quinzaine.";
+}
+function updateEggStage(){
+  const player=document.getElementById("eggStagePlayer"),text=document.getElementById("eggWheelText"),spin=document.getElementById("eggSpinButton"),copy=document.getElementById("eggCopyButton");
+  if(SELECTED_EGG<0||!EGGS[SELECTED_EGG]){
+    player.textContent="—";text.textContent="🥚 Prêt pour le tirage";spin.disabled=true;copy.disabled=true;return;
+  }
+  const e=EGGS[SELECTED_EGG];
+  player.textContent=e.nm;
+  text.textContent=e.result||"🥚 Prêt pour le tirage";
+  spin.disabled=EGG_SPINNING;
+  spin.textContent=e.result?"Relancer la roulette":"Lancer la roulette";
+  copy.disabled=!e.result||EGG_SPINNING;
+}
+function spinEgg(){
+  if(EGG_SPINNING||SELECTED_EGG<0||!EGGS[SELECTED_EGG])return;
+  const candidates=access();
+  if(!candidates.length){status.textContent="Aucun Pokémon disponible pour le tirage des œufs.";return}
+  EGG_SPINNING=true;
+  const wheel=document.getElementById("eggWheel"),text=document.getElementById("eggWheelText"),spin=document.getElementById("eggSpinButton"),copy=document.getElementById("eggCopyButton");
+  wheel.classList.add("is-spinning");spin.disabled=true;copy.disabled=true;
+  const start=performance.now(),duration=2200;
+  function tick(now){
+    text.textContent="Œuf de "+pk(candidates);
+    if(now-start<duration){requestAnimationFrame(tick);return}
+    const p=pk(candidates);
+    EGGS[SELECTED_EGG].result=p?"Œuf de "+p:"Œuf aléatoire";
+    EGG_SPINNING=false;
+    wheel.classList.remove("is-spinning");
+    updateOutputWithEggs();
+    renderEggGenerator();
+    status.textContent="Œuf tiré pour "+EGGS[SELECTED_EGG].nm+" et ajouté au post de la quinzaine.";
+  }
+  requestAnimationFrame(tick);
+}
+async function copySelectedEgg(){
+  if(SELECTED_EGG<0)return;
+  await copyEgg(SELECTED_EGG);
 }
 function updateOutputWithEggs(){
   if(!BASE_OUTPUT)return;
