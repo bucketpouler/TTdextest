@@ -370,6 +370,14 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
   .themis-copy-btn{width:100%}
   .themis-preview-area{padding:15px}
 }
+
+.themis-pokemon-search{position:relative}
+.themis-pokemon-search input{width:100%;box-sizing:border-box}
+.themis-pokemon-results{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:30;max-height:260px;overflow:auto;padding:5px;background:var(--bg-fond,#fff);border:1px solid var(--bord-neutre,#ccd5db);border-radius:9px;box-shadow:0 12px 30px rgba(0,0,0,.16)}
+.themis-pokemon-results[hidden]{display:none!important}
+.themis-pokemon-result{width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:6px 9px;border:0;border-radius:6px;background:transparent;color:var(--txt-noir-neutre,#3F515A);cursor:pointer;font:inherit}
+.themis-pokemon-result:hover,.themis-pokemon-result:focus{background:var(--bg-neutre,#E1E7EA)}
+.themis-pokemon-result img{width:38px;height:38px;object-fit:contain;image-rendering:pixelated}
 </style>
 </head>
 
@@ -442,10 +450,10 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
   <div class="themis-starter-fields" id="starterFields" hidden>
     <h3 class="themis-section-title" style="margin-top:24px;font-size:23px">Les trois Pokémon proposés</h3>
     <p class="themis-section-desc" id="pokemonLoadStatus">Chargement du Pokédex…</p>
-    <datalist id="pokemonNames"></datalist>
-    <div class="themis-field"><label for="starter1">Pokémon 1</label><input id="starter1" class="themis-pokemon-input" list="pokemonNames" autocomplete="off" placeholder="Rechercher un Pokémon…"></div>
-    <div class="themis-field"><label for="starter2">Pokémon 2</label><input id="starter2" class="themis-pokemon-input" list="pokemonNames" autocomplete="off" placeholder="Rechercher un Pokémon…"></div>
-    <div class="themis-field"><label for="starter3">Pokémon 3</label><input id="starter3" class="themis-pokemon-input" list="pokemonNames" autocomplete="off" placeholder="Rechercher un Pokémon…"></div>
+    
+    <div class="themis-field"><label for="starter1">Pokémon 1</label><div class="themis-pokemon-search"><input id="starter1" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 1"><div class="themis-pokemon-results" id="starterResults1" hidden></div></div></div>
+    <div class="themis-field"><label for="starter2">Pokémon 2</label><div class="themis-pokemon-search"><input id="starter2" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 2"><div class="themis-pokemon-results" id="starterResults2" hidden></div></div></div>
+    <div class="themis-field"><label for="starter3">Pokémon 3</label><div class="themis-pokemon-search"><input id="starter3" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 3"><div class="themis-pokemon-results" id="starterResults3" hidden></div></div></div>
   </div>
 </aside>
 
@@ -496,7 +504,7 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
   const pokemonInputs=[1,2,3].map(i=>document.getElementById("starter"+i));
   const starterFields=document.getElementById("starterFields");
   const loadStatus=document.getElementById("pokemonLoadStatus");
-  const pokemonNames=document.getElementById("pokemonNames");
+  const pokemonResults=[1,2,3].map(i=>document.getElementById("starterResults"+i));
   const defaultStarterMessage="Bienvenue sur Themis Trials ! Avant de valider ta présentation, nous te proposons de choisir ton deuxième starter parmi ces trois Pokémon. Réponds à ce sujet pour nous indiquer celui que tu souhaites accueillir dans ton équipe !";
 
   function normalize(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim()}
@@ -528,11 +536,9 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
       const spriteCol=columnIndex(rows[0],["Sprite","Image"]);
       if(nameCol<0)throw new Error("Colonne Nom introuvable");
       pokemonList=rows.slice(1).map(row=>({name:(row[nameCol]||"").trim(),sprite:spriteCol<0?"":(row[spriteCol]||"").trim()})).filter(p=>p.name);
-      pokemonNames.replaceChildren();
-      const fragment=document.createDocumentFragment();
-      const unique=new Set();
-      pokemonList.forEach(p=>{if(unique.has(p.name))return;unique.add(p.name);const option=document.createElement("option");option.value=p.name;fragment.appendChild(option)});
-      pokemonNames.appendChild(fragment);
+      const unique=new Map();
+      pokemonList.forEach(p=>{if(!unique.has(normalize(p.name)))unique.set(normalize(p.name),p)});
+      pokemonList=[...unique.values()];
       loadStatus.textContent=pokemonList.length+" Pokémon chargés depuis le Pokédex du forum.";
       update();
     }catch(error){
@@ -582,7 +588,7 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
     const safeTitle=escapeHtml(titleInput.value.trim()||type.label);
     const safeText=formatText(textInput.value.trim()||"Votre message apparaîtra ici.");
 
-    const css=`<style>.themis-mod-message{--mod-color:${type.color};box-sizing:border-box;width:100%;max-width:none;margin:18px 0;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A)}.themis-mod-banner{padding:18px 20px;border-radius:8px;background:var(--mod-color);color:var(--txt-brand-neutre,#F0F3F4)}.themis-mod-title{font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase}.themis-mod-kicker{margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82}.themis-mod-card{margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10))}.themis-mod-body{padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:15px;line-height:1.6}.themis-mod-starters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.themis-mod-starter{min-width:0;padding:16px 10px;border:1px solid var(--bord-surface,#C9D6DD);border-radius:9px;background:var(--bg-neutre,#E1E7EA);text-align:center}.themis-mod-starter-number{color:var(--txt-neutre,#889FAA);font-size:10px;font-weight:800;letter-spacing:1px}.themis-mod-starter-img{display:block;width:112px;max-width:100%;height:112px;object-fit:contain;image-rendering:pixelated;margin:8px auto}.themis-mod-starter-placeholder{display:grid;place-items:center;height:112px;margin:8px auto;color:var(--mod-color);font-size:38px}.themis-mod-starter-name{color:var(--txt-noir-neutre,#3F515A);font:400 23px Coolvetica,Arial,sans-serif;overflow-wrap:anywhere}@media(max-width:560px){.themis-mod-starters{grid-template-columns:1fr}.themis-mod-starter-img,.themis-mod-starter-placeholder{height:88px}.themis-mod-starter-img{width:88px}}</style>`;
+    const css=`<style>.themis-mod-message{--mod-color:${type.color};box-sizing:border-box;width:100%;max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A)}.themis-mod-banner{padding:18px 20px;border-radius:8px;background:var(--mod-color);color:var(--txt-brand-neutre,#F0F3F4)}.themis-mod-title{font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase}.themis-mod-kicker{margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82}.themis-mod-card{margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10))}.themis-mod-body{padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:15px;line-height:1.6}.themis-mod-starters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.themis-mod-starter{min-width:0;padding:16px 10px;border:1px solid var(--bord-surface,#C9D6DD);border-radius:9px;background:var(--bg-neutre,#E1E7EA);text-align:center}.themis-mod-starter-number{color:var(--txt-neutre,#889FAA);font-size:10px;font-weight:800;letter-spacing:1px}.themis-mod-starter-img{display:block;width:112px;max-width:100%;height:112px;object-fit:contain;image-rendering:pixelated;margin:8px auto}.themis-mod-starter-placeholder{display:grid;place-items:center;height:112px;margin:8px auto;color:var(--mod-color);font-size:38px}.themis-mod-starter-name{color:var(--txt-noir-neutre,#3F515A);font:400 23px Coolvetica,Arial,sans-serif;overflow-wrap:anywhere}@media(max-width:560px){.themis-mod-starters{grid-template-columns:1fr}.themis-mod-starter-img,.themis-mod-starter-placeholder{height:88px}.themis-mod-starter-img{width:88px}}</style>`;
 
     let extra="";
     if(selectedType==="starter"){
@@ -622,7 +628,30 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
 
   titleInput.addEventListener("input",update);
   textInput.addEventListener("input",update);
-  pokemonInputs.forEach(input=>input.addEventListener("input",update));
+  function renderSuggestions(index){
+    const input=pokemonInputs[index], panel=pokemonResults[index];
+    const query=normalize(input.value);
+    panel.replaceChildren();
+    if(!query||!pokemonList.length){panel.hidden=true;return}
+    const matches=pokemonList.filter(p=>normalize(p.name).includes(query)).slice(0,12);
+    if(!matches.length){panel.hidden=true;return}
+    matches.forEach(p=>{
+      const item=document.createElement("button");item.type="button";item.className="themis-pokemon-result";
+      const url=safeSprite(p.sprite);
+      if(url){const img=document.createElement("img");img.src=p.sprite;img.alt="";img.loading="lazy";item.appendChild(img)}
+      const name=document.createElement("span");name.textContent=p.name;item.appendChild(name);
+      item.addEventListener("mousedown",event=>event.preventDefault());
+      item.addEventListener("click",()=>{input.value=p.name;panel.hidden=true;update()});
+      panel.appendChild(item);
+    });
+    panel.hidden=false;
+  }
+  pokemonInputs.forEach((input,index)=>{
+    input.addEventListener("input",()=>{renderSuggestions(index);update()});
+    input.addEventListener("focus",()=>renderSuggestions(index));
+    input.addEventListener("keydown",event=>{if(event.key==="Escape")pokemonResults[index].hidden=true});
+    input.addEventListener("blur",()=>setTimeout(()=>{pokemonResults[index].hidden=true},140));
+  });
 
   copyButton.addEventListener("click",async function(){
     try{
