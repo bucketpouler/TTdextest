@@ -260,6 +260,11 @@ button,input,textarea{font:inherit}
 .themis-choice[data-type="recompense"]{--choice:#D3A63C}
 .themis-choice[data-type="starter"]{--choice:#D44D2B}
 .themis-starter-fields[hidden]{display:none!important}
+.themis-preview-panel .themis-starter-fields{margin:0 0 22px;padding:18px;border:1px solid var(--bord-surface);border-radius:10px;background:var(--bg-neutre)}
+.themis-preview-panel .themis-starter-fields h3{margin-top:0!important}
+.themis-preview-panel .themis-starter-fields .themis-starter-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.themis-preview-panel .themis-starter-fields .themis-field{min-width:0;margin:0}
+@media(max-width:700px){.themis-preview-panel .themis-starter-fields .themis-starter-inputs{grid-template-columns:1fr}}
 .themis-choice-icon{
   width:42px;
   height:42px;
@@ -447,14 +452,7 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
       <span class="themis-choice-tag">06</span>
     </button>
   </div>
-  <div class="themis-starter-fields" id="starterFields" hidden>
-    <h3 class="themis-section-title" style="margin-top:24px;font-size:23px">Les trois Pokémon proposés</h3>
-    <p class="themis-section-desc" id="pokemonLoadStatus">Chargement du Pokédex…</p>
-    
-    <div class="themis-field"><label for="starter1">Pokémon 1</label><div class="themis-pokemon-search"><input id="starter1" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 1"><div class="themis-pokemon-results" id="starterResults1" hidden></div></div></div>
-    <div class="themis-field"><label for="starter2">Pokémon 2</label><div class="themis-pokemon-search"><input id="starter2" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 2"><div class="themis-pokemon-results" id="starterResults2" hidden></div></div></div>
-    <div class="themis-field"><label for="starter3">Pokémon 3</label><div class="themis-pokemon-search"><input id="starter3" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 3"><div class="themis-pokemon-results" id="starterResults3" hidden></div></div></div>
-  </div>
+
 </aside>
 
 <section class="themis-main">
@@ -467,6 +465,17 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
       </div>
       <div class="themis-state" id="currentType">Validation</div>
     </div>
+
+  <div class="themis-starter-fields" id="starterFields" hidden>
+    <h3 class="themis-section-title" style="margin-top:24px;font-size:23px">Les trois Pokémon proposés</h3>
+    <p class="themis-section-desc" id="pokemonLoadStatus">Chargement du Pokédex…</p>
+    
+    <div class="themis-starter-inputs">
+    <div class="themis-field"><label for="starter1">Pokémon 1</label><div class="themis-pokemon-search"><input id="starter1" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 1"><div class="themis-pokemon-results" id="starterResults1" hidden></div></div></div>
+    <div class="themis-field"><label for="starter2">Pokémon 2</label><div class="themis-pokemon-search"><input id="starter2" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 2"><div class="themis-pokemon-results" id="starterResults2" hidden></div></div></div>
+    <div class="themis-field"><label for="starter3">Pokémon 3</label><div class="themis-pokemon-search"><input id="starter3" class="themis-pokemon-input" autocomplete="off" placeholder="Taper un nom de Pokémon…" aria-label="Rechercher le Pokémon 3"><div class="themis-pokemon-results" id="starterResults3" hidden></div></div></div>
+    </div>
+  </div>
 
     <div class="themis-preview-area" id="preview"></div>
   </div>
