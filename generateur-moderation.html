@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Messages de modération — Themis Trials</title>
+<title>Messages du staff — Themis Trials (choix du starter)</title>
 
 <script>
 (function(){
@@ -258,6 +258,8 @@ button,input,textarea{font:inherit}
 .themis-choice[data-type="modification"]{--choice:#A98FF3}
 .themis-choice[data-type="attention"]{--choice:#D44D2B}
 .themis-choice[data-type="recompense"]{--choice:#D3A63C}
+.themis-choice[data-type="starter"]{--choice:#D44D2B}
+.themis-starter-fields[hidden]{display:none!important}
 .themis-choice-icon{
   width:42px;
   height:42px;
@@ -431,6 +433,19 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
       <span><strong>Récompense</strong><small>Gain attribué à un membre</small></span>
       <span class="themis-choice-tag">05</span>
     </button>
+    <button class="themis-choice" data-type="starter" type="button">
+      <span class="themis-choice-icon">✦</span>
+      <span><strong>Choix du starter</strong><small>Proposer trois Pokémon au membre</small></span>
+      <span class="themis-choice-tag">06</span>
+    </button>
+  </div>
+  <div class="themis-starter-fields" id="starterFields" hidden>
+    <h3 class="themis-section-title" style="margin-top:24px;font-size:23px">Les trois Pokémon proposés</h3>
+    <p class="themis-section-desc" id="pokemonLoadStatus">Chargement du Pokédex…</p>
+    <datalist id="pokemonNames"></datalist>
+    <div class="themis-field"><label for="starter1">Pokémon 1</label><input id="starter1" class="themis-pokemon-input" list="pokemonNames" autocomplete="off" placeholder="Rechercher un Pokémon…"></div>
+    <div class="themis-field"><label for="starter2">Pokémon 2</label><input id="starter2" class="themis-pokemon-input" list="pokemonNames" autocomplete="off" placeholder="Rechercher un Pokémon…"></div>
+    <div class="themis-field"><label for="starter3">Pokémon 3</label><input id="starter3" class="themis-pokemon-input" list="pokemonNames" autocomplete="off" placeholder="Rechercher un Pokémon…"></div>
   </div>
 </aside>
 
@@ -471,10 +486,67 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
     information:{label:"Information",icon:"i",color:"var(--bg-bleu-second, #72A9C0)"},
     modification:{label:"Modification",icon:"✎",color:"var(--vol, #A98FF3)"},
     attention:{label:"Attention",icon:"!",color:"var(--bg-orange-terti, #D44D2B)"},
-    recompense:{label:"Récompense",icon:"★",color:"var(--roche, #B6A136)"}
+    recompense:{label:"Récompense",icon:"★",color:"var(--roche, #B6A136)"},
+    starter:{label:"Choix du starter",icon:"✦",color:"var(--bg-orange-terti, #D44D2B)"}
   };
 
   let selectedType="validation";
+  const POKEDEX_URL="https://docs.google.com/spreadsheets/d/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/gviz/tq?tqx=out%3Acsv&gid=1750579867";
+  let pokemonList=[];
+  const pokemonInputs=[1,2,3].map(i=>document.getElementById("starter"+i));
+  const starterFields=document.getElementById("starterFields");
+  const loadStatus=document.getElementById("pokemonLoadStatus");
+  const pokemonNames=document.getElementById("pokemonNames");
+  const defaultStarterMessage="Bienvenue sur Themis Trials ! Avant de valider ta présentation, nous te proposons de choisir ton deuxième starter parmi ces trois Pokémon. Réponds à ce sujet pour nous indiquer celui que tu souhaites accueillir dans ton équipe !";
+
+  function normalize(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim()}
+  function parseCSV(csv){
+    const rows=[];let row=[],field="",quoted=false;
+    for(let i=0;i<csv.length;i++){
+      const c=csv[i];
+      if(c==='"'){if(quoted&&csv[i+1]==='"'){field+='"';i++}else quoted=!quoted}
+      else if(c===","&&!quoted){row.push(field);field=""}
+      else if((c==="\n"||c==="\r")&&!quoted){if(c==="\r"&&csv[i+1]==="\n")i++;row.push(field);if(row.some(x=>x!==""))rows.push(row);row=[];field=""}
+      else field+=c;
+    }
+    if(field||row.length){row.push(field);rows.push(row)}
+    return rows;
+  }
+  function columnIndex(headers,aliases){
+    const normalized=headers.map(normalize);
+    for(const alias of aliases){const exact=normalized.indexOf(normalize(alias));if(exact>=0)return exact}
+    for(const alias of aliases){const index=normalized.findIndex(h=>h.includes(normalize(alias)));if(index>=0)return index}
+    return -1;
+  }
+  async function loadPokemon(){
+    try{
+      const response=await fetch(POKEDEX_URL);
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      const rows=parseCSV(await response.text());
+      if(rows.length<2)throw new Error("Pokédex vide");
+      const nameCol=columnIndex(rows[0],["Nom","Pokémon","Pokemon"]);
+      const spriteCol=columnIndex(rows[0],["Sprite","Image"]);
+      if(nameCol<0)throw new Error("Colonne Nom introuvable");
+      pokemonList=rows.slice(1).map(row=>({name:(row[nameCol]||"").trim(),sprite:spriteCol<0?"":(row[spriteCol]||"").trim()})).filter(p=>p.name);
+      pokemonNames.replaceChildren();
+      const fragment=document.createDocumentFragment();
+      const unique=new Set();
+      pokemonList.forEach(p=>{if(unique.has(p.name))return;unique.add(p.name);const option=document.createElement("option");option.value=p.name;fragment.appendChild(option)});
+      pokemonNames.appendChild(fragment);
+      loadStatus.textContent=pokemonList.length+" Pokémon chargés depuis le Pokédex du forum.";
+      update();
+    }catch(error){
+      console.error("[Themis staff] Chargement Pokédex :",error);
+      loadStatus.textContent="Impossible de charger le Pokédex. Vérifie que le Google Sheets est accessible publiquement.";
+    }
+  }
+  function getPokemon(index){
+    const value=pokemonInputs[index].value;
+    return pokemonList.find(p=>normalize(p.name)===normalize(value))||null;
+  }
+  function safeSprite(url){
+    try{const parsed=new URL(url);return parsed.protocol==="https:"||parsed.protocol==="http:"?escapeHtml(parsed.href):""}catch(e){return ""}
+  }
 
   const titleInput=document.getElementById("messageTitle");
   const textInput=document.getElementById("messageText");
@@ -510,9 +582,19 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
     const safeTitle=escapeHtml(titleInput.value.trim()||type.label);
     const safeText=formatText(textInput.value.trim()||"Votre message apparaîtra ici.");
 
-    const css=`<style>.themis-mod-message{--mod-color:${type.color};box-sizing:border-box;width:100%;max-width:none;margin:18px 0;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A)}.themis-mod-banner{padding:18px 20px;border-radius:8px;background:var(--mod-color);color:var(--txt-brand-neutre,#F0F3F4)}.themis-mod-title{font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase}.themis-mod-kicker{margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82}.themis-mod-card{margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10))}.themis-mod-body{padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:15px;line-height:1.6}</style>`;
+    const css=`<style>.themis-mod-message{--mod-color:${type.color};box-sizing:border-box;width:100%;max-width:none;margin:18px 0;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A)}.themis-mod-banner{padding:18px 20px;border-radius:8px;background:var(--mod-color);color:var(--txt-brand-neutre,#F0F3F4)}.themis-mod-title{font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase}.themis-mod-kicker{margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82}.themis-mod-card{margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10))}.themis-mod-body{padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:15px;line-height:1.6}.themis-mod-starters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.themis-mod-starter{min-width:0;padding:16px 10px;border:1px solid var(--bord-surface,#C9D6DD);border-radius:9px;background:var(--bg-neutre,#E1E7EA);text-align:center}.themis-mod-starter-number{color:var(--txt-neutre,#889FAA);font-size:10px;font-weight:800;letter-spacing:1px}.themis-mod-starter-img{display:block;width:112px;max-width:100%;height:112px;object-fit:contain;image-rendering:pixelated;margin:8px auto}.themis-mod-starter-placeholder{display:grid;place-items:center;height:112px;margin:8px auto;color:var(--mod-color);font-size:38px}.themis-mod-starter-name{color:var(--txt-noir-neutre,#3F515A);font:400 23px Coolvetica,Arial,sans-serif;overflow-wrap:anywhere}@media(max-width:560px){.themis-mod-starters{grid-template-columns:1fr}.themis-mod-starter-img,.themis-mod-starter-placeholder{height:88px}.themis-mod-starter-img{width:88px}}</style>`;
 
-    const block=`<div class="themis-mod-message ${selectedType}"><div class="themis-mod-banner"><div class="themis-mod-title">${safeTitle}</div><div class="themis-mod-kicker">${type.label}</div></div><div class="themis-mod-card"><div class="themis-mod-body">${safeText}</div></div></div>`;
+    let extra="";
+    if(selectedType==="starter"){
+      const cards=pokemonInputs.map((input,index)=>{
+        const pokemon=getPokemon(index);
+        const name=pokemon?pokemon.name:(input.value.trim()||"Pokémon à choisir");
+        const sprite=pokemon?safeSprite(pokemon.sprite):"";
+        return `<div class="themis-mod-starter"><div class="themis-mod-starter-number">OPTION 0${index+1}</div>${sprite?`<img src="${sprite}" alt="${escapeHtml(name)}" class="themis-mod-starter-img">`:`<div class="themis-mod-starter-placeholder">✦</div>`}<div class="themis-mod-starter-name">${escapeHtml(name)}</div></div>`;
+      }).join("");
+      extra=`<div class="themis-mod-card"><div class="themis-mod-starters">${cards}</div></div>`;
+    }
+    const block=`<div class="themis-mod-message ${selectedType}"><div class="themis-mod-banner"><div class="themis-mod-title">${safeTitle}</div><div class="themis-mod-kicker">${type.label}</div></div><div class="themis-mod-card"><div class="themis-mod-body">${safeText}</div></div>${extra}</div>`;
 
     return minifyForumHtml(css+block);
   }
@@ -526,7 +608,13 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
 
   choices.forEach(button=>{
     button.addEventListener("click",function(){
+      const previous=selectedType;
       selectedType=button.dataset.type;
+      starterFields.hidden=selectedType!=="starter";
+      if(selectedType==="starter"&&previous!=="starter"){
+        if(titleInput.value.trim()==="Message du staff")titleInput.value="Choisis ton deuxième starter";
+        if(textInput.value.trim()==="Votre message apparaîtra ici.")textInput.value=defaultStarterMessage;
+      }
       choices.forEach(item=>item.classList.toggle("is-active",item===button));
       update();
     });
@@ -534,6 +622,7 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
 
   titleInput.addEventListener("input",update);
   textInput.addEventListener("input",update);
+  pokemonInputs.forEach(input=>input.addEventListener("input",update));
 
   copyButton.addEventListener("click",async function(){
     try{
@@ -557,6 +646,7 @@ html.night-mode .themis-choice-icon{background:rgba(255,255,255,.08)}
   });
 
   update();
+  loadPokemon();
 })();
 </script>
 
