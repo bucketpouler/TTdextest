@@ -1198,7 +1198,7 @@ button, input { font: inherit; }
 
   function buildForumResultHtml(result) {
     const chest = CHESTS[result.chestKey];
-    const accent = chest.color;
+    const accent = "var(--roche, #B6A136)"; // Couleur Récompense du générateur de modération
     const personValue = result.chestKey === "equipe" ? result.stable : result.player;
 
     let rewardRows = [];
@@ -1238,7 +1238,7 @@ button, input { font: inherit; }
       ? `<div style="margin-top:9px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);color:var(--txt-noir-neutre,#3F515A);font-size:11px;line-height:1.5;font-weight:700;">Ce butin est à répartir librement entre les membres de l'écurie.</div>`
       : "";
 
-    return `<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
+    return `<div class="themis-mod-message recompense" style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);">
       <div style="padding:18px 20px;border-radius:8px;background:${accent};color:var(--txt-brand-neutre,#F0F3F4);">
         <div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;">${escapeForumHtml(result.chestName)}</div>
         ${identityHtml}
