@@ -682,6 +682,9 @@ button, input { font: inherit; }
   }
 }
 
+
+/* Roulette des récompenses Pokémon */
+.themis-draw-panel{margin-top:16px;padding:24px}.themis-draw-panel[hidden]{display:none!important}.themis-draw-layout{display:grid;grid-template-columns:minmax(190px,.7fr) minmax(0,1.3fr);gap:16px}.themis-draw-queue{display:grid;gap:8px;align-content:start}.themis-draw-item{width:100%;padding:12px;text-align:left;border:1px solid var(--bord-surface);border-radius:8px;background:var(--bg-neutre);color:var(--txt-noir-neutre);cursor:pointer}.themis-draw-item.is-active{border-color:var(--bord-bleu-second);box-shadow:inset 0 0 0 1px var(--bord-bleu-second)}.themis-draw-item strong,.themis-draw-item small{display:block}.themis-draw-item small{margin-top:5px;color:var(--txt-orange);font-size:11px}.themis-draw-stage{padding:24px;border:1px solid var(--bord-surface);border-radius:10px;background:var(--bg-neutre);text-align:center}.themis-draw-name{font:400 26px Coolvetica,Arial,sans-serif;color:var(--txt-noir)}.themis-draw-wheel{position:relative;min-height:115px;margin:20px 0;padding:25px 14px;display:grid;place-items:center;border:1px solid var(--bord-surface);border-radius:10px;background:var(--bg-fond);overflow:hidden;font-size:21px;font-weight:800;color:var(--txt-noir-neutre)}.themis-draw-wheel:after{content:'';position:absolute;inset:29px 7px;border:2px solid var(--bord-orange);border-radius:8px;pointer-events:none}.themis-draw-wheel.is-spinning span{animation:pulseText .13s infinite alternate}.themis-draw-actions{display:flex;gap:9px}.themis-draw-actions button{flex:1;min-height:43px;border:0;border-radius:8px;background:var(--bg-orange-second);color:white;font-weight:800;cursor:pointer}.themis-draw-actions button.secondary{background:var(--bg-bleu-second)}.themis-draw-actions button:disabled{opacity:.45;cursor:default}.themis-draw-manual{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.themis-draw-manual button{padding:9px 12px;border:1px solid var(--bord-surface);border-radius:8px;background:var(--bg-neutre);color:var(--txt-noir-neutre);cursor:pointer;font-weight:700}.themis-draw-status{font-size:11px;color:var(--txt-neutre);line-height:1.5;margin:8px 0 14px}@media(max-width:700px){.themis-draw-layout{grid-template-columns:1fr}.themis-draw-actions{flex-direction:column}}
 </style>
 </head>
 
@@ -822,6 +825,17 @@ button, input { font: inherit; }
         </div>
         <textarea id="forumCode" readonly></textarea>
         <div class="themis-forum-copy-preview" id="forumPreview"></div>
+      </div>
+
+
+      <div class="themis-panel themis-draw-panel" id="themisDrawPanel">
+        <h2 class="themis-section-title">🥚 Roulette des œufs & Pokémon</h2>
+        <p class="themis-section-desc">Quand un coffre donne un œuf ou un Pokémon, les tirages correspondants apparaissent ici automatiquement. La liste est issue du Pokédex du forum, comme dans l'outil des talents de la quinzaine.</p>
+        <div class="themis-draw-manual"><button type="button" id="drawAddEgg">+ Tirer un œuf</button><button type="button" id="drawAddPokemon">+ Tirer un Pokémon</button><button type="button" id="drawAddRare">+ Tirer un Pokémon rare</button></div>
+        <div class="themis-draw-status" id="drawStatus">Chargement du Pokédex…</div>
+        <div class="themis-draw-layout"><div class="themis-draw-queue" id="drawQueue"><div class="themis-history-empty">Aucun tirage en attente.</div></div>
+          <div class="themis-draw-stage"><div class="themis-draw-name" id="drawName">Choisis un tirage</div><div class="themis-draw-wheel" id="drawWheel"><span id="drawWheelText">🥚 Prêt pour le tirage</span></div><div class="themis-draw-actions"><button type="button" id="drawSpin" disabled>Lancer la roulette</button><button type="button" class="secondary" id="drawCopy" disabled>Copier le résultat</button></div></div>
+        </div>
       </div>
 
       <div class="themis-panel themis-history">
@@ -1039,7 +1053,29 @@ button, input { font: inherit; }
     selectedChest = type;
     const chest = CHESTS[type];
 
-    choiceButtons.forEach(btn => {
+  
+  // Roulette indépendante, basée sur le même Pokédex que l'outil des talents.
+  const DRAW_DEX_URL="https://docs.google.com/spreadsheets/d/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/export?format=csv&gid=1750579867";
+  let drawDex=[],drawTasks=[],drawSelected=-1,drawBusy=false,drawToken=0;
+  const drawEl=id=>document.getElementById(id);
+  const drawNorm=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  function drawCsv(src){let rows=[],row=[],cell='',quoted=false;for(let i=0;i<src.length;i++){const c=src[i],next=src[i+1];if(c==='"'&&quoted&&next==='"'){cell+='"';i++}else if(c==='"')quoted=!quoted;else if(c===','&&!quoted){row.push(cell);cell=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&next==='\n')i++;row.push(cell);rows.push(row);row=[];cell=''}else cell+=c}if(cell||row.length){row.push(cell);rows.push(row)}return rows.filter(r=>r.some(x=>x.trim()))}
+  function drawField(o,aliases){const keys=Object.keys(o);for(const a of aliases){const k=keys.find(k=>drawNorm(k)===drawNorm(a));if(k)return String(o[k]||'').trim()}return ''}
+  async function drawLoadDex(){try{const res=await fetch(DRAW_DEX_URL);if(!res.ok)throw Error('HTTP '+res.status);const rows=drawCsv(await res.text()),headers=rows.shift();drawDex=rows.map(row=>Object.fromEntries(headers.map((h,i)=>[h.trim(),(row[i]||'').trim()])));drawEl('drawStatus').textContent='✓ Pokédex chargé : '+drawDex.length+' entrées.'}catch(e){drawEl('drawStatus').textContent='Impossible de charger le Pokédex : '+e.message+' — Vérifie le partage du Google Sheet.'}}
+  function drawCandidates(kind){return drawDex.filter(p=>{const name=drawField(p,['nom','name','pokemon','pokémon']);const rarity=drawNorm(drawField(p,['rare','rareté','rarete','rarity']));const zone=drawField(p,['zone','zones','zone de capture']);if(!name||!zone)return false;return kind!=='rare'||rarity==='rare'}).map(p=>drawField(p,['nom','name','pokemon','pokémon']))}
+  function drawAdd(kind,source=null){drawTasks.push({kind,source,result:'',token:drawToken});if(drawSelected<0)drawSelected=0;drawRender()}
+  function drawRender(){const q=drawEl('drawQueue');q.innerHTML='';if(!drawTasks.length){q.innerHTML='<div class="themis-history-empty">Aucun tirage en attente. Ouvre un coffre ou ajoute un tirage.</div>'}drawTasks.forEach((task,i)=>{const btn=document.createElement('button');btn.type='button';btn.className='themis-draw-item'+(i===drawSelected?' is-active':'');const title=document.createElement('strong');title.textContent=(task.kind==='egg'?'🥚 Œuf':task.kind==='rare'?'✨ Pokémon rare':'🎲 Pokémon')+' #'+(i+1);const sub=document.createElement('small');sub.textContent=task.result||'En attente';btn.append(title,sub);btn.addEventListener('click',()=>{if(!drawBusy){drawSelected=i;drawRender()}});q.appendChild(btn)});const task=drawTasks[drawSelected];drawEl('drawName').textContent=task?(task.kind==='egg'?'Œuf aléatoire':task.kind==='rare'?'Pokémon rare':'Pokémon aléatoire'):'Choisis un tirage';drawEl('drawWheelText').textContent=task?(task.result||'Prêt pour le tirage'):'🥚 Prêt pour le tirage';drawEl('drawSpin').disabled=!task||drawBusy;drawEl('drawSpin').textContent=task&&task.result?'Relancer la roulette':'Lancer la roulette';drawEl('drawCopy').disabled=!task||!task.result||drawBusy}
+  function drawFromChest(result){drawToken++;drawTasks=[];drawSelected=-1;const fields=result.chestKey==='bienvenue'?[['welcome',result.welcome]]:result.chestKey==='equipe'?[['team',result.team]]:[['resources',result.resources],['special',result.special],['chance',result.chance]];for(const [key,reward] of fields){const text=String(reward||'');const egg=text.match(/(\d+)\s*[Œœ]ufs?\s+aléatoires?/i);const pokemon=text.match(/(\d+)\s*Pokémon(?:s)?\s+(Rare\s+)?aléatoires?/i);if(egg)for(let i=0;i<Number(egg[1]);i++)drawAdd('egg',{key,original:text});if(pokemon)for(let i=0;i<Number(pokemon[1]);i++)drawAdd(pokemon[2]?'rare':'pokemon',{key,original:text})}drawRender()}
+  function drawSyncResult(){if(!lastResult)return;const groups={};drawTasks.forEach(t=>{if(t.source&&t.result&&t.token===drawToken){(groups[t.source.key]??=[]).push(t.result)}});for(const [key,values] of Object.entries(groups)){const original=drawTasks.find(t=>t.source&&t.source.key===key).source.original;lastResult[key]=original+' → '+values.join(' · ')}renderForumResult(lastResult);renderHistory()}
+  async function drawSpin(){const idx=drawSelected,task=drawTasks[idx];if(drawBusy||!task)return;const pool=drawCandidates(task.kind);if(!pool.length){drawEl('drawStatus').textContent='Aucun Pokémon admissible dans le Pokédex (nom, zone et rareté à vérifier).';return}drawBusy=true;drawRender();drawEl('drawWheel').classList.add('is-spinning');const start=performance.now();await new Promise(resolve=>{function tick(now){drawEl('drawWheelText').textContent=(task.kind==='egg'?'Œuf de ':'')+randomFrom(pool);if(now-start<2200)requestAnimationFrame(tick);else resolve()}requestAnimationFrame(tick)});task.result=(task.kind==='egg'?'Œuf de ':'')+randomFrom(pool);drawBusy=false;drawEl('drawWheel').classList.remove('is-spinning');drawRender();drawSyncResult();drawEl('drawStatus').textContent='Résultat obtenu : '+task.result}
+  drawEl('drawSpin').addEventListener('click',drawSpin);
+  drawEl('drawCopy').addEventListener('click',async()=>{const t=drawTasks[drawSelected];if(!t?.result)return;try{await navigator.clipboard.writeText(t.result);drawEl('drawStatus').textContent='Résultat copié !'}catch{prompt('Copie le résultat :',t.result)}});
+  drawEl('drawAddEgg').addEventListener('click',()=>drawAdd('egg'));
+  drawEl('drawAddPokemon').addEventListener('click',()=>drawAdd('pokemon'));
+  drawEl('drawAddRare').addEventListener('click',()=>drawAdd('rare'));
+  drawLoadDex();
+
+  choiceButtons.forEach(btn => {
       btn.classList.toggle("is-active", btn.dataset.chest === type);
     });
 
@@ -1267,6 +1303,7 @@ button, input { font: inherit; }
         resources:resources.reward, special:special.reward, chance:chance.reward };
     }
 
+    drawFromChest(lastResult);
     history.unshift(lastResult);
     renderHistory();
     renderForumResult(lastResult);
