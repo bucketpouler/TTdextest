@@ -28,19 +28,19 @@
 .egg-stage-actions .ghost{margin:0}
 .egg-empty{padding:30px;text-align:center;color:var(--m);font-size:12px}
 @media(max-width:800px){.egg-live{grid-template-columns:1fr}.egg-stage{min-height:320px}.egg-head{align-items:flex-start;flex-direction:column}}
-#status{font-size:11px;color:var(--m);margin-top:14px;line-height:1.5}@media(max-width:800px){.grid{grid-template-columns:1fr}.side{position:static}.talents{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}</style></head>
-<body><div class="w"><div class="hero"><small>THEMIS TRIALS · OUTIL STAFF</small><h1>Talents de la quinzaine</h1><p>Lecture automatique du tableau joueurs/talents et du Pokédex. Les récompenses aléatoires sont retirées à chaque génération.</p></div>
+.copy-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px}.copy-switch button{margin-top:0}.ph{align-items:center;gap:10px}.pill{display:inline-block;font-size:10px;font-weight:800;border-radius:20px;padding:5px 9px;background:#e1e7ea;color:#3f515a}.pill.auto{background:#f8e4dc;color:#b14e33}.pill.month{background:#e1edf2;color:#477d94}.reward-line{margin:5px 0}.player-body{padding:13px 16px;background:#f0f3f4;line-height:1.7}.player-body strong{color:#151b1e}#status{font-size:11px;color:var(--m);margin-top:14px;line-height:1.5}@media(max-width:800px){.grid{grid-template-columns:1fr}.side{position:static}.talents{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}</style></head>
+<body><div class="w"><div class="hero"><small>THEMIS TRIALS · OUTIL STAFF</small><h1>Talents de la quinzaine</h1><p>Lecture automatique du tableau joueurs/talents et du Pokédex. 4 récompenses automatiques et rappels personnalisés. Les œufs sont tirés séparément avec la roulette.</p></div>
 <div class="grid"><aside class="card side"><h2>Sources</h2><div class="src"><b>Joueurs & talents</b><span id="ts">Chargement…</span></div><div class="src"><b>Pokédex</b><span id="ds">Chargement…</span></div><button onclick="gen()">Générer la quinzaine</button><button class="alt" onclick="copyR()">Copier les résultats</button><button class="ghost" onclick="load()">Recharger les Sheets</button><div id="status">Connexion aux Google Sheets…</div></aside>
-<main><section class="card"><h2>Résumé</h2><div class="stats"><div class="stat"><b id="sp">0</b><small>JOUEURS</small></div><div class="stat"><b id="st">0</b><small>TALENTS ACTIFS</small></div><div class="stat"><b id="sa">0</b><small>TIRAGES</small></div><div class="stat"><b id="sd">0</b><small>POKÉMON DU DEX</small></div></div></section><section class="card" style="margin-top:16px">
-<h2>Texte à copier-coller</h2>
+<main><section class="card"><h2>Résumé</h2><div class="stats"><div class="stat"><b id="sp">0</b><small>JOUEURS</small></div><div class="stat"><b id="st">0</b><small>TALENTS POSSÉDÉS</small></div><div class="stat"><b id="sa">0</b><small>RÉCOMPENSES AUTO</small></div><div class="stat"><b id="sd">0</b><small>POKÉMON DU DEX</small></div></div></section><section class="card" style="margin-top:16px">
+<h2>Messages à copier-coller</h2><p style="font-size:12px;color:var(--m)">Les rappels sont informatifs : ils ne vérifient pas si un talent a déjà été utilisé.</p><div class="copy-switch"><button type="button" class="alt" onclick="copySection('rewards')">Copier les récompenses</button><button type="button" class="ghost" onclick="copySection('reminders')">Copier les rappels</button></div>
 <p style="font-size:11px;color:var(--m);line-height:1.5">Le résultat est généré directement sous forme de message prêt à poster sur le forum.</p>
 <textarea id="output" readonly style="width:100%;min-height:480px;margin-top:12px;padding:18px;border:1px solid #c8d4da;border-radius:10px;background:#F0F3F4;color:#151B1E;font:13px/1.65 Arial;resize:vertical" placeholder="Clique sur « Générer la quinzaine »…"></textarea>
 </section></main></div>
-<section class="card egg-section">
+<section class="card egg-section"><div class="egg-head"><div><h2>Répartition des talents</h2><p>Récompenses et rappels détectés dans le tableau.</p></div></div><div id="playerSummary" class="players"><div class="empty">Génère la quinzaine pour afficher les joueurs.</div></div></section><section class="card egg-section">
   <div class="egg-head">
     <div>
       <h2>🥚 Roulette des œufs</h2>
-      <p>Les Expert en Omelette sont tirés séparément. Sélectionne un joueur puis lance la roulette en direct.</p>
+      <p>Les œufs des Experts en Omelette sont tirés séparément. Sélectionne un joueur puis lance la roulette en direct.</p>
     </div>
   </div>
   <div class="egg-live">
@@ -67,9 +67,9 @@ const TU="https://docs.google.com/spreadsheets/d/1_1m07HZArHir6GwnXNo9fvCV2jWqWx
 const F=["Fossile Dôme","Fossile Nautile","Vieil Ambre","Fossile Racine","Fossile Griffe","Fossile Crâne","Fossile Armure","Fossile Plaque","Fossile Plume","Fossile Mâchoire","Fossile Nageoire","Fossile Oiseau","Fossile Poisson","Fossile Dragon","Fossile Aileron"];
 const E=["Pierre Soleil","Pierre Lune","Pierre Feu","Pierre Foudre","Pierre Eau","Pierre Plante","Pierre Éclat","Pierre Nuit","Pierre Aube","Pierre Glace","Roche Royale","Peau Métal","Écaille Draco","Améliorator","CD Douteux","Protecteur","Électriseur","Magmariseur","Tissu Fauche","Écaille Belle","Sachet Senteur","Chantibonbon","Pierre Ovale","Griffe Rasoir","Croc Rasoir","Dent Océan","Écaille Océan","Pomme Sucrée","Pomme Acidulée","Théière Fêlée","Théière Ébréchée","Bracelet Galanoa","Couronne Galanoa","Obsidienne","Bloc de Tourbe","Fil de Liaison","Armure de la Fortune","Armure de la Rancune","Pomme Nectar","Bol Médiocre","Bol Exceptionnel","Alliage Métallique"];
 let T=[],D=[],R=[],EGGS=[],BASE_OUTPUT="",SELECTED_EGG=-1,EGG_SPINNING=false;
-function csv(s){let a=[],r=[],c="",q=0;for(let i=0;i<s.length;i++){let x=s[i],n=s[i+1];if(x=='"'&&q&&n=='"'){c+='"';i++}else if(x=='"')q=!q;else if(x==','&&!q){r.push(c);c=""}else if((x=='\n'||x=='\r')&&!q){if(x=='\r'&&n=='\n')i++;r.push(c);a.push(r);r=[];c=""}else c+=x}if(c||r.length){r.push(c);a.push(r)}return a.filter(r=>r.some(x=>x.trim()))}
+function csv(s){let first=(s.split(/\r?\n/,1)[0]||"");let sep=(first.match(/;/g)||[]).length>(first.match(/,/g)||[]).length?";":",";let a=[],r=[],c="",q=0;for(let i=0;i<s.length;i++){let x=s[i],n=s[i+1];if(x=='"'&&q&&n=='"'){c+='"';i++}else if(x=='"')q=!q;else if(x==sep&&!q){r.push(c);c=""}else if((x=='\n'||x=='\r')&&!q){if(x=='\r'&&n=='\n')i++;r.push(c);a.push(r);r=[];c=""}else c+=x}if(c||r.length){r.push(c);a.push(r)}return a.filter(r=>r.some(x=>x.trim()))}
 function obj(a){let h=a[0];return a.slice(1).map(r=>Object.fromEntries(h.map((x,i)=>[x.trim(),(r[i]||"").trim()])))}
-function n(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim()}
+function n(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’‘]/g,"'").trim()}
 function ck(v){return["true","vrai","1","x","oui","✓","✔","☑"].includes(n(v))}
 function pk(a){return a.length?a[Math.floor(Math.random()*a.length)]:null}
 function f(o,names){let k=Object.keys(o);for(let x of names){let z=k.find(y=>n(y)==n(x));if(z)return o[z]}return""}
@@ -77,22 +77,31 @@ function name(p){return f(p,["nom","name","pokemon","pokémon"])}
 function rar(p){return n(f(p,["rare","rareté","rarete","rarity"]))}
 function pool(x){x=n(x);return D.filter(p=>{let r=rar(p);return x=="rare"?(r=="rare"||r=="paradoxe"||r=="paradox"):x=="peu commun"?(r=="peu commun"||r=="peu-commun"||r=="uncommon"):(r=="commun"||r=="common")}).map(name).filter(Boolean)}
 function access(){return D.filter(p=>f(p,["zone","zones","zone de capture"]).trim()).map(name).filter(Boolean)}
-function rew(t){let x=n(t);
-if(x=="pokeball prime"||x=="pokéball prime")return[1,"4 Poké Balls","Récompense automatique de quinzaine."];
-if(x=="chef")return[0,"Chef disponible","1 utilisation cette quinzaine."];
-if(x=="fana de l'evolution")return[1,pk(E),"1 objet d'évolution aléatoire."];
-if(x=="pensionnaire")return[0,"Reproduction disponible","1 utilisation cette quinzaine."];
-if(x=="passeur de savoir")return[0,"Prêt de talent disponible","Talent D/C utilisable une fois."];
-if(x=="chasseur de primes")return[1,[pk(pool("commun")),pk(pool("peu commun")),pk(pool("rare"))].filter(Boolean).join(" · "),"1 Commun + 1 Peu Commun + 1 Rare."];
-if(x=="mentor")return[0,"Mentorat disponible","1 passage D → C disponible."];
-if(x=="graveur de cd")return[0,"Création de CT disponible","1 utilisation cette quinzaine."];
-if(x=="donneur de capacites")return[0,"Don de capacité disponible","1 utilisation cette quinzaine."];
-if(x=="expert en omelette")return[0,"Œuf à tirer manuellement","Utilise le générateur d’œufs séparé."];
-if(x=="docteur du jurassique")return[1,pk(F),"1 Fossile aléatoire."];
-if(x=="ct douteuse")return[0,"CT Douteuse disponible","Talent disponible cette quinzaine."];
-if(x=="transmission")return[0,"Transmission disponible","Talent disponible cette quinzaine."];
-if(x=="aimant a raretes")return[0,"Aimant à raretés disponible","Talent disponible cette quinzaine."];
-return[0,"Talent actif","Pas de génération automatique configurée."]}
+const AUTO = {"prevoyant":"4 Poké Balls", "fana de l'evolution":"", "expert en omelette":"", "docteur du jurassique":"", "chasseur de primes":""};
+const BIWEEKLY = {
+ "chef":"Tu peux cuisiner un plat aléatoire.",
+ "pensionnaire":"Tu peux demander une reproduction entre deux Pokémon de joueurs.",
+ "passeur de savoir":"Tu peux prêter temporairement un talent de rang D ou C à un autre joueur.",
+ "mentor":"Tu peux offrir une montée de rang D → C à un autre joueur.",
+ "graveur de cd":"Tu peux fabriquer une CT à usage unique.",
+ "donneur de capacites":"Tu peux enseigner une attaque de reproduction / donneur de capacités.",
+ "professeur pokemon":"Tu peux proposer une mission de recherche à d’autres joueurs.",
+ "ct douteuse":"Tu peux enseigner une attaque normalement inaccessible à un Pokémon (validation du staff).",
+ "transmission":"Tu peux offrir à un autre joueur le bénéfice d’un talent à utilisation unique de rang A ou inférieur.",
+ "aimant a raretes":"Tu peux demander une apparition tirée uniquement parmi les Pokémon Peu Communs et Rares."
+};
+const MONTHLY = {
+ "cristalliseur":"Tu peux fabriquer un Cristal Z ce mois-ci.",
+ "joaillier":"Tu peux fabriquer une Méga-Gemme ce mois-ci.",
+ "pousseur de fonte":"Tu peux fabriquer un objet Dynamax ou Gigamax ce mois-ci.",
+ "princesse":"Tu peux fabriquer un Orbe Téracristal ce mois-ci."
+};
+function kind(t){let x=n(t);return Object.hasOwn(AUTO,x)?'auto':Object.hasOwn(BIWEEKLY,x)?'biweekly':Object.hasOwn(MONTHLY,x)?'monthly':null}
+function autoReward(t){let x=n(t);if(x==='prevoyant')return '4 Poké Balls';if(x==="fana de l'evolution")return pk(E)||'Objet évolutif indisponible';if(x==='docteur du jurassique')return pk(F)||'Fossile indisponible';if(x==='chasseur de primes'){const a=pk(pool('commun')),b=pk(pool('peu commun')),c=pk(pool('rare'));return 'Commun (20 PO) : '+(a||'Indisponible')+' · Peu Commun (30 PO) : '+(b||'Indisponible')+' · Rare (40 PO) : '+(c||'Indisponible');}return 'Œuf à tirer avec la roulette';}
+function forumCard(title,inner){return `<div style="max-width:660px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);"><div style="padding:18px 20px;border-radius:8px;background:var(--bg-orange,#e59480);color:#fff;"><div style="font-family:Coolvetica,Arial,sans-serif;font-size:30px;text-transform:uppercase;">${esc(title)}</div><div style="font-size:11px;font-weight:800;letter-spacing:.7px;">THEMIS TRIALS</div></div>${inner}</div>`}
+function forumPlayer(p,lines){return `<div style="margin-top:10px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);"><div style="font-family:Coolvetica,Arial,sans-serif;font-size:21px;color:var(--txt-noir,#151B1E);">${esc(p.nm)}</div><div style="margin-top:7px;font-size:13px;line-height:1.7;">${lines.join('')}</div></div>`}
+function forumLine(t,description){return `<div><strong style="color:var(--txt-orange,#D44D2B);">${esc(t)}</strong> — ${esc(description)}</div>`}
+let OUTPUTS={rewards:'',reminders:''};
 async function load(){status.textContent="Lecture des Sheets…";try{let[a,b]=await Promise.all([fetch(TU).then(x=>{if(!x.ok)throw Error(x.status);return x.text()}),fetch(DU).then(x=>{if(!x.ok)throw Error(x.status);return x.text()})]);T=csv(a);D=obj(csv(b));ts.textContent="✓ Connecté · "+(T.length-1)+" lignes";ds.textContent="✓ Connecté · "+D.length+" Pokémon";sd.textContent=D.length;status.textContent="Sources chargées."}catch(e){status.textContent="Erreur de lecture. Vérifie que les deux Sheets sont accessibles par lien. ("+e.message+")"}}
 function esc(s){return String(s??"").replace(/[&<>"]/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[x]))}
 function renderEggGenerator(){
@@ -150,15 +159,11 @@ async function copySelectedEgg(){
   await copyEgg(SELECTED_EGG);
 }
 function updateOutputWithEggs(){
-  if(!BASE_OUTPUT)return;
-  const drawn=EGGS.filter(e=>e.result);
-  if(!drawn.length){
-    document.getElementById("output").value=BASE_OUTPUT;
-    return;
-  }
-  const eggHtml=`<div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10));"><div style="margin-bottom:8px;font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:21px;line-height:1.1;color:var(--txt-noir,#151B1E);">Œufs de la quinzaine</div>`+drawn.map(e=>`<div style="margin-top:8px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);"><strong style="color:var(--txt-orange,#D44D2B);">${esc(e.nm)}</strong> <span style="color:var(--txt-noir-neutre,#3F515A);">— ${esc(e.result)}</span></div>`).join("")+`</div>`;
-  const pos=BASE_OUTPUT.lastIndexOf("</div></div>");
-  document.getElementById("output").value=pos>=0?BASE_OUTPUT.slice(0,pos)+eggHtml+BASE_OUTPUT.slice(pos):BASE_OUTPUT+eggHtml;
+ const drawn=EGGS.filter(e=>e.result);
+ const eggHtml=drawn.length?`<div style="margin-top:12px;padding:15px;border-radius:8px;background:#fff;"><strong style="color:#D44D2B;">Œufs de la quinzaine</strong>${drawn.map(e=>forumPlayer(e,[forumLine('Expert en Omelette',e.result)])).join('')}</div>`:'';
+ const base=OUTPUTS.rewards||'';
+ const combined=base.replace('<!--EGG_RESULTS-->',eggHtml);
+ document.getElementById('output').value=combined+(OUTPUTS.reminders?'\n\n'+OUTPUTS.reminders:'');
 }
 async function copyEgg(i){
   let e=EGGS[i];
@@ -166,6 +171,44 @@ async function copyEgg(i){
   let x=e.nm+" — Expert en Omelette : "+e.result;
   try{await navigator.clipboard.writeText(x);status.textContent="Résultat de l’œuf copié !"}catch{prompt("Copie :",x)}
 }
-function gen(){if(T.length<2){status.textContent="Le tableau n'est pas encore chargé.";return}let h=T[0],P=[];for(let r of T.slice(1)){let nm=(r[0]||"").trim();if(!nm)continue;let a=[];for(let i=1;i<h.length;i++)if(h[i]&&ck(r[i]))a.push(h[i].trim());if(a.length)P.push({nm,a})}EGGS=P.filter(p=>p.a.some(t=>n(t)=="expert en omelette")).map(p=>({nm:p.nm,result:""}));renderEggGenerator();let au=0,tot=0;R=P.map(p=>({nm:p.nm,a:p.a.map(t=>{tot++;let z=rew(t);if(z[0])au++;return[t,...z]})})).sort((a,b)=>a.nm.localeCompare(b.nm,"fr",{sensitivity:"base"}));let txt=R.length?`<div style="max-width:620px;margin:18px auto;padding:16px;border-radius:10px;background:var(--bg-fond,#F0F3F4);background-image:linear-gradient(var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px),linear-gradient(90deg,var(--bord-neutre,rgba(9,9,11,.06)) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--bord-neutre,rgba(9,9,11,.10));font-family:Inter,Arial,Helvetica,sans-serif;color:var(--txt-noir-neutre,#3F515A);"><div style="padding:18px 20px;border-radius:8px;background:var(--bg-orange,#e59480);color:var(--txt-brand-neutre,#F0F3F4);"><div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:32px;line-height:1;font-weight:400;text-transform:uppercase;">Talents de la quinzaine</div><div style="margin-top:5px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.82;">Themis Trials · Quinzaine</div></div><div style="margin-top:10px;padding:16px;border-radius:8px;background:var(--bg-transparent,rgba(255,255,255,.70));border:1px solid var(--bord-neutre,rgba(9,9,11,.10));">`+R.filter(p=>p.a.some(z=>z[1]&&n(z[0])!="expert en omelette")).map(p=>`<div style="margin-top:8px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre,#E1E7EA);"><div style="font-family:Coolvetica,Arial,Helvetica,sans-serif;font-size:21px;line-height:1.1;color:var(--txt-noir,#151B1E);">${esc(p.nm)}</div><div style="margin-top:8px;font-size:13px;line-height:1.65;">`+p.a.filter(z=>z[1]&&n(z[0])!="expert en omelette").map(z=>`<div><strong style="color:var(--txt-orange,#D44D2B);">${esc(z[0])}</strong> <span style="color:var(--txt-noir-neutre,#3F515A);">— ${esc(z[2])}</span></div>`).join("")+`</div></div>`).join("")+`</div></div>`:"Aucun talent coché détecté.";BASE_OUTPUT=txt;document.getElementById("output").value=txt;updateOutputWithEggs();sp.textContent=P.length;st.textContent=tot;sa.textContent=au;status.textContent="Quinzaine générée. Les œufs seront ajoutés au post au fur et à mesure des tirages."}
+function gen(){
+ if(T.length<2){document.getElementById('status').textContent='Le tableau n’est pas encore chargé.';return;}
+ const h=T[0],P=[];
+ for(const r of T.slice(1)){
+  const nm=(r[0]||'').trim();if(!nm)continue;
+  const a=[];for(let i=1;i<h.length;i++)if(h[i]&&ck(r[i])&&kind(h[i]))a.push(h[i].trim());
+  if(a.length)P.push({nm,a});
+ }
+ P.sort((a,b)=>a.nm.localeCompare(b.nm,'fr',{sensitivity:'base'}));
+ EGGS=P.filter(p=>p.a.some(t=>n(t)==='expert en omelette')).map(p=>({nm:p.nm,result:''}));SELECTED_EGG=-1;renderEggGenerator();
+ let total=0,automatic=0;
+ const rewardCards=[],reminderCards=[];
+ const summary=[];
+ for(const p of P){
+  const auto=[],biweekly=[],monthly=[];
+  for(const t of p.a){total++;const k=kind(t);if(k==='auto'){automatic++;auto.push({t,value:autoReward(t)})}else if(k==='biweekly')biweekly.push({t,value:BIWEEKLY[n(t)]});else if(k==='monthly')monthly.push({t,value:MONTHLY[n(t)]})}
+  if(auto.length)rewardCards.push(forumPlayer(p,auto.map(x=>forumLine(x.t,x.value))));
+  if(biweekly.length||monthly.length){
+   const lines=[];
+   if(biweekly.length){lines.push('<div style="margin-top:6px;font-weight:800;color:#151B1E;">Cette quinzaine</div>');lines.push(...biweekly.map(x=>forumLine(x.t,x.value)))}
+   if(monthly.length){lines.push('<div style="margin-top:8px;font-weight:800;color:#151B1E;">Ce mois-ci</div>');lines.push(...monthly.map(x=>forumLine(x.t,x.value)))}
+   reminderCards.push(forumPlayer(p,lines));
+  }
+  summary.push(`<div class="player"><div class="ph"><b>${esc(p.nm)}</b><span class="pill">${p.a.length} talent${p.a.length>1?'s':''}</span></div><div class="player-body">${auto.length?`<div class="reward-line"><span class="pill auto">Récompenses</span> ${auto.map(x=>esc(x.t)+' : '+esc(x.value)).join(' · ')}</div>`:''}${biweekly.length?`<div class="reward-line"><span class="pill">Quinzaine</span> ${biweekly.map(x=>esc(x.t)).join(' · ')}</div>`:''}${monthly.length?`<div class="reward-line"><span class="pill month">Mensuel</span> ${monthly.map(x=>esc(x.t)).join(' · ')}</div>`:''}</div></div>`);
+ }
+ OUTPUTS.rewards=forumCard('Récompenses et missions de la quinzaine',rewardCards.join('')||'<p>Aucune récompense automatique.</p>')+'<!--EGG_RESULTS-->';
+ OUTPUTS.reminders=forumCard('Rappel des talents',`<div style="padding:10px 4px;font-size:12px;line-height:1.6;">Ces talents peuvent être utilisés sur demande, selon leurs conditions. Ce rappel ne confirme pas qu’ils n’ont pas déjà été utilisés.</div>`+(reminderCards.join('')||'<p>Aucun rappel pour cette période.</p>'));
+ document.getElementById('playerSummary').innerHTML=summary.join('')||'<div class="empty">Aucun talent correspondant coché.</div>';
+ document.getElementById('sp').textContent=P.length;
+ document.getElementById('st').textContent=total;
+ document.getElementById('sa').textContent=automatic;
+ updateOutputWithEggs();
+ document.getElementById('status').textContent='Génération terminée. Les œufs seront ajoutés après chaque tirage.';
+}
+async function copySection(which){
+ if(!OUTPUTS[which])return;
+ const value=which==='rewards'?OUTPUTS.rewards.replace('<!--EGG_RESULTS-->',EGGS.filter(e=>e.result).map(e=>forumPlayer(e,[forumLine('Expert en Omelette',e.result)])).join('')):OUTPUTS.reminders;
+ try{await navigator.clipboard.writeText(value);document.getElementById('status').textContent=which==='rewards'?'Récompenses copiées.':'Rappels copiés.'}catch(e){prompt('Copie :',value)}
+}
 async function copyR(){let x=document.getElementById("output").value;if(!x)return;try{await navigator.clipboard.writeText(x);status.textContent="Code forum copié !"}catch{prompt("Copie :",x)}}load();
 </script></body></html>
