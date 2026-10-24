@@ -517,6 +517,10 @@ Centre de Recyclage</textarea>
 
     <section class="themis-bingo-panel themis-bingo-actions">
       <button class="themis-bingo-btn" id="generateBingo">Générer une nouvelle grille</button>
+      <button class="themis-bingo-btn is-blue" id="exportCsv">Exporter CSV</button>
+      <button class="themis-bingo-btn is-blue" id="exportJson">Sauvegarder la grille (JSON)</button>
+      <button class="themis-bingo-btn is-blue" id="importJson">Restaurer une grille (JSON)</button>
+      <input type="file" id="jsonFile" accept=".json,application/json" hidden>
       <button class="themis-bingo-btn is-blue" id="screenshotMode">Mode screenshot</button>
     </section>
 
@@ -642,12 +646,19 @@ Centre de Recyclage</textarea>
     return generated;
   }
 
-  function generateBingo() {
+  const SAVE_KEY = "themis_bingo_saison_v1";
+  let currentMissions = [];
+  function download(name, content, mime) {
+    const blob = new Blob([content], {type:mime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function renderBingo(selected) {
+    currentMissions = selected.map(m => ({tag:String(m.tag||"Mission"), text:String(m.text||"")}));
     grid.innerHTML = "";
-
-    const selected = shuffle(buildMissionPool()).slice(0,25);
-
-    selected.forEach((mission,index) => {
+    currentMissions.forEach((mission,index) => {
       const cell = document.createElement("div");
       cell.className = "themis-bingo-cell";
 
@@ -666,8 +677,30 @@ Centre de Recyclage</textarea>
       cell.append(number,tag,text);
       grid.appendChild(cell);
     });
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(currentMissions)); } catch(e) {}
   }
-
+  function generateBingo() {
+    if(currentMissions.length && !confirm("Remplacer la grille actuelle par une nouvelle grille ?")) return;
+    renderBingo(shuffle(buildMissionPool()).slice(0,25));
+  }
+  function csvCell(v) { return '"' + String(v).replace(/"/g,'""') + '"'; }
+  document.getElementById("exportCsv").addEventListener("click", () => {
+    const teams = ["check_sunshine","check_moonlight","check_golden_crown","check_hurle-temps"];
+    const rows = [["id_mission","mission","categorie",...teams]];
+    currentMissions.forEach((m,i) => rows.push([i+1,m.text,m.tag,...teams.map(()=>"non")]));
+    download("themis_bingo_saison.csv", "\uFEFF" + rows.map(r=>r.map(csvCell).join(",")).join("\r\n"), "text/csv;charset=utf-8");
+  });
+  document.getElementById("exportJson").addEventListener("click", () => download("themis_bingo_saison.json", JSON.stringify(currentMissions,null,2),"application/json"));
+  document.getElementById("importJson").addEventListener("click", () => document.getElementById("jsonFile").click());
+  document.getElementById("jsonFile").addEventListener("change", async e => {
+    const file=e.target.files[0]; if(!file) return;
+    try {
+      const data=JSON.parse(await file.text());
+      if(!Array.isArray(data)||data.length!==25||!data.every(m=>m&&typeof m.text==="string"&&typeof m.tag==="string")) throw Error("Le fichier doit contenir 25 missions.");
+      renderBingo(data);
+    } catch(err) { alert("Impossible de restaurer : " + err.message); }
+    e.target.value="";
+  });
   document.getElementById("generateBingo").addEventListener("click",generateBingo);
 
   document.getElementById("screenshotMode").addEventListener("click",function(){
@@ -678,7 +711,11 @@ Centre de Recyclage</textarea>
     document.body.classList.remove("screenshot-mode");
   });
 
-  generateBingo();
+  try {
+    const saved=JSON.parse(localStorage.getItem(SAVE_KEY));
+    if(Array.isArray(saved)&&saved.length===25&&saved.every(m=>typeof m.text==="string"&&typeof m.tag==="string")) renderBingo(saved);
+    else renderBingo(shuffle(buildMissionPool()).slice(0,25));
+  } catch(e) { renderBingo(shuffle(buildMissionPool()).slice(0,25)); }
 
 })();
 </script>
