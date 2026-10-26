@@ -1259,6 +1259,8 @@ function fillRadarSelects(){
   const basePool = allPokemon.filter(p => {
     if(isParadoxPokemon(p)) return false;
     const zones = getZones(p).filter(z => normalizeName(z) !== "paradoxe");
+    // Sans zone de capture réelle, ce Pokémon n'est jamais accessible.
+    if(zones.length === 0) return false;
     const zoneOk = !zone || zones.some(z => normalizeName(z) === normalizeName(zone));
     const typeOk = !type || getType1(p) === type || getType2(p) === type;
     const pairOk = !pairTypes.length || pokemonHasAnyType(p, pairTypes);
@@ -1358,7 +1360,7 @@ function generateEncounter(){
     // Un Pokémon marqué uniquement « Paradoxe » reste réservé au tirage hebdomadaire.
     // Dès qu’une autre zone est indiquée (ex. « Paradoxe;Forêt »), il rejoint
     // normalement le pool d’apparition de cette zone.
-    if(isParadoxPokemon(p) && playableZones.length === 0) return false;
+    if(playableZones.length === 0) return false;
 
     const matchesZone = !zone || playableZones.some(item => normalizeName(item) === normalizeName(zone));
     const matchesType = !type || getType1(p) === type || getType2(p) === type;
