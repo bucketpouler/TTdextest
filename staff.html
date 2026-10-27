@@ -286,6 +286,14 @@
     }
 
     .capture-row button { width: auto; }
+    .ball-picker { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:8px; }
+    .ball-picker select { width:auto; max-width:240px; flex:1; min-width:155px; }
+    .ball-picker img { width:30px; height:30px; object-fit:contain; }
+    .ball-conditions { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .ball-conditions label { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; }
+    .ball-conditions input { width:auto; }
+    .ball-note { font-size:11px; color:var(--muted); font-weight:700; }
+
 
     .capture-result {
       font-size: 12px;
@@ -508,9 +516,11 @@
                 <option value="peucommun">Peu Commun</option>
                 <option value="rare">Rare</option>
               </select>
+              <select id="captureBallSelect" onchange="renderCapturePreview()"></select>
               <button class="green" onclick="tryManualCapture()">Tester la capture</button>
             </div>
 
+            <div id="manualBallConditions" class="ball-conditions"></div>
             <div class="talents" style="margin-top:10px;">
               <label class="talent-check"><input id="captureAuraFarmer" type="checkbox" onchange="renderCapturePreview()" /> Aura Farmer</label>
               <label class="talent-check"><input id="captureShiny" type="checkbox" onchange="renderCapturePreview()" /> Pokémon shiny</label>
@@ -589,6 +599,107 @@ let typePairs = [];
 let lastEncounterResults = [];
 let lastManualCaptureResult = null;
 
+const BALLS = [
+  ["poke", "Poké Ball", "poke-ball", 1],
+  ["super", "Super Ball", "great-ball", 1.5],
+  ["honor", "Honor Ball", "premier-ball", 1],
+  ["lune", "Lune Ball", "moon-ball", 3],
+  ["bis", "Bis Ball", "repeat-ball", 3.5],
+  ["faiblo", "Faiblo Ball", "nest-ball", 3],
+  ["hyper", "Hyper Ball", "ultra-ball", 2],
+  ["safari", "Safari Ball", "safari-ball", 2],
+  ["copain", "Copain Ball", "friend-ball", 2],
+  ["niveau", "Niveau Ball", "level-ball", 2],
+  ["filet", "Filet Ball", "net-ball", 2],
+  ["luxe", "Luxe Ball", "luxury-ball", 2],
+  ["scuba", "Scuba Ball", "dive-ball", 2],
+  ["rapide", "Rapide Ball", "quick-ball", 2],
+  ["sombre", "Sombre Ball", "dusk-ball", 2],
+  ["reve", "Rêve Ball", "dream-ball", 2],
+  ["ultra", "Ultra Ball", "beast-ball", 5]
+].map(([id,name,sprite,max]) => ({id,name,max,sprite:`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${sprite}.png`}));
+const BALL_TYPES = {safari:["Sol","Combat"],copain:["Dragon","Plante"],niveau:["Roche","Feu"],filet:["Acier","Insecte"],luxe:["Ténèbres","Psy"],scuba:["Glace","Eau"],rapide:["Électrik","Vol"],sombre:["Spectre","Poison"],reve:["Fée","Normal"]};
+const ballById = id => BALLS.find(b=>b.id===id) || BALLS[0];
+const ballOptions = () => BALLS.map(b=>`<option value="${b.id}">${b.name}</option>`).join("");
+function normalizeBallType(t){return String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();}
+function ballMultiplier(ballId,pokemon,rank,conditions={}){
+  const b=ballById(ballId);
+  if(b.id==="lune") return conditions.moon ? 3 : 1;
+  if(b.id==="bis") return conditions.repeat ? 3.5 : 1;
+  if(b.id==="ultra") return conditions.beast ? 5 : 1;
+  if(b.id==="faiblo") return rank==="D"?3:rank==="C"?2:1;
+  if(BALL_TYPES[b.id]){
+    const types=[getType1(pokemon),getType2(pokemon)].map(normalizeBallType);
+    return BALL_TYPES[b.id].some(t=>types.includes(normalizeBallType(t)))?2:1;
+  }
+  return b.max;
+}
+function captureChanceWithBall(base,ballId,pokemon,rank,conditions={}){
+  return Math.min(100,Math.max(0,base*ballMultiplier(ballId,pokemon,rank,conditions)));
+}
+function ballConditionHtml(prefix,ballId,conditions={}){
+  const labels={lune:["moon","Évolution par Pierre Lune"],bis:["repeat","Espèce déjà enregistrée dans le Pokédex du personnage"],ultra:["beast","Pokémon Ultra-Chimère"]};
+  const data=labels[ballId];
+  if(!data) return "";
+  return `<label><input type="checkbox" data-ball-condition="${data[0]}" ${conditions[data[0]]?"checked":""} onchange="${prefix}" /> ${data[1]}</label>`;
+}
+function getManualBallConditions(){
+  const node=document.getElementById("manualBallConditions");
+  return Object.fromEntries([...node.querySelectorAll("input[data-ball-condition]")].map(i=>[i.dataset.ballCondition,i.checked]));
+}
+function renderManualBallConditions(){
+  const id=document.getElementById("captureBallSelect")?.value||"poke";
+  const box=document.getElementById("manualBallConditions");
+  if(box) box.innerHTML=ballConditionHtml("renderCapturePreview()",id,getManualBallConditions());
+}
+function initBallSelect(){
+  const select=document.getElementById("captureBallSelect");
+  if(select){select.innerHTML=ballOptions();select.value="poke";}
+  renderManualBallConditions();
+}
+function getEncounterBallState(index){
+  const result=lastEncounterResults[index];
+  if(!result) return null;
+  const picker=document.getElementById(`encounterBall-${index}`);
+  if(picker) result.ballId=picker.value;
+  const cond=document.getElementById(`encounterBallConditions-${index}`);
+  if(cond) result.ballConditions=Object.fromEntries([...cond.querySelectorAll("input[data-ball-condition]")].map(i=>[i.dataset.ballCondition,i.checked]));
+  result.ballId ||= "poke";
+  result.ballConditions ||= {};
+  return result;
+}
+function updateEncounterBall(index){
+  const result=getEncounterBallState(index);
+  if(!result)return;
+  result.ballConditions={};
+  result.roll=undefined;result.success=undefined;result.ballRecovered=undefined;
+  document.getElementById("captureRpCodeBox")?.classList.add("hidden");
+  renderEncounterBall(index);
+}
+function renderEncounterBall(index){
+  const r=getEncounterBallState(index);if(!r)return;
+  const cond=document.getElementById(`encounterBallConditions-${index}`);
+  if(cond)cond.innerHTML=ballConditionHtml(`updateEncounterBallCondition(${index})`,r.ballId,r.ballConditions);
+  const sprite=document.getElementById(`encounterBallSprite-${index}`);
+  if(sprite)sprite.src=ballById(r.ballId).sprite;
+  const rate=captureChanceWithBall(r.captureChance,r.ballId,r.pokemon,r.rank,r.ballConditions);
+  const info=document.getElementById(`encounterBallRate-${index}`);
+  if(info)info.textContent=`×${ballMultiplier(r.ballId,r.pokemon,r.rank,r.ballConditions)} · ${rate}% (base ${r.captureChance}%)`;
+  const out=document.getElementById(`captureResult-${index}`);
+  if(out&&r.success===undefined)out.textContent="";
+}
+function updateEncounterBallCondition(index){
+  const r=getEncounterBallState(index);if(!r)return;
+  r.roll=undefined;r.success=undefined;r.ballRecovered=undefined;
+  document.getElementById("captureRpCodeBox")?.classList.add("hidden");
+  renderEncounterBall(index);
+}
+function getEncounterFinalChance(index){
+  const r=getEncounterBallState(index);
+  return captureChanceWithBall(r.captureChance,r.ballId,r.pokemon,r.rank,r.ballConditions);
+}
+
+
 let lastWeeklyParadoxDraw = null;
 
 const TYPE_COLORS = {
@@ -654,6 +765,7 @@ async function loadData(){
   fillEncounterParadoxSelects();
   fillSelect("typeSelect", allTypes, "Tous les types");
   fillTypePairSelect();
+  initBallSelect();
   fillCapturePokemonSelect();
   renderStats();
   renderMissingZones();
@@ -740,10 +852,12 @@ function getManualCaptureChance(pokemon){
   const rarity = getManualCaptureRarityKey(pokemon);
   const auraFarmer = document.getElementById("captureAuraFarmer")?.checked || false;
   const amiPokemon = document.getElementById("captureAmiPokemon")?.checked || false;
-  return Math.min(getCaptureChanceByRarity(rarity, rank, auraFarmer) + (amiPokemon ? 10 : 0), 100);
+  const base=Math.min(getCaptureChanceByRarity(rarity, rank, auraFarmer) + (amiPokemon ? 10 : 0), 100);
+  return captureChanceWithBall(base,document.getElementById("captureBallSelect")?.value||"poke",pokemon,rank,getManualBallConditions());
 }
 
 function renderCapturePreview(){
+  renderManualBallConditions();
   const pokemon = getManualCapturePokemon();
   const preview = document.getElementById("capturePreview");
   const result = document.getElementById("captureManualResult");
@@ -776,7 +890,8 @@ function renderCapturePreview(){
     </div>
   `;
 
-  result.textContent = `Taux de capture : ${chance}%.`;
+  const ballId=document.getElementById("captureBallSelect")?.value||"poke";
+  result.textContent = `Taux de capture : ${chance}% — ${ballById(ballId).name} (×${ballMultiplier(ballId,pokemon,rank,getManualBallConditions())}).`;
 }
 
 function tryManualCapture(){
@@ -810,7 +925,10 @@ function tryManualCapture(){
     captureChance: chance,
     roll,
     success,
-    rarityLabel: rarity.label
+    rarityLabel: rarity.label,
+    ballId: document.getElementById("captureBallSelect")?.value||"poke",
+    ballConditions: getManualBallConditions(),
+    ballRecovered
   };
 
   renderCaptureRpCode(lastManualCaptureResult);
@@ -975,16 +1093,17 @@ function generateEncounterCaptureRp(index){
   const result = lastEncounterResults[index];
   if(!result) return;
 
+  getEncounterBallState(index);
   if(typeof result.success === "undefined"){
     const roll = Math.floor(Math.random() * 100) + 1;
     result.roll = roll;
-    result.success = roll <= result.captureChance;
+    result.success = roll <= getEncounterFinalChance(index);
 
     const container = document.getElementById(`captureResult-${index}`);
     if(container){
       container.textContent = result.success
-        ? `✅ Capture réussie ! (${result.roll}/${result.captureChance})`
-        : `❌ Échec de capture. (${result.roll}/${result.captureChance})`;
+        ? `✅ Capture réussie ! (${result.roll}/${getEncounterFinalChance(index)})`
+        : `❌ Échec de capture. (${result.roll}/${getEncounterFinalChance(index)})`;
     }
   }
 
@@ -994,7 +1113,10 @@ function generateEncounterCaptureRp(index){
     pokemon: result.pokemon,
     rank: result.rank,
     isShiny: result.isShiny,
-    captureChance: result.captureChance,
+    captureChance: getEncounterFinalChance(index),
+    ballId: result.ballId,
+    ballConditions: result.ballConditions,
+    ballRecovered: result.ballRecovered,
     roll: result.roll,
     success: result.success,
     rarityLabel: rarity.label
@@ -1011,7 +1133,7 @@ function tryCapture(index){
   const result = lastEncounterResults[index];
   if(!result) return;
 
-  const chance = result.captureChance;
+  const chance = getEncounterFinalChance(index);
   const roll = Math.floor(Math.random() * 100) + 1;
   const success = roll <= chance;
   result.roll = roll;
@@ -1046,6 +1168,12 @@ function pokemonMiniHtml(result, index){
           <span class="badge ${rarity.className}">${rarity.label}</span>
           <span class="badge coral">Capture ${result.captureChance}%</span>
         </div>
+        <div class="ball-picker">
+          <img id="encounterBallSprite-${index}" src="${ballById(result.ballId||"poke").sprite}" alt="Ball" />
+          <select id="encounterBall-${index}" onchange="updateEncounterBall(${index})">${ballOptions()}</select>
+          <span class="ball-note" id="encounterBallRate-${index}">×1 · ${result.captureChance}%</span>
+        </div>
+        <div class="ball-conditions" id="encounterBallConditions-${index}"></div>
         <div class="capture-row">
           <button class="green" onclick="tryCapture(${index})">Tenter la capture</button>
           <button class="primary" onclick="generateEncounterAppearanceRp(${index})">Générer le post d’apparition</button>
@@ -1055,6 +1183,12 @@ function pokemonMiniHtml(result, index){
       </div>
     </div>
   `;
+}
+function initEncounterBallCards(){
+  lastEncounterResults.forEach((r,i)=>{
+    const select=document.getElementById(`encounterBall-${i}`);
+    if(select){select.value=r.ballId||"poke";renderEncounterBall(i);}
+  });
 }
 
 function getIsoWeekKey(date = new Date()){
@@ -1206,6 +1340,7 @@ function generateWeeklyParadoxEncounter(){
     <div class="summary-line"><strong>Zone : ${lastWeeklyParadoxDraw.zone}</strong> • Tirage parmi les deux Paradoxes de la semaine</div>
     ${pokemonMiniHtml(lastEncounterResults[0], 0)}
   `;
+  initEncounterBallCards();
 }
 
 function fillEncounterParadoxSelects(){
@@ -1443,6 +1578,7 @@ function generateEncounter(){
     <div style="margin-bottom:8px;"><strong>${encounterCount} Pokémon apparu${encounterCount > 1 ? "s" : ""}</strong></div>
     ${lastEncounterResults.map((result, index) => pokemonMiniHtml(result, index)).join("")}
   `;
+  initEncounterBallCards();
 }
 
 function renderMissingZones(){
@@ -2258,6 +2394,8 @@ function buildCaptureRpHtml(result){
   const type2 = getType2(p);
   const introText = getCaptureFlavorText(result.success);
   const resultText = result.success ? "Capture réussie" : "Capture ratée";
+  const usedBall=ballById(result.ballId||"poke");
+  const multiplier=ballMultiplier(usedBall.id,p,result.rank,result.ballConditions||{});
   const statusColor = result.success ? "var(--odyssey)" : "var(--txt-orange)";
   const typesHtml = [type1, type2].filter(Boolean).map(type => `<span style="display:inline-block;padding:5px 9px;border-radius:5px;background:${typeBadgeColor(type)};color:var(--txt-brand-neutre);font-size:10px;font-weight:800;text-transform:uppercase;margin:2px;">${escapeHtmlForRp(type)}</span>`).join("");
 
@@ -2284,6 +2422,10 @@ function buildCaptureRpHtml(result){
       </div>
     </div>
 
+    <div style="margin-top:10px;padding:10px 12px;border-radius:7px;background:var(--bg-neutre);display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;">
+      <img src="${usedBall.sprite}" alt="${escapeHtmlForRp(usedBall.name)}" style="width:34px;height:34px;object-fit:contain;" />
+      <span>${escapeHtmlForRp(usedBall.name)} · Multiplicateur ×${multiplier}${result.ballRecovered?" · ♻️ Ball récupérée":""}</span>
+    </div>
     <div style="margin-top:14px;padding:12px 14px;border-radius:7px;background:var(--bg-neutre);color:var(--txt-noir-neutre);font-size:13px;line-height:1.6;">
       <strong style="display:block;margin-bottom:4px;color:${statusColor};font-size:12px;font-weight:900;text-transform:uppercase;">${escapeHtmlForRp(resultText)}</strong>
       ${escapeHtmlForRp(introText)}
