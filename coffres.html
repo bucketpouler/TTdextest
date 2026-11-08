@@ -35,6 +35,7 @@
   --bg-orange-second: #DC7156;
 
   --bronze: #A66F4A;
+  --chocolat: #79513E;
   --argent: #8999A3;
   --or: #D3A63C;
   --bienvenue: #72A9C0;
@@ -271,6 +272,7 @@ button, input { font: inherit; }
 .themis-chest-choice[data-chest="or"] { color: var(--or); }
 .themis-chest-choice[data-chest="argent"] { color: var(--argent); }
 .themis-chest-choice[data-chest="bronze"] { color: var(--bronze); }
+.themis-chest-choice[data-chest="chocolat"] { color: var(--chocolat); }
 .themis-chest-choice[data-chest="bienvenue"] { color: var(--bienvenue); }
 .themis-chest-choice[data-chest="equipe"] { color: var(--equipe); }
 
@@ -698,7 +700,7 @@ button, input { font: inherit; }
       <h1 class="themis-title">Ouverture des Coffres</h1>
       <p class="themis-intro">
         Sélectionnez le coffre à ouvrir puis lancez le tirage.
-        Les Coffres d'Écurie contiennent trois tirages garantis. Les Coffres de bienvenue et d'Équipe offrent un tirage unique ; le contenu du Coffre d'Équipe est à répartir entre ses membres.
+        Les Coffres Or, Argent, Bronze et Chocolat contiennent trois tirages garantis. Les Coffres de bienvenue et d'Équipe offrent un tirage unique ; le contenu du Coffre d'Équipe est à répartir entre ses membres.
       </p>
     </div>
     <div class="themis-chest-hero-mark">🎁</div>
@@ -746,6 +748,15 @@ button, input { font: inherit; }
             <small>Récompense du Top 3</small>
           </span>
           <span class="themis-chest-choice-rank">03</span>
+        </button>
+
+        <button class="themis-chest-choice" data-chest="chocolat" type="button">
+          <span class="themis-chest-choice-icon">🍫</span>
+          <span>
+            <strong>Coffre en Chocolat</strong>
+            <small>Récompense des participants hors podium</small>
+          </span>
+          <span class="themis-chest-choice-rank">04</span>
         </button>
 
         <button class="themis-chest-choice" data-chest="bienvenue" type="button">
@@ -979,6 +990,33 @@ button, input { font: inherit; }
         { reward: "1 Fossile aléatoire", chance: 1.5 },
         { reward: "1 Œuf aléatoire", chance: 1 },
         { reward: "1 Pokémon aléatoire", chance: 0.5 }
+      ]
+    },
+
+    chocolat: {
+      name: "Coffre en Chocolat",
+      icon: "🍫",
+      color: "#79513E",
+      resources: [
+        { reward: "2 Poké Balls", chance: 30 },
+        { reward: "3 Poké Balls", chance: 25 },
+        { reward: "1 Super Ball", chance: 20 },
+        { reward: "2 Super Balls", chance: 15 },
+        { reward: "1 Hyper Ball", chance: 5 },
+        { reward: "1 Ball spé-type", chance: 5 }
+      ],
+      special: [
+        { reward: "1 CT aléatoire", chance: 70 },
+        { reward: "10 PO", chance: 15 },
+        { reward: "20 PO", chance: 10 },
+        { reward: "1 objet évolutif aléatoire", chance: 5 }
+      ],
+      chance: [
+        { reward: "5 PO", chance: 35 },
+        { reward: "10 PO", chance: 35 },
+        { reward: "20 PO", chance: 20 },
+        { reward: "1 PT", chance: 9 },
+        { reward: "2 PT", chance: 1 }
       ]
     },
 
