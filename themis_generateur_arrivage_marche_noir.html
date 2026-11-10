@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Marché Noir — Générateur d'arrivages | Themis Trials</title>
+<style>
+:root{--bg:#F0F3F4;--grid:rgba(98,135,148,.10);--surface:#E1E7EA;--panel:rgba(255,255,255,.78);--line:#C9D6DD;--blue:#72A9C0;--blue2:#4F93B0;--coral:#DC7156;--coral2:#D44D2B;--ink:#3F515A;--strong:#151B1E;--muted:#889FAA}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,Arial,sans-serif;color:var(--ink);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px}body:before,body:after{content:'';position:fixed;width:620px;height:620px;filter:blur(85px);z-index:-1;pointer-events:none;border-radius:50%}body:before{right:-390px;top:-320px;background:radial-gradient(circle,rgba(114,169,192,.35),transparent 70%)}body:after{left:-390px;bottom:-340px;background:radial-gradient(circle,rgba(220,113,86,.3),transparent 70%)}
+@font-face{font-family:Coolvetica;src:url('https://cdn.jsdelivr.net/gh/Pandariesw/TOY/CoolveticaRg-Regular%20400.ttf')}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}.wrap{max-width:1190px;margin:auto;padding:24px 20px 54px}
+.hero{background:linear-gradient(110deg,rgba(220,113,86,.93),rgba(114,169,192,.84)),url('https://2img.net/i.imgur.com/JoUhDEV.png') center / cover;border-radius:12px;color:white;padding:29px 32px;margin-bottom:14px;display:flex;justify-content:space-between;gap:16px;align-items:center;overflow:hidden}.eyebrow{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.16em}.hero h1{font:400 clamp(35px,6vw,56px)/1 Coolvetica,Arial;margin:5px 0 9px}.hero p{font-size:12px;line-height:1.6;max-width:670px;margin:0}.hero .stamp{font-size:52px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);width:90px;height:90px;display:grid;place-items:center;border-radius:14px;flex:none}
+.panel{background:var(--panel);border:1px solid rgba(9,9,11,.10);border-radius:12px;padding:18px;margin-bottom:13px}.control-wrap{display:flex;align-items:end;gap:18px;justify-content:space-between;flex-wrap:wrap}.panel h2{font:400 26px Coolvetica,Arial;margin:0 0 5px;color:var(--strong)}.sub{color:var(--muted);font-size:11px;line-height:1.6;margin:0}.options{display:flex;gap:15px;flex-wrap:wrap;margin-top:13px}.options label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:750;cursor:pointer}.options input{accent-color:var(--coral);width:16px;height:16px}.buttons{display:flex;gap:9px;flex-wrap:wrap}.btn{border:0;border-radius:8px;background:var(--coral);color:white;padding:13px 16px;font-size:12px;font-weight:850}.btn:hover:not(:disabled){filter:brightness(.95)}.btn.secondary{background:var(--blue)}.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}.status{font-size:12px;color:var(--muted);margin:13px 1px 2px}.status.error{color:#ae4437}.headrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}.headrow h2{margin:0}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.poke{min-width:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}.art{height:155px;display:grid;place-items:center;position:relative;background:radial-gradient(circle,rgba(114,169,192,.19),transparent 66%),var(--bg);border-bottom:1px solid var(--line)}.art:before{content:'';position:absolute;width:120px;height:120px;border:1px solid var(--line);border-radius:50%}.art img{width:135px;height:135px;object-fit:contain;image-rendering:pixelated;z-index:1;position:relative}.art .missing{color:var(--muted);font-size:11px;z-index:1}.slot{position:absolute;top:12px;left:13px;font-weight:900;font-size:10px;color:var(--muted);z-index:2}.poke-body{padding:15px 16px 16px;flex:1}.poke h3{font:400 25px Coolvetica,Arial;margin:0 0 11px;color:var(--strong);overflow-wrap:anywhere}.pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.pill{border-radius:6px;padding:6px 8px;font-size:10px;font-weight:800;background:var(--bg);border:1px solid var(--line)}.pill.shiny{color:#9a661b;border-color:#e6bd65;background:#fff1cc}.nickname{font-size:12px;border-top:1px solid var(--line);padding-top:10px}.nickname strong{color:var(--coral2)}.empty{grid-column:1/-1;min-height:195px;border:1px dashed var(--line);display:grid;place-items:center;text-align:center;color:var(--muted);font-size:12px;border-radius:10px;padding:25px}.copybox{margin-top:16px}.copybox textarea{width:100%;min-height:190px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:12px/1.6 Consolas,monospace;resize:vertical}.copybox .buttons{margin-top:9px}.note{margin-top:12px;font-size:11px;color:var(--muted);line-height:1.5}.footer{font-size:10px;color:var(--muted);text-align:center;margin-top:16px}
+@media(max-width:850px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:530px){.wrap{padding:10px}.hero{padding:20px}.hero .stamp{display:none}.cards{grid-template-columns:1fr}.buttons{width:100%}.buttons .btn{flex:1}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="hero"><div><div class="eyebrow">Themis Trials · Outil staff</div><h1>Arrivage du Marché Noir</h1><p>Génère 6 Pokémon depuis le Pokédex d'Eleftheria, avec un rang aléatoire, une chance de chromatique de 1 sur 30 et un surnom.</p></div><div class="stamp">🎲</div></header>
+<section class="panel"><div class="control-wrap"><div><h2>Préparer l'arrivage</h2><p class="sub">Sans doublon d'espèce. Légendaires, fabuleux et Ultra-Chimères exclus.</p><div class="options"><label><input type="checkbox" id="fossils" checked> Autoriser les fossiles</label><label><input type="checkbox" id="paradox"> Autoriser les Paradoxes</label></div></div><div class="buttons"><button class="btn" id="generate" disabled>Chargement du Pokédex…</button><button class="btn ghost" id="restore">Restaurer le dernier tirage</button></div></div><div id="status" class="status">Connexion à la base de données…</div></section>
+<section class="panel"><div class="headrow"><h2>Les 6 Pokémon de la semaine</h2><span class="sub" id="drawDate">Aucun tirage</span></div><div class="cards" id="cards"><div class="empty">L'arrivage apparaîtra ici après le tirage.</div></div><div class="copybox"><h2>Résultat à copier</h2><textarea id="resultText" readonly placeholder="Pokémon — Rang — Chromatique — Surnom"></textarea><div class="buttons"><button class="btn secondary" id="copy" disabled>Copier la liste</button><button class="btn ghost" id="csv" disabled>Exporter CSV</button></div></div><p class="note">Rang : D 50 %, C 25 %, B 15 %, A 7 %, S 2,5 %, X 0,5 %. Chromatique : 1/30 par Pokémon, indépendamment des autres. Les réglages modifient uniquement les prochains tirages.</p></section>
+<footer class="footer">Themis Trials · Générateur staff · Les résultats sont conservés localement sur cet appareil.</footer>
+</main>
+<script>
+'use strict';
+const SHEET_URL='https://opensheet.elk.sh/1_inTvzxt5GKfwj9OiofOH8kprf-fcjL6Jea0G1VzDww/Sheet1';
+const NICKNAMES=[
+  "Abricot",
+  "Amande",
+  "Améthyste",
+  "Anis",
+  "Aster",
+  "Azuki",
+  "Bambou",
+  "Banane",
+  "Basilic",
+  "Biscotte",
+  "Biscuit",
+  "Boba",
+  "Bonbon",
+  "Bounty",
+  "Brindille",
+  "Brioche",
+  "Bulle",
+  "Cacao",
+  "Cactus",
+  "Cajou",
+  "Calisson",
+  "Cannelle",
+  "Caramel",
+  "Cerise",
+  "Châtaigne",
+  "Chaussette",
+  "Chiffon",
+  "Chips",
+  "Chouquette",
+  "Citron",
+  "Clémentine",
+  "Coco",
+  "Cookie",
+  "Coquelicot",
+  "Corail",
+  "Cosmo",
+  "Crêpe",
+  "Croquette",
+  "Cupcake",
+  "Dango",
+  "Datte",
+  "Éclair",
+  "Éclipse",
+  "Étoile",
+  "Figue",
+  "Flocon",
+  "Framboise",
+  "Gaufre",
+  "Gelée",
+  "Gingembre",
+  "Givre",
+  "Guimauve",
+  "Haricot",
+  "Jasmin",
+  "Kiwi",
+  "Litchi",
+  "Lune",
+  "Macaron",
+  "Mandarine",
+  "Mangue",
+  "Marron",
+  "Matcha",
+  "Menthe",
+  "Miel",
+  "Mochi",
+  "Moka",
+  "Muffin",
+  "Muscade",
+  "Myrtille",
+  "Nectar",
+  "Noisette",
+  "Nougat",
+  "Nuage",
+  "Olive",
+  "Onigiri",
+  "Opale",
+  "Orage",
+  "Oréo",
+  "Papaye",
+  "Paprika",
+  "Pêche",
+  "Pépito",
+  "Perle",
+  "Persil",
+  "Pistache",
+  "Pixel",
+  "Plume",
+  "Poire",
+  "Poivre",
+  "Pollen",
+  "Pomme",
+  "Praline",
+  "Prune",
+  "Réglisse",
+  "Riz",
+  "Romarin",
+  "Sablé",
+  "Safran",
+  "Sakura",
+  "Sésame",
+  "Sirop",
+  "Soleil",
+  "Sucre",
+  "Tapioca",
+  "Thym",
+  "Toffee",
+  "Trèfle",
+  "Truffe",
+  "Vanille",
+  "Velours",
+  "Wasabi",
+  "Yuzu",
+  "Zeste",
+  "Aube",
+  "Badiane",
+  "Baie",
+  "Brume",
+  "Céleste",
+  "Comète",
+  "Cristal",
+  "Dune",
+  "Écume",
+  "Émeraude",
+  "Flamme",
+  "Frisson",
+  "Galaxie",
+  "Halo",
+  "Iris",
+  "Lilas",
+  "Lotus",
+  "Luciolle",
+  "Mistral",
+  "Nébuleuse",
+  "Neige",
+  "Nova",
+  "Océan",
+  "Ombre",
+  "Paillette",
+  "Pivoine",
+  "Quartz",
+  "Rivage",
+  "Rosée",
+  "Rubis",
+  "Saphir",
+  "Tempête",
+  "Topaze",
+  "Violette",
+  "Zéphyr",
+  "Aquarelle",
+  "Astéroïde"
+];
+const LEGENDARY_IDS=new Set([
+  144,145,146,150,
+  243,244,245,249,250,
+  377,378,379,380,381,382,383,384,
+  480,481,482,483,484,485,486,487,488,
+  638,639,640,641,642,643,644,645,646,
+  716,717,718,
+  772,773,785,786,787,788,789,790,791,792,800,
+  888,889,890,891,892,894,895,896,897,898,
+  1001,1002,1003,1004,1007,1008,1014,1015,1016,1017,1024
+,151,251,385,386,489,490,491,492,493,494,647,648,649,719,720,721,801,802,807,808,809,893,1025]);
+const ULTRA_BEAST_IDS=new Set([793,794,795,796,797,798,799,803,804,805,806]);
+const PARADOX_IDS=new Set([984,985,986,987,988,989,990,991,992,993,994,995,1005,1006,1009,1010,1020,1021,1022,1023]);
+const FOSSIL_IDS=new Set([138,139,140,141,142,345,346,347,348,408,409,410,411,564,565,566,567,696,697,698,699,880,881,882,883]);
+const RANK_WEIGHTS=[['D',50],['C',25],['B',15],['A',7],['S',2.5],['X',.5]];
+const SAVE_KEY='themis_marche_arrivage_v1';
+let all=[],last=[];
+const $=id=>document.getElementById(id);
+function norm(v){return String(v??'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function field(p,names){for(const name of names){const entry=Object.entries(p).find(([k])=>norm(k)===norm(name));if(entry&&String(entry[1]??'').trim())return String(entry[1]).trim()}return ''}
+function getName(p){return field(p,['french','nom','name','pokemon','pokémon'])}
+function getId(p){const v=field(p,['id']);const match=v.match(/^\d+/);return match?Number(match[0]):null}
+function isYes(v){return ['oui','yes','true','1','x','vrai'].includes(norm(v))}
+function isCategory(p,search){return ['categorie','category','statut','status','classification','classe','rare','rarete','rareté','rarity','zone'].some(k=>norm(field(p,[k])).includes(search))}
+function isLegendary(p){const id=getId(p);return LEGENDARY_IDS.has(id)||['legendaire','légendaire','legendary','fabuleux','mythique','mythical'].some(label=>isCategory(p,norm(label)))||['legendaire','légendaire','legendary','is_legendary','fabuleux','mythical'].some(k=>isYes(field(p,[k])))}
+function isUltraBeast(p){return ULTRA_BEAST_IDS.has(getId(p))||isCategory(p,'ultra-chimere')||isCategory(p,'ultrachimere')||isCategory(p,'ultra beast')||isCategory(p,'ultrabeast')}
+function isParadox(p){return PARADOX_IDS.has(getId(p))||isCategory(p,'paradox')||isCategory(p,'paradoxe')||isYes(field(p,['paradox','paradoxe']))}
+function isFossil(p){return FOSSIL_IDS.has(getId(p))||isCategory(p,'fossil')||isCategory(p,'fossile')||isYes(field(p,['fossil','fossile']))}
+function eligible(){return all.filter(p=>!isLegendary(p)&&!isUltraBeast(p)&&($('fossils').checked||!isFossil(p))&&($('paradox').checked||!isParadox(p)))}
+function pickWeighted(weights){let roll=Math.random()*weights.reduce((s,x)=>s+x[1],0);for(const [value,w] of weights){roll-=w;if(roll<0)return value}return weights[weights.length-1][0]}
+function takeRandom(list){return list.splice(Math.floor(Math.random()*list.length),1)[0]}
+function sprite(p,shiny){const v=field(p,shiny?['shiny','shiny sprite','sprite shiny']:['sprite','sprite url']);if(/^https:\/\//i.test(v))return v;if(!shiny){const id=getId(p);if(id!==null&&/^\d+$/.test(field(p,['id'])))return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+id+'.png'}return ''}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]))}
+function makeDraw(){let pool=eligible().slice();if(pool.length<6){$('status').textContent='Pas assez de Pokémon admissibles pour en tirer 6.';$('status').classList.add('error');return}const result=[],nickpool=NICKNAMES.slice(),used=new Set();while(result.length<6&&pool.length){const p=takeRandom(pool),name=getName(p),key=norm(name);if(used.has(key))continue;used.add(key);const shiny=Math.random()<1/30;const nickname=takeRandom(nickpool);result.push({id:field(p,['id']),name,rank:pickWeighted(RANK_WEIGHTS),shiny,nickname,sprite:sprite(p,shiny),normalSprite:sprite(p,false)})}if(result.length!==6){$('status').textContent='La base ne contient pas six espèces distinctes admissibles.';return}last=result;save();render();$('status').textContent='Arrivage généré : 6 Pokémon, aucun doublon.';$('status').classList.remove('error')}
+function render(){const cards=$('cards');if(!last.length)return;cards.innerHTML=last.map((p,i)=>`<article class="poke"><div class="art"><span class="slot">N° ${String(i+1).padStart(2,'0')}</span>${p.sprite?`<img src="${escapeHtml(p.sprite)}" alt="${escapeHtml(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="missing" style="display:none">Sprite indisponible</span>`:'<span class="missing">Sprite indisponible</span>'}</div><div class="poke-body"><h3>${escapeHtml(p.name)}</h3><div class="pills"><span class="pill">Rang ${escapeHtml(p.rank)}</span><span class="pill ${p.shiny?'shiny':''}">Chromatique : ${p.shiny?'Oui ✨':'Non'}</span></div><div class="nickname">Surnom : <strong>${escapeHtml(p.nickname)}</strong></div></div></article>`).join('');$('resultText').value=last.map((p,i)=>`${i+1}. ${p.name} — Rang ${p.rank} — Chromatique : ${p.shiny?'Oui':'Non'} — Surnom : ${p.nickname}`).join('\n');$('copy').disabled=false;$('csv').disabled=false;$('drawDate').textContent='Dernier tirage enregistré'}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(last))}catch(e){}}
+function restore(){try{const saved=JSON.parse(localStorage.getItem(SAVE_KEY));if(!Array.isArray(saved)||saved.length!==6)throw Error('Aucun tirage enregistré.');last=saved;render();$('status').textContent='Dernier tirage restauré.'}catch(e){$('status').textContent=e.message}}
+async function load(){try{const r=await fetch(SHEET_URL,{cache:'no-store'});if(!r.ok)throw Error('Impossible de récupérer le Pokédex ('+r.status+').');const data=await r.json();if(!Array.isArray(data))throw Error('Format de base de données invalide.');all=data.filter(p=>p&&getName(p));if(eligible().length<6)throw Error('La base contient moins de 6 Pokémon admissibles.');$('generate').disabled=false;$('generate').textContent='Générer les 6 Pokémon';$('status').textContent=`Pokédex chargé : ${all.length} entrées, ${eligible().length} Pokémon admissibles.`;restoreSilently()}catch(e){$('status').classList.add('error');$('status').textContent=e.message;$('generate').textContent='Chargement impossible'}}
+function restoreSilently(){try{const saved=JSON.parse(localStorage.getItem(SAVE_KEY));if(Array.isArray(saved)&&saved.length===6){last=saved;render()}}catch(e){}}
+$('generate').addEventListener('click',()=>{if(last.length&&!confirm('Remplacer le dernier arrivage généré ?'))return;makeDraw()});$('restore').addEventListener('click',restore);
+for(const id of ['fossils','paradox'])$(id).addEventListener('change',()=>{if(all.length)$('status').textContent=`${eligible().length} Pokémon admissibles avec ces filtres.`});
+$('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('resultText').value);$('copy').textContent='Copié !';setTimeout(()=>$('copy').textContent='Copier la liste',1500)}catch(e){$('resultText').select();document.execCommand('copy')}});
+$('csv').addEventListener('click',()=>{const rows=[['Pokémon','Rang','Chromatique','Surnom'],...last.map(p=>[p.name,p.rank,p.shiny?'Oui':'Non',p.nickname])];const text='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='themis_arrivage_marche_noir.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+load();
+</script></body></html>
