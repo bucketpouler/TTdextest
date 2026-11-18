@@ -45,9 +45,7 @@ button,textarea{font:inherit}button{cursor:pointer}
 .themis-bingo-zone-wrap textarea{width:100%;height:50px;resize:vertical;padding:8px 9px;border:1px solid var(--bord-surface);border-radius:8px;outline:0;background:var(--bg-neutre);color:var(--txt-noir-neutre);font:500 10px/1.35 Inter,Arial,sans-serif}
 .themis-bingo-actions{padding:10px;display:grid;gap:8px}
 .themis-bingo-btn{min-height:40px;border-radius:8px;border:1px solid var(--bord-orange-second);background:var(--bg-orange-second);color:white;font:700 11px Inter,Arial,sans-serif;transition:.2s ease}
-.themis-bingo-btn:hover{background:var(--bg-orange-terti);border-color:var(--bord-orange-terti)}
 .themis-bingo-btn.is-blue{background:var(--bg-bleu-second);border-color:var(--bord-bleu-second)}
-.themis-bingo-btn.is-blue:hover{background:var(--bg-bleu-terti)}
 .themis-bingo-board{width:min(100%,calc(100vh - 300px));min-width:610px;margin:0 auto;padding:12px}
 .themis-bingo-board-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
 .themis-bingo-board-title{display:flex;align-items:baseline;gap:10px}
@@ -70,12 +68,12 @@ body.screenshot-mode .themis-shot-exit{display:block}
 @media(max-width:900px){.themis-bingo-toolbar{grid-template-columns:1fr}.themis-bingo-board{width:100%;min-width:0}}
 @media(max-width:700px){.themis-bingo-shell{width:min(100% - 16px,1450px)}.themis-bingo-hero{align-items:flex-start}.themis-bingo-intro{display:none}.themis-bingo-settings{grid-template-columns:1fr}.themis-bingo-board{padding:8px}.themis-bingo-grid{gap:4px}.themis-bingo-cell{padding:24px 5px 5px}.themis-bingo-cell-text{font-size:10px}.themis-bingo-cell-tag{font-size:5px;padding:3px}.themis-bingo-cell-number{font-size:7px}}
 
-/* Variantes des missions — consultation au survol, au clavier et au clic */
+/* Variantes des missions — affichage uniquement au clic */
 .themis-bingo-cell{cursor:pointer;overflow:visible;isolation:isolate}
-.themis-bingo-cell:hover,.themis-bingo-cell:focus-visible,.themis-bingo-cell.is-info-open{z-index:30;outline:2px solid var(--bord-bleu-second);outline-offset:1px}
+.themis-bingo-cell.is-info-open{z-index:30;outline:2px solid var(--bord-bleu-second);outline-offset:1px}
 .themis-bingo-cell-points{position:absolute;bottom:5px;right:7px;color:var(--bord-orange-second);font:800 9px Inter,Arial,sans-serif}
 .themis-bingo-tooltip{display:none;position:absolute;z-index:100;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:min(360px,86vw);max-height:60vh;overflow:auto;padding:13px;background:var(--bg-fond);border:1px solid var(--bord-bleu-second);border-radius:10px;box-shadow:0 8px 36px rgba(0,0,0,.22);text-align:left;color:var(--txt-noir-neutre)}
-.themis-bingo-cell:hover .themis-bingo-tooltip,.themis-bingo-cell:focus-visible .themis-bingo-tooltip,.themis-bingo-cell.is-info-open .themis-bingo-tooltip{display:block}
+.themis-bingo-cell.is-info-open .themis-bingo-tooltip{display:block}
 .themis-bingo-tooltip-row{display:grid;grid-template-columns:45px minmax(0,1fr);gap:8px;align-items:start;padding:8px 0;font:600 11px/1.45 Inter,Arial,sans-serif}
 .themis-bingo-tooltip-row+.themis-bingo-tooltip-row{border-top:1px solid var(--bord-neutre)}
 .themis-bingo-tooltip-row b{display:inline-block;padding:4px;border-radius:5px;text-align:center;background:var(--bg-bleu-second);color:#fff;font-size:10px}
@@ -98,7 +96,7 @@ body.screenshot-mode .themis-bingo-tooltip{display:none!important}
   <section class="themis-bingo-panel themis-bingo-settings">
     <div>
       <div class="themis-bingo-settings-title"><div class="themis-bingo-settings-icon">✦</div><h2>Génération de la grille</h2></div>
-      <p>25 missions tirées parmi 42 possibilités (28 fixes, 14 variables). Survolez une case ou cliquez dessus pour consulter les niveaux. Une seule version peut être validée, sans amélioration ultérieure.</p>
+      <p>25 missions par grille : 7 captures maximum et 2 variantes maximum par modèle de mission. Cliquez sur une case pour consulter les niveaux. Une seule version peut être validée, sans amélioration ultérieure.</p>
     </div>
     <div class="themis-bingo-zone-wrap"><label for="zonesList">Zones de capture</label><textarea id="zonesList">Palestre Ancienne
 Ruines envahies
@@ -257,11 +255,75 @@ Centre de Recyclage</textarea></div>
     });
     try{localStorage.setItem(SAVE_KEY,JSON.stringify(currentMissions));}catch(e){}
   }
+  // Les variantes de type, de rareté, de Ball et de zone appartiennent
+  // à un même modèle même lorsque leur paramètre change.
+  function missionFamily(m) {
+    const t = String(m.text || '');
+    if (/^Capturer 1 Pokémon de type /i.test(t)) return 'capture:type';
+    if (/^Capturer 1 Pokémon de rareté /i.test(t)) return 'capture:rarete';
+    if (/^Capturer 1 Pokémon avec une /i.test(t)) return 'capture:ball';
+    if (/^Commencer 1 RP dans /i.test(t)) return 'exploration:zone';
+    if (/^Commencer un RP avec un personnage du groupe /i.test(t)) return 'rp:groupe';
+    return 'unique:' + t;
+  }
+
+  function gridError(missions) {
+    if (!Array.isArray(missions) || missions.length !== 25 ||
+        !missions.every(m => m && typeof m.text === 'string' && typeof m.tag === 'string')) {
+      return 'La grille doit contenir exactement 25 missions valides.';
+    }
+    let captures = 0;
+    const families = new Map();
+    const texts = new Set();
+    const rpGroups = new Set();
+    for (const m of missions) {
+      if (texts.has(m.text)) return 'La grille contient deux missions identiques.';
+      texts.add(m.text);
+      if (m.tag === 'Capture' && ++captures > 7) return 'Maximum 7 missions Capture par grille.';
+      const family = missionFamily(m);
+      const limit = family === 'rp:groupe' ? 3 : 2;
+      families.set(family, (families.get(family) || 0) + 1);
+      if (families.get(family) > limit) return 'Maximum 2 variantes du même modèle de mission.';
+      if (family === 'rp:groupe') {
+        const group = m.text.match(/groupe (Civils|Dresseurs|Odyssey)/i)?.[1]?.toLowerCase();
+        if (!group || rpGroups.has(group)) return 'Un seul RP par groupe (Civils, Dresseurs, Odyssey).';
+        rpGroups.add(group);
+      }
+    }
+    return null;
+  }
+
+  function selectMissions(pool) {
+    const chosen = [];
+    const families = new Map();
+    let captures = 0;
+    for (const m of shuffle(pool)) {
+      if (chosen.length >= 25) break;
+      const family = missionFamily(m);
+      const limit = family === 'rp:groupe' ? 3 : 2;
+      if ((families.get(family) || 0) >= limit) continue;
+      if (m.tag === 'Capture' && captures >= 7) continue;
+      chosen.push(m);
+      families.set(family, (families.get(family) || 0) + 1);
+      if (m.tag === 'Capture') captures++;
+    }
+    return chosen.length === 25 ? shuffle(chosen) : null;
+  }
+
+  function makeNewGrid() {
+    // Nouvel essai si le tirage produit trop peu de missions admissibles.
+    for (let tries = 0; tries < 30; tries++) {
+      const selected = selectMissions(buildMissionPool());
+      if (selected && !gridError(selected)) return selected;
+    }
+    return null;
+  }
+
   function generateBingo() {
     if (currentMissions.length && !confirm("Remplacer la grille actuelle par une nouvelle grille ?")) return;
-    const pool = buildMissionPool();
-    if (pool.length < 25) {alert("Impossible de générer 25 missions différentes. Vérifie la liste des zones.");return;}
-    renderBingo(shuffle(pool).slice(0,25));
+    const selected = makeNewGrid();
+    if (!selected) { alert("Impossible de générer 25 missions respectant les limites."); return; }
+    renderBingo(selected);
   }
   function download(name,content,mime) {
     const blob = new Blob([content],{type:mime});
@@ -283,9 +345,8 @@ Centre de Recyclage</textarea></div>
     const file = e.target.files[0];if (!file) return;
     try {
       const data = JSON.parse(await file.text());
-      if (!Array.isArray(data) || data.length !== 25 || !data.every(m => m && typeof m.text === "string" && typeof m.tag === "string")) {
-        throw Error("Le fichier doit contenir exactement 25 missions avec leurs catégories.");
-      }
+      const error = gridError(data);
+      if (error) throw Error(error);
       renderBingo(data);
     } catch (err) {alert("Impossible de restaurer : " + err.message);}
     e.target.value = "";
@@ -295,9 +356,16 @@ Centre de Recyclage</textarea></div>
   document.getElementById("exitScreenshot").addEventListener("click",() => document.body.classList.remove("screenshot-mode"));
   try {
     const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
-    if (Array.isArray(saved) && saved.length === 25 && saved.every(m => m && typeof m.text === "string" && typeof m.tag === "string")) renderBingo(saved);
-    else renderBingo(shuffle(buildMissionPool()).slice(0,25));
-  } catch (e) {renderBingo(shuffle(buildMissionPool()).slice(0,25));}
+    if (saved && !gridError(saved)) renderBingo(saved);
+    else {
+      const selected = makeNewGrid();
+      if (selected) renderBingo(selected);
+      else alert("Impossible de générer la grille de départ.");
+    }
+  } catch (e) {
+    const selected = makeNewGrid();
+    if (selected) renderBingo(selected);
+  }
 })();
 </script>
 </body>
