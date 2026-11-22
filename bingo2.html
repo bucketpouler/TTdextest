@@ -201,23 +201,23 @@ Centre de Recyclage</textarea></div>
       mission('Capture',"Capturer 1 Pokémon d'une espèce déjà possédée par au moins un membre de l'écurie au moment de la capture.","Capturer 2 Pokémon d'espèces déjà possédées par au moins un membre de l'écurie au moment de chaque capture.","Capturer 3 Pokémon d'espèces déjà possédées par au moins un membre de l'écurie au moment de chaque capture."),
       mission('Capture',"Capturer 1 Pokémon de la même espèce qu'un Pokémon capturé par une écurie adverse pendant la saison.","Capturer 2 Pokémon d'espèces également capturées par une écurie adverse pendant la saison.","Capturer 3 Pokémon d'espèces également capturées par une écurie adverse pendant la saison."),
       mission('Capture','Capturer un Pokémon possédant deux types.',`Capturer un Pokémon possédant deux types, dont ${t1}.`,`Capturer un Pokémon possédant les deux types ${t1} et ${t2}.`),
-      mission('Capture','Capturer un Pokémon Commun et un Pokémon Peu Commun.','Capturer un Pokémon Rare et un Pokémon Commun.','Capturer un Pokémon Rare et un Pokémon Peu Commun lors de la même capture.'),
-      mission('Capture',"Capturer 1 Pokémon ayant au moins un type désavantagé face à celui de son starter.","Capturer 2 Pokémon ayant au moins un type désavantagé face à celui de leur starter.","Capturer 3 Pokémon ayant au moins un type désavantagé face à celui de leur starter."),
+      mission('Capture','Capturer un Pokémon Commun et un Pokémon Peu Commun lors d’une même capture, par une seule personne.','Capturer un Pokémon Rare et un Pokémon Commun lors d’une même capture, par une seule personne.','Capturer un Pokémon Rare et un Pokémon Peu Commun lors d’une même capture, par une seule personne.'),
+      mission('Capture',"Capturer 1 Pokémon ayant au moins un type désavantagé face à celui de son starter sous sa forme actuelle.","Capturer 2 Pokémon ayant au moins un type désavantagé face à celui de leur starter sous sa forme actuelle.","Capturer 3 Pokémon ayant au moins un type désavantagé face à celui de leur starter sous sa forme actuelle."),
       mission('Hasard',"Cumuler 4 échecs de lancer de Ball au sein de l'écurie.","Cumuler 8 échecs de lancer de Ball au sein de l'écurie.","Cumuler 12 échecs de lancer de Ball au sein de l'écurie."),
       mission('Rencontre',"Rencontrer 2 Pokémon de la même espèce dans 2 rencontres de capture distinctes, tous membres de l'écurie confondus.","Rencontrer 3 Pokémon de la même espèce dans 3 rencontres de capture distinctes, tous membres de l'écurie confondus.","Rencontrer 4 Pokémon de la même espèce dans 4 rencontres de capture distinctes, tous membres de l'écurie confondus."),
-      mission('Rencontre','Rencontrer 1 Pokémon chromatique lors d’une rencontre de capture.','Rencontrer 3 Pokémon chromatiques lors de rencontres de capture.','Rencontrer 5 Pokémon chromatiques lors de rencontres de capture.'),
+      mission('Rencontre','Rencontrer 1 Pokémon chromatique lors de captures.','Rencontrer 3 Pokémon chromatiques lors de captures.','Rencontrer 5 Pokémon chromatiques lors de captures.'),
       mission('Écurie',"Participer à 1 RP de capture avec 1 autre membre de l'écurie.","Participer à 2 RP de capture avec 2 partenaires différents de l'écurie (un partenaire différent par RP).","Participer à 3 RP de capture avec 3 partenaires différents de l'écurie (un partenaire différent par RP)."),
       mission('Écurie',"2 membres différents de l'écurie doivent chacun capturer un Pokémon partageant au moins un type.","3 membres différents de l'écurie doivent chacun capturer un Pokémon partageant au moins un type.","4 membres différents de l'écurie doivent chacun capturer un Pokémon partageant au moins un type."),
       mission('Écurie',"2 membres différents de l'écurie doivent chacun capturer un Pokémon de rareté Rare.","3 membres différents de l'écurie doivent chacun capturer un Pokémon de rareté Rare.","4 membres différents de l'écurie doivent chacun capturer un Pokémon de rareté Rare."),
       mission('Exploration',"Commencer un RP dans une zone de capture où aucun membre de l'écurie n'a RP durant la saison précédente.","Commencer un RP dans une zone de capture où aucun membre d'une autre écurie n'a RP durant la saison précédente.","Commencer un RP dans une zone où personne n'a RP durant la saison précédente."),
       mission('Exploration','Commencer collectivement des RP dans 5 zones de capture différentes au cours de la saison.','Commencer collectivement des RP dans 10 zones de capture différentes au cours de la saison.','Commencer collectivement des RP dans 15 zones de capture différentes au cours de la saison.'),
-      ...groups.map(g => mission('RP',`Commencer un RP avec un personnage du groupe ${g} appartenant à une autre écurie.`,`Terminer un RP avec un personnage du groupe ${g} appartenant à une autre écurie.`,`Terminer un RP de plus de 5 posts par personnage avec un personnage du groupe ${g} appartenant à une autre écurie.`)),
+      ...groups.map(g => mission('RP',`Commencer un RP hors capture avec un personnage du groupe ${g} appartenant à une autre écurie.`,`Terminer un RP hors capture avec un personnage du groupe ${g} appartenant à une autre écurie.`,`Terminer un RP hors capture de plus de 5 posts par personnage avec un personnage du groupe ${g} appartenant à une autre écurie.`)),
       mission('Pokémon',"Faire évoluer un Pokémon de son équipe.","Faire évoluer un Pokémon de son équipe avec un objet d'évolution.","Faire évoluer un Pokémon de son équipe jusqu'à son stade d'évolution final."),
-      mission('Pokémon',"Augmenter d'un rang un Pokémon de son équipe.","Augmenter de 2 rangs un Pokémon de son équipe.","Augmenter de 3 rangs un Pokémon de son équipe."),
+      mission('Pokémon',"Augmenter 1 Pokémon de son équipe d’un rang.","Augmenter 2 Pokémon de son équipe d’un rang chacun.","Augmenter 3 Pokémon de son équipe d’un rang chacun."),
       mission('Pokémon','Faire éclore 1 Œuf Pokémon.','Faire éclore 2 Œufs Pokémon.','Faire éclore 4 Œufs Pokémon.'),
       mission('Pokémon',"Apprendre 1 nouvelle capacité hors-niveau à un Pokémon de son équipe.","Apprendre 2 nouvelles capacités hors-niveau à des Pokémon de son équipe.","Apprendre 4 nouvelles capacités hors-niveau à des Pokémon de son équipe."),
-      mission('Combat',"Remporter un combat Pokémon contre un membre d'une autre écurie."),
-      mission('Combat',"Perdre un combat Pokémon contre un membre d'une autre écurie."),
+      mission('Combat',"Remporter un combat Pokémon à 1 Pokémon chacun contre un membre d'une autre écurie.","Remporter un combat Pokémon à 2 Pokémon chacun contre un membre d'une autre écurie.","Remporter un combat Pokémon à 3 Pokémon chacun contre un membre d'une autre écurie."),
+      mission('Combat',"Perdre un combat Pokémon à 1 Pokémon chacun contre un membre d'une autre écurie.","Perdre un combat Pokémon à 2 Pokémon chacun contre un membre d'une autre écurie.","Perdre un combat Pokémon à 3 Pokémon chacun contre un membre d'une autre écurie."),
       mission('Défi',"Capturer un Pokémon dont le nom de l'espèce commence par la même lettre que le prénom du personnage qui le capture.","Capturer un Pokémon dont le nom de l'espèce commence par la même lettre que le nom de famille du personnage qui le capture.","Réussir les deux objectifs : capturer un Pokémon dont l'espèce commence par la même lettre que le prénom du personnage ET un Pokémon dont l'espèce commence par la même lettre que son nom de famille."),
       mission('Défi',"Capturer 1 Pokémon originaire d'Eleftheria.","Capturer 3 Pokémon originaires d'Eleftheria.","Capturer 5 Pokémon originaires d'Eleftheria.")
     ];
@@ -262,7 +262,7 @@ Centre de Recyclage</textarea></div>
     if (/^Capturer 1 Pokémon de rareté /i.test(t)) return 'capture:rarete';
     if (/^Capturer 1 Pokémon avec une /i.test(t)) return 'capture:ball';
     if (/^Commencer 1 RP dans /i.test(t)) return 'exploration:zone';
-    if (/^Commencer un RP avec un personnage du groupe /i.test(t)) return 'rp:groupe';
+    if (/^Commencer un RP(?: hors capture)? avec un personnage du groupe /i.test(t)) return 'rp:groupe';
     return 'unique:' + t;
   }
 
@@ -281,12 +281,12 @@ Centre de Recyclage</textarea></div>
       texts.add(m.text);
       if (m.tag === 'Capture' && ++captures > 7) return 'Maximum 7 missions Capture par grille.';
       const family = missionFamily(m);
-      const limit = family === 'rp:groupe' ? 3 : 2;
+      const limit = family === 'rp:groupe' ? 1 : 2;
       families.set(family, (families.get(family) || 0) + 1);
-      if (families.get(family) > limit) return 'Maximum 2 variantes du même modèle de mission.';
+      if (families.get(family) > limit) return family === 'rp:groupe' ? 'Une seule mission RP hors capture avec un groupe par grille.' : 'Maximum 2 variantes du même modèle de mission.';
       if (family === 'rp:groupe') {
         const group = m.text.match(/groupe (Civils|Dresseurs|Odyssey)/i)?.[1]?.toLowerCase();
-        if (!group || rpGroups.has(group)) return 'Un seul RP par groupe (Civils, Dresseurs, Odyssey).';
+        if (!group || rpGroups.has(group)) return 'Une seule mission RP hors capture avec un groupe par grille.';
         rpGroups.add(group);
       }
     }
@@ -300,7 +300,7 @@ Centre de Recyclage</textarea></div>
     for (const m of shuffle(pool)) {
       if (chosen.length >= 25) break;
       const family = missionFamily(m);
-      const limit = family === 'rp:groupe' ? 3 : 2;
+      const limit = family === 'rp:groupe' ? 1 : 2;
       if ((families.get(family) || 0) >= limit) continue;
       if (m.tag === 'Capture' && captures >= 7) continue;
       chosen.push(m);
