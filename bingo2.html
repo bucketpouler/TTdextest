@@ -334,7 +334,7 @@ Centre de Recyclage</textarea></div>
   }
   function csvCell(value) {return '"' + String(value).replace(/"/g,'""') + '"';}
   document.getElementById("exportCsv").addEventListener("click",() => {
-    const teams = ["check_sunshine","check_moonlight","check_golden_crown","check_hurle-temps"];
+    const teams = ["check_sunshine","check_moonlight","check_golden_crown","check_hurle-temps","check_pantheon","check_alta_moda","check_guts_and_glory"];
     const rows = [["id_mission","mission","categorie","mission_2_points","mission_3_points",...teams]];
     currentMissions.forEach((m,i) => rows.push([i+1,m.text,m.tag,m.levels[1]||"",m.levels[2]||"",...teams.map(() => "non")]));
     download("themis_bingo_saison.csv","\uFEFF" + rows.map(r=>r.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8");
