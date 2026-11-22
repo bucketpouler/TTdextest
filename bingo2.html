@@ -218,7 +218,6 @@ Centre de Recyclage</textarea></div>
       mission('Pokémon',"Apprendre 1 nouvelle capacité hors-niveau à un Pokémon de son équipe.","Apprendre 2 nouvelles capacités hors-niveau à des Pokémon de son équipe.","Apprendre 4 nouvelles capacités hors-niveau à des Pokémon de son équipe."),
       mission('Combat',"Remporter un combat Pokémon contre un membre d'une autre écurie."),
       mission('Combat',"Perdre un combat Pokémon contre un membre d'une autre écurie."),
-      mission('Combat',"Affronter un Champion d'Arène.","Vaincre un Champion d'Arène."),
       mission('Défi',"Capturer un Pokémon dont le nom de l'espèce commence par la même lettre que le prénom du personnage qui le capture.","Capturer un Pokémon dont le nom de l'espèce commence par la même lettre que le nom de famille du personnage qui le capture.","Réussir les deux objectifs : capturer un Pokémon dont l'espèce commence par la même lettre que le prénom du personnage ET un Pokémon dont l'espèce commence par la même lettre que son nom de famille."),
       mission('Défi',"Capturer 1 Pokémon originaire d'Eleftheria.","Capturer 3 Pokémon originaires d'Eleftheria.","Capturer 5 Pokémon originaires d'Eleftheria.")
     ];
@@ -277,6 +276,7 @@ Centre de Recyclage</textarea></div>
     const texts = new Set();
     const rpGroups = new Set();
     for (const m of missions) {
+      if (m.text === "Affronter un Champion d'Arène.") return "Cette mission a été retirée du générateur.";
       if (texts.has(m.text)) return 'La grille contient deux missions identiques.';
       texts.add(m.text);
       if (m.tag === 'Capture' && ++captures > 7) return 'Maximum 7 missions Capture par grille.';
