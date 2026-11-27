@@ -873,7 +873,7 @@ function renderCapturePreview(){
   const rarity = getManualCaptureRarityKey(pokemon);
   const shiny = document.getElementById("captureShiny").checked;
   const sprite = shiny && pokemon.shiny ? pokemon.shiny : pokemon.sprite;
-  const rarityInfo = rarity === "rare"
+  const rarityInfo = (pokemon.__encounterParadox || isParadoxPokemon(pokemon)) ? getRarityInfo(pokemon) : rarity === "rare"
     ? { label: "Rare", className: "coral" }
     : rarity === "peucommun"
       ? { label: "Peu Commun", className: "blue" }
@@ -910,7 +910,7 @@ function tryManualCapture(){
   const success = roll <= chance;
   const rank = document.getElementById("captureRankSelect")?.value || "D";
   const isShiny = document.getElementById("captureShiny")?.checked || false;
-  const rarity = getRarityInfo({ spawn: getManualCaptureRarityKey(pokemon) });
+  const rarity = (isParadoxPokemon(pokemon) ? getRarityInfo(pokemon) : getRarityInfo({ rare: getManualCaptureRarityKey(pokemon) }));
   const recyclage = document.getElementById("captureRecyclage")?.checked || false;
   const ballRecovered = !success && recyclage && Math.random() < 0.30;
 
@@ -954,13 +954,13 @@ function renderStats(){
 }
 
 function getRarityKey(p){
-  if(p && p.__encounterParadox) return "peucommun";
+  if(p && (p.__encounterParadox || isParadoxPokemon(p))) return "rare";
 
   const raw = normalizeName(
     p.rare || p.rarete || p["rareté"] || p.rarity || ""
   );
 
-  if(raw === "paradoxe" || raw === "paradox") return "peucommun";
+  if(raw === "paradoxe" || raw === "paradox") return "rare";
   if(raw === "rare") return "rare";
   if(
     raw === "peu commun" ||
@@ -973,6 +973,7 @@ function getRarityKey(p){
 }
 
 function getRarityInfo(p){
+  if(p && (p.__encounterParadox || isParadoxPokemon(p))) return { label: "Paradoxe", className: "coral" };
   const rarity = getRarityKey(p);
   if(rarity === "rare") return { label: "Rare", className: "coral" };
   if(rarity === "peucommun") return { label: "Peu Commun", className: "blue" };
@@ -1392,7 +1393,6 @@ function fillRadarSelects(){
   const pairTypes = pair ? pair.split("|") : [];
 
   const basePool = allPokemon.filter(p => {
-    if(isParadoxPokemon(p)) return false;
     const zones = getZones(p).filter(z => normalizeName(z) !== "paradoxe");
     // Sans zone de capture réelle, ce Pokémon n'est jamais accessible.
     if(zones.length === 0) return false;
@@ -1412,7 +1412,7 @@ function fillRadarSelects(){
     .filter(Boolean)
     .map(p => ({ ...p, __encounterParadox: true }));
 
-  const pool = [...basePool, ...injectedParadoxes];
+  const pool = [...basePool, ...injectedParadoxes].filter((p,i,arr) => arr.findIndex(q => String(q.id) === String(p.id)) === i);
 
   [
     ["radarCommun","commun","Radar — Commun"],
@@ -1442,41 +1442,17 @@ function pickEncounterPokemon(pool, paradoxes, talents){
     return picks[rollRarity({ commun: 50, peucommun: 35, rare: 15 })];
   }
 
-  // Le tirage normal se fait D'ABORD par rareté.
-  // C'est ce qui garantit réellement 50 % Commun / 35 % Peu Commun / 15 % Rare.
-  const rarity = talents.aimantRaretes
-    ? rollRarity({ peucommun: 70, rare: 30 })
-    : rollRarity({ commun: 50, peucommun: 35, rare: 15 });
-
-  const regularPool = pool.filter(p => !p.__encounterParadox);
-  const regularCandidates = regularPool.filter(p => getRarityKey(p) === rarity);
-
-  // Les Paradoxes du Bulletin comptent comme Peu Communs.
-  if(rarity === "peucommun"){
-    if(talents.traqueur && paradoxes.length){
-      // Traqueur : 50 % Paradoxe / 50 % Peu Commun classique.
-      if(Math.random() < 0.50){
-        return randomItem(paradoxes);
-      }
-      if(regularCandidates.length){
-        return randomItem(regularCandidates);
-      }
-      return randomItem(paradoxes);
-    }
-
-    // Sans Traqueur, les Paradoxes font simplement partie du pool Peu Commun.
-    const uncommonPool = [...regularCandidates, ...paradoxes];
-    if(uncommonPool.length){
-      return randomItem(uncommonPool);
-    }
+  const paradoxPool = pool.filter(p => p.__encounterParadox || isParadoxPokemon(p));
+  const regularPool = pool.filter(p => !p.__encounterParadox && !isParadoxPokemon(p));
+  const weights = talents.aimantRaretes ? { peucommun: 70, rare: 30 } : { commun: 50, peucommun: 35, rare: 15 };
+  const rarity = rollRarity(weights);
+  const candidates = regularPool.filter(p => getRarityKey(p) === rarity);
+  const tracking = talents.traqueur && paradoxPool.length > 0;
+  if(rarity === "rare"){
+    if(tracking && (Math.random() < 0.5 || !candidates.length)) return randomItem(paradoxPool);
+    if(!tracking) candidates.push(...paradoxPool);
   }
-
-  if(regularCandidates.length){
-    return randomItem(regularCandidates);
-  }
-
-  // Sécurité seulement si une zone ne possède exceptionnellement aucun Pokémon
-  // de la rareté tirée.
+  if(candidates.length) return randomItem(candidates);
   return randomItem(pool);
 }
 
@@ -1568,7 +1544,7 @@ function generateEncounter(){
     talents.amiPokemon ? "Ami des Pokémon : +10 capture" : null,
     talents.recyclage ? "Recyclage : 30%" : null,
     talents.radar ? "Radar : 50/35/15" : null,
-    talents.traqueur ? "Traqueur : 50% Paradoxe sur un Peu Commun" : null,
+    talents.traqueur ? "Traqueur : 50% Paradoxe sur un Rare" : null,
     talents.aimantRaretes ? "Aimant à raretés : 70% Peu Commun / 30% Rare" : null
   ].filter(Boolean).join(" • ");
 
